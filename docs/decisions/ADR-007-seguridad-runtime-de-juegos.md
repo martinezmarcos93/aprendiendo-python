@@ -23,7 +23,8 @@ TortuScript → JavaScript generado → eval() / new Function()
 - **Prohibido:** red (`fetch`, `XMLHttpRequest`, `WebSocket`), cookies, `localStorage`/`IndexedDB` arbitrarios, DOM,
   sistema de archivos, navegación, `import`/`importScripts`, APIs externas.
 - Segunda barrera: CSP estricta para el worker (`connect-src 'none'`, sin `unsafe-eval`).
-- Antes de implementar hace falta un **modelo de amenazas** escrito del runtime.
+- Antes de implementar hace falta un **modelo de amenazas** escrito del runtime. Borrador (26/09/2026):
+  [`docs/experimental/MODELO_DE_AMENAZAS_RUNTIME_JUEGOS.md`](../experimental/MODELO_DE_AMENAZAS_RUNTIME_JUEGOS.md).
 
 ## Consecuencias
 + Superficie de ataque acotada y verificable con tests.
