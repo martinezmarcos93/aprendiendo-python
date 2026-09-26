@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titulo %}Juegos{% endblock %}
+{% block contenido %}
+<section class="tarjeta">
+  <div class="fila">
+    <h1>🎮 Creá tu juego</h1>
+    <span class="tenue">Un juego de rol por turnos: héroes, enemigos, dados y aventuras.</span>
+  </div>
+  <div class="ejemplos" id="ejemplos" aria-label="Ejemplos"></div>
+  <div class="ordenes tenue">
+    <code>escena("bosque")</code> · <code>h es heroe("Tharok", 30, 5)</code> · <code>b es enemigo("Bug", 20, 2)</code> ·
+    <code>atacar(h, b)</code> · <code>vivo(b)</code> · <code>curar(h, 10)</code> · <code>decir(h, "¡Hola!")</code> ·
+    <code>dar(h, "llave")</code> · <code>tiene(h, "llave")</code> · <code>mover(h, 3, 2)</code> · <code>mision("…")</code> ·
+    <code>ganar("…")</code> · <code>perder("…")</code> · <code>dado(6)</code>
+  </div>
+</section>
+<section class="editores tortuga-grid">
+  <div class="panel-editor tortu"><h3>✏️ Tu juego</h3><textarea id="editor"></textarea></div>
+  <div class="panel-editor lienzo-panel">
+    <h3>🗺️ Escena</h3>
+    <div class="lienzo-caja"><canvas id="escena" width="640" height="400" role="img" aria-label="Escena del juego (lo que pasa está escrito abajo)"></canvas></div>
+  </div>
+</section>
+<div class="acciones">
+  <button class="boton verde grande" id="btn-ejecutar" type="button">▶ Jugar <span class="atajo">Ctrl+Enter</span></button>
+  <button class="boton amarillo" id="btn-detener" type="button" disabled>⏹ Detener</button>
+  <button class="boton violeta" id="btn-guardar" type="button">💾 Guardar</button>
+  <a class="boton chico" href="{{ url_for('proyectos') }}">📂 Mis proyectos</a>
+  <span class="tenue" id="proyecto-nombre">{% if proyecto %}Proyecto: <b>{{ proyecto.nombre }}</b>{% endif %}</span>
+</div>
+<section class="resultado">
+  <h3>📜 Lo que pasó</h3>
+  <ol class="registro-juego" id="registro-juego" aria-live="polite"></ol>
+  <div id="veredicto"></div>
+</section>
+{% endblock %}
+{% block scripts %}<script type="application/json" id="proyecto-actual">{{ proyecto|tojson }}</script>
+<script type="application/json" id="juego-config">{{ {"worker": url_for('static', filename='js/tortugame/interprete.js')}|tojson }}</script>
+<script src="{{ url_for('static', filename='js/proyectos.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tortugame/escena.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tortugame/pagina.js') }}"></script>{% endblock %}

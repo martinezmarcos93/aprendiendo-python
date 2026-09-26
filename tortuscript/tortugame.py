@@ -277,3 +277,18 @@ def correr_juego(fuente, semilla, entradas=None, completar_con_vacio=False):
     return {"eventos": partida.eventos, "error": bool(hay_error), "mensaje": mensaje if hay_error else "",
             "linea": int(linea.group(1)) if linea else None, "pregunta": detalles.get("pregunta_pendiente")}
 
+
+def comparar(eventos_alumno, eventos_solucion):
+    """¿El juego del chico hace lo mismo que la solución? Compara los registros sin las líneas.
+    Devuelve {"estado": "correcto"|"incorrecto"|"sin_eventos", "posicion", "esperado", "obtenido"}: el primer evento
+    distinto, para mostrarle al chico en qué momento su juego hizo otra cosa."""
+    alumno, solucion = sin_lineas(eventos_alumno), sin_lineas(eventos_solucion)
+    if not alumno:
+        return {"estado": "sin_eventos", "posicion": None, "esperado": None, "obtenido": None}
+    if alumno == solucion:
+        return {"estado": "correcto", "posicion": None, "esperado": None, "obtenido": None}
+    i = next((k for k, (a, b) in enumerate(zip(alumno, solucion)) if a != b), min(len(alumno), len(solucion)))
+    return {"estado": "incorrecto", "posicion": i,
+            "esperado": eventos_solucion[i] if i < len(eventos_solucion) else None,
+            "obtenido": eventos_alumno[i] if i < len(eventos_alumno) else None}
+

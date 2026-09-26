@@ -192,7 +192,7 @@ class TestWebCamino(Base):
         self.assertEqual(html.count('class="parada'), 30)
         self.assertIn("¡Te toca!", html)
         self.assertIn('href="/leccion/hola-mundo"', html)
-        self.assertIn("0/64", html)
+        self.assertIn("0/69", html)
 
     def test_aprender_lleva_a_la_leccion_actual(self):
         self.post("/api/onboarding", {"meta_min": 10})
@@ -395,6 +395,53 @@ class TestWebCamino(Base):
         self.assertFalse(r["ok"])
         self.assertEqual(r["pista"], paso["pista"])
         self.assertNotEqual(r["pista"], leccion.PISTAS_GENERICAS["completar"])
+
+    # ── lecciones de juegos (TortuGame) ──
+    def _abrir_juegos(self):
+        self.post("/api/onboarding", {"meta_min": 10})
+        self._terminar_hasta("desafio-final")
+        for _, lec in contenido.lecciones(contenido.cargar_curso("tortuaria")):
+            self._dar_por_completa(lec["id"])
+
+    def test_el_curso_de_juegos_se_abre_al_terminar_tortuaria(self):
+        self.post("/api/onboarding", {"meta_min": 10})
+        self._terminar_hasta("desafio-final")
+        self.assertEqual(self.c.get("/leccion/juego-escena").status_code, 302)
+        self._abrir_juegos()
+        html = self.c.get("/leccion/juego-escena").get_data(as_text=True)
+        self.assertIn('"juego": true', html)
+        self.assertIn("tortugame/escena.js", html)
+
+    def test_escribir_un_juego_se_evalua_por_eventos(self):
+        self._abrir_juegos()
+        ruta = "/api/lecciones/juego-enemigo/pasos/3/evaluar"
+        self._dar_por_completa("juego-escena")
+        otra = ('h es heroe("Rex", 25, 4)\nb es enemigo("Bug", 15, 2)\nrepetir 20 veces:\n    si vivo(b):\n        atacar(h, b)')
+        ok = self.post(ruta, {"codigo": otra}).get_json()
+        self.assertEqual(ok["evaluacion"]["estado"], "correcto")               # otra forma, mismo juego
+        self.assertTrue(ok["eventos"])
+        mal = self.post(ruta, {"codigo": 'h es heroe("Rex", 25, 4)\nb es enemigo("Bug", 15, 2)\natacar(h, b)'}).get_json()
+        self.assertEqual(mal["evaluacion"]["estado"], "incorrecto")
+        self.assertIsNotNone(mal["evaluacion"]["posicion"])
+        vacio = self.post(ruta, {"codigo": "x es 1"}).get_json()
+        self.assertEqual(vacio["evaluacion"]["estado"], "sin_eventos")
+        error = self.post(ruta, {"codigo": 'escena("luna")'}).get_json()
+        self.assertTrue(error["error"])
+        self.assertIn("El juego no entendió", error["mensaje"])
+
+    def test_completar_un_juego_compara_lo_que_pasa(self):
+        self._abrir_juegos()
+        ruta = "/api/lecciones/juego-escena/pasos/2/comprobar"
+        self.assertFalse(self.post(ruta, {"respuesta": ['"luna"']}).get_json()["ok"])
+        self.assertTrue(self.post(ruta, {"respuesta": ['"bosque"']}).get_json()["ok"])
+
+    def test_ver_el_juego_de_un_ejemplo(self):
+        self.post("/api/onboarding", {"meta_min": 10})
+        r = self.post("/api/juego/correr", {"codigo": 'h es heroe("A", 10, 1)\nr es preguntar("¿Sí? ")\nmostrar r'}).get_json()
+        self.assertEqual(r["pregunta"], "¿Sí? ")
+        r2 = self.post("/api/juego/correr", {"codigo": 'h es heroe("A", 10, 1)\nr es preguntar("¿Sí? ")\nmostrar r',
+                                             "entradas": ["si"], "semilla": r["semilla"]}).get_json()
+        self.assertEqual(r2["eventos"][-1]["texto"], "si")
 
     def test_el_curso_de_la_tortuga_empieza_cerrado_y_se_abre_al_terminar_dos_variables(self):
         self.post("/api/onboarding", {"meta_min": 10})

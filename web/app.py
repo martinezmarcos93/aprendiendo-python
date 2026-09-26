@@ -25,6 +25,9 @@ from tortuscript import contenido, evaluacion, leccion as motor, liga, logros, p
 from tortuscript import practica as espaciado  # noqa: E402
 from tortuscript import proyectos as mis_proyectos  # noqa: E402
 from tortuscript import diagnostico, intereses, respaldo  # noqa: E402
+from tortuscript.juego_ast import arbol_del_juego  # noqa: E402
+from tortuscript.executor import CodigoNoPermitido  # noqa: E402
+from tortuscript.error_handler import armar_mensaje_error  # noqa: E402
 from tortuscript.ejercicios import EJERCICIOS  # noqa: E402
 from tortuscript.proceso import correr  # noqa: E402
 from tortuscript.referencia import cargar_referencia  # noqa: E402
@@ -52,6 +55,10 @@ CSP = "; ".join((
     "form-action 'self'",
     "frame-ancestors 'none'",
 ))
+# El intérprete de juegos corre en un Web Worker: su CSP (la de la respuesta del script) no le deja nada salvo su propio
+# código. Sin red, sin otros scripts (ADR-007, modelo de amenazas A1/A3).
+RUTA_WORKER_JUEGOS = "/static/js/tortugame/interprete.js"
+CSP_WORKER_JUEGOS = "default-src 'none'; script-src 'self'"
 CABECERAS_SEGURIDAD = {
     "Content-Security-Policy": CSP,
     "X-Content-Type-Options": "nosniff",
@@ -125,6 +132,8 @@ def create_app(token=None):
     def _cabeceras_de_seguridad(respuesta):
         for nombre, valor in CABECERAS_SEGURIDAD.items():
             respuesta.headers.setdefault(nombre, valor)
+        if request.path == RUTA_WORKER_JUEGOS:
+            respuesta.headers["Content-Security-Policy"] = CSP_WORKER_JUEGOS
         return respuesta
 
     @app.before_request
@@ -288,13 +297,13 @@ def create_app(token=None):
     def _ejecutar_para_motor(paso):
         """Cómo el motor corre un programa para comparar (completar/ordenar): devuelve
         {"salida", "ordenes"}, o None si falla o pregunta algo."""
-        op = "tortuga" if paso.get("tortuga") else "ejecutar"
+        op = "juego" if paso.get("juego") else "tortuga" if paso.get("tortuga") else "ejecutar"
 
         def ejecutar(fuente, entradas):
             r = correr({"op": op, "fuente": fuente, "entradas": entradas, "semilla": evaluacion.SEMILLA_EVALUACION})
             if r.get("error") or r.get("pregunta") is not None:
                 return None
-            return {"salida": r.get("salida_programa", ""), "ordenes": r.get("ordenes", [])}
+            return {"salida": r.get("salida_programa", ""), "ordenes": r.get("ordenes", []), "eventos": r.get("eventos", [])}
         return ejecutar
 
     objetivos = {}   # dibujo de la solución de cada paso de tortuga: (fuente, entradas) -> órdenes
@@ -508,6 +517,32 @@ def create_app(token=None):
         proyecto, otra = _proyecto_pedido("experimentar")
         return otra or render_template("experimentar.html", proyecto=proyecto)
 
+    @app.get("/juego")
+    def juego():
+        proyecto, otra = _proyecto_pedido("juego")
+        return otra or render_template("juego.html", proyecto=proyecto)
+
+    @app.post("/api/juego/correr")
+    def api_juego_correr():
+        """Corre un juego con la implementación de referencia (ejemplos de las lecciones): devuelve el registro."""
+        datos = request.get_json(silent=True) or {}
+        return jsonify(correr({"op": "juego", "fuente": str(datos.get("codigo", ""))[:mis_proyectos.MAX_CODIGO],
+                               "entradas": datos.get("entradas", []), "semilla": datos.get("semilla")}))
+
+    @app.post("/api/juego/arbol")
+    def api_juego_arbol():
+        """El árbol del juego (TortuGame): el servidor analiza y valida, el navegador ejecuta (ADR-006/007)."""
+        codigo = str((request.get_json(silent=True) or {}).get("codigo", ""))
+        if len(codigo) > mis_proyectos.MAX_CODIGO:
+            return jsonify(ok=False, mensaje="Tu juego es demasiado largo."), 400
+        try:
+            return jsonify(ok=True, arbol=arbol_del_juego(codigo))
+        except CodigoNoPermitido as e:
+            linea = f"\n\n📍 Mirá la línea {e.linea}" if e.linea else ""
+            return jsonify(ok=False, mensaje=f"🚫 Eso no se puede usar en un juego\n\n{e}{linea}", linea=e.linea)
+        except SyntaxError as e:
+            return jsonify(ok=False, mensaje=armar_mensaje_error(e), linea=e.lineno)
+
     @app.get("/tortuga")
     def tortuga():
         proyecto, otra = _proyecto_pedido("tortuga")
@@ -586,7 +621,8 @@ def create_app(token=None):
     def _evaluar_escribir(leccion_id, i, paso, datos):
         """Ejecuta y evalúa un paso 'escribir'. Los ejercicios del curso clásico guardan su
         resultado en `ejercicios` (clave histórica); los de otros cursos, en el paso de la lección."""
-        pedido = {"op": "evaluar_tortuga" if paso.get("tortuga") else "evaluar", "fuente": datos.get("codigo", ""),
+        op = "evaluar_juego" if paso.get("juego") else "evaluar_tortuga" if paso.get("tortuga") else "evaluar"
+        pedido = {"op": op, "fuente": datos.get("codigo", ""),
                   "entradas": datos.get("entradas", []), "solucion": paso["solucion"]}
         if paso.get("laberinto"):
             pedido.update(laberinto=paso["laberinto"], usar=paso.get("usar") or [])

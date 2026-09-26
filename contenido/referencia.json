@@ -209,6 +209,28 @@
           "python": "activo = True\nif activo:\n    print(\"Sí\")"
         }
       ]
+    },
+    {
+      "icono": "🎮",
+      "titulo": "Juegos",
+      "color": "morado",
+      "ejemplos": [
+        {
+          "descripcion": "Una escena, un héroe y un enemigo",
+          "tortu": "escena(\"bosque\")\nh es heroe(\"Tharok\", 30, 5)\nb es enemigo(\"Bug\", 20, 2)",
+          "python": "escena(\"bosque\")\nh = heroe(\"Tharok\", 30, 5)\nb = enemigo(\"Bug\", 20, 2)"
+        },
+        {
+          "descripcion": "Combate por turnos",
+          "tortu": "h es heroe(\"Kira\", 20, 4)\nb es enemigo(\"Bug\", 12, 2)\nmientras vivo(b):\n    atacar(h, b)\nganar(\"¡Venciste!\")",
+          "python": "h = heroe(\"Kira\", 20, 4)\nb = enemigo(\"Bug\", 12, 2)\nwhile vivo(b):\n    atacar(h, b)\nganar(\"¡Venciste!\")"
+        },
+        {
+          "descripcion": "Diálogos e inventario",
+          "tortu": "h es heroe(\"Luz\", 20, 3)\ndar(h, \"llave\")\nsi tiene(h, \"llave\"):\n    decir(h, \"¡Tengo la llave!\")",
+          "python": "h = heroe(\"Luz\", 20, 3)\ndar(h, \"llave\")\nif tiene(h, \"llave\"):\n    decir(h, \"¡Tengo la llave!\")"
+        }
+      ]
     }
   ]
 }

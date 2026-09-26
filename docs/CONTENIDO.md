@@ -56,6 +56,10 @@ Detalles:
   usa siempre la misma semilla (`SEMILLA_EVALUACION`), así que el programa del chico y la solución tiran los mismos
   números **si los piden en el mismo orden**. Un `predecir` con `dado` es válido: la opción correcta es la que sale con esa
   semilla (el validador la comprueba). Como cualquier palabra, `dado` hay que presentarlo antes de usarlo.
+- `juego: true` (en `explicacion`, `completar`, `ordenar` y `escribir`): el código es un juego de TortuGame
+  (`docs/TORTUGAME.md`). Se compara **lo que pasa en el juego** (el registro de eventos, sin las líneas) con lo que pasa
+  en la respuesta oficial, con la semilla de evaluación: vale cualquier forma de escribir el mismo juego. En la
+  explicación aparece "▶ Ver el juego". Si el juego pregunta algo, agregá `entradas_prueba`.
 - `usar` (solo en laberintos): palabras que el recorrido tiene que usar, p. ej. `["repetir"]`. Si llega sin usarlas, no vale.
 - `lienzo: true` en `explicacion`, `elegir` y `predecir` agrega el botón para ver qué dibuja el código.
 - `inicial` (en `escribir`): el editor arranca con ese código (proyectos guiados). Sus líneas tienen que aparecer, en orden, dentro de la solución.

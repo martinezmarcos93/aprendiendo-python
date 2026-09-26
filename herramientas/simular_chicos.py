@@ -118,7 +118,7 @@ class Chico:
             while self.se_equivoca() and errores < 2:
                 self.pg.evaluate("s => document.querySelector('.paso-caja .CodeMirror').CodeMirror.setValue(s)",
                                  con_error(paso["solucion"]))
-                self.pg.click("text=▶ Dibujar" if paso.get("tortuga") else "text=▶ Ejecutar")
+                self.pg.click("text=▶ Jugar" if paso.get("juego") else "text=▶ Dibujar" if paso.get("tortuga") else "text=▶ Ejecutar")
                 self.esperar("mal", entradas)
                 errores += 1; self.errores_por_paso[clave] += 1
                 self.pg.click("#lec-principal")                   # Reintentar
@@ -127,7 +127,7 @@ class Chico:
                     self.m["pistas_vistas"] += 1
             self.m["primer_intento_ok" if errores == 0 else "con_errores"] += 1
             self.pg.evaluate("s => document.querySelector('.paso-caja .CodeMirror').CodeMirror.setValue(s)", paso["solucion"])
-            self.pg.click("text=▶ Dibujar" if paso.get("tortuga") else "text=▶ Ejecutar")
+            self.pg.click("text=▶ Jugar" if paso.get("juego") else "text=▶ Dibujar" if paso.get("tortuga") else "text=▶ Ejecutar")
             self.esperar("bien", entradas); self.principal()
         else:
             jc._jugar_paso(self.pg, paso)                          # explicación, completar y ordenar: bien jugados

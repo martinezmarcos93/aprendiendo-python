@@ -113,6 +113,10 @@ Estimaciones en **semanas-persona** (rango). "Puerta" = decisión que se toma co
 
 ### Fase 3 — Runtime de juegos en el navegador (10–16 sem) · flujo D
 
+> **Estado (26/09/2026, noche):** ítems 1–5 ✅ — API TortuGame (`docs/TORTUGAME.md`), intérprete en Web Worker sin eval,
+> evaluación determinista, tipo de proyecto `juego` y curso "🎮 Creá tu juego" (5 lecciones). Ítem 6 ✅ (tests de
+> seguridad del modelo de amenazas). Falta: guardado de partidas y el puente TortuGame → Pygame (horizonte).
+
 > **Estado (26/09/2026):** **habilitada** — Marcos aceptó todas las ADR (incluidas 006, 007 y 008). Antes estaba bloqueada. Ya existe el borrador del modelo de
 > amenazas que pide ADR-007: [`MODELO_DE_AMENAZAS_RUNTIME_JUEGOS.md`](MODELO_DE_AMENAZAS_RUNTIME_JUEGOS.md).
 1. Especificar la API **TortuGame** en español (entidades, escenas, colisiones, combate, inventario, diálogos, guardado).

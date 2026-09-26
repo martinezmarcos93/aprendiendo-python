@@ -21,8 +21,8 @@
   <div class="proyectos-grid">
     {% for p in proyectos %}
     <article class="tarjeta proyecto">
-      <h3><span aria-hidden="true">{{ '🎨' if p.tipo == 'tortuga' else '🧪' }}</span> {{ p.nombre }}</h3>
-      <span class="tenue">{{ 'Dibujo de la tortuga' if p.tipo == 'tortuga' else 'Experimento' }} · {{ p.actualizado }}</span>
+      <h3><span aria-hidden="true">{{ {'tortuga': '🎨', 'juego': '🎮'}.get(p.tipo, '🧪') }}</span> {{ p.nombre }}</h3>
+      <span class="tenue">{{ {'tortuga': 'Dibujo de la tortuga', 'juego': 'Juego'}.get(p.tipo, 'Experimento') }} · {{ p.actualizado }}</span>
       <pre>{{ p.codigo[:220] }}</pre>
       <div class="acciones">
         <a class="boton verde chico" href="{{ url_for(p.tipo, proyecto=p.id) }}">▶ Abrir</a>

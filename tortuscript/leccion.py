@@ -14,7 +14,7 @@ Reglas amables (nada de vidas ni castigos):
 import random
 import zlib
 
-from . import tortuga
+from . import tortuga, tortugame
 from .contenido import HUECO
 from .translator import detectar_tipo, palabras_usadas
 from .evaluacion import normalizar_salida
@@ -203,7 +203,7 @@ def paso_publico(paso, leccion_id, indice, numero_ejercicio=None):
     tipo = paso["tipo"]
     semilla = _semilla(leccion_id, indice)
     publico = {"tipo": tipo, "indice": indice}
-    for bandera in ("lienzo", "tortuga"):                     # cómo se dibuja / se compara el paso
+    for bandera in ("lienzo", "tortuga", "juego"):            # cómo se dibuja / se compara el paso
         if paso.get(bandera):
             publico[bandera] = True
     if paso.get("lenguaje"):
@@ -262,6 +262,8 @@ def _mismo_resultado(paso, ejecutar, fuente_a, fuente_b, entradas):
     a, b = ejecutar(fuente_a, entradas), ejecutar(fuente_b, entradas)
     if a is None or b is None:
         return False
+    if paso.get("juego"):                                         # TortuGame: el mismo registro de eventos
+        return bool(a.get("eventos")) and tortugame.sin_lineas(a["eventos"]) == tortugame.sin_lineas(b["eventos"])
     if paso.get("tortuga"):
         return tortuga.mismo_dibujo(a["ordenes"], b["ordenes"])
     return normalizar_salida(a["salida"]) != "" and normalizar_salida(a["salida"]) == normalizar_salida(b["salida"])
@@ -293,7 +295,7 @@ def comprobar(paso, respuesta, ejecutar=None):
             return {"ok": True, "pista": None, "malos": None}
         if ejecutar and all(isinstance(r, str) and r in paso["fichas"] for r in respuesta):
             entradas = paso.get("entradas_prueba") or []
-            if paso.get("tortuga"):                                     # mismo dibujo que la respuesta oficial
+            if paso.get("tortuga") or paso.get("juego"):                # mismo dibujo / mismo juego que la respuesta oficial
                 if _mismo_resultado(paso, ejecutar, _completado(paso, respuesta),
                                     _completado(paso, esperado), entradas):
                     return {"ok": True, "pista": None, "malos": None}

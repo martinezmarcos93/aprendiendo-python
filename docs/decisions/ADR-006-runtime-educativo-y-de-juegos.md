@@ -23,3 +23,15 @@ Runtime de juegos:  TortuScript → TortuGame → intérprete propio → Canvas 
 ## Consecuencias
 + Cada runtime tiene un modelo de seguridad simple y propio.
 − El traductor actual solo produce Python: el runtime de juegos necesita su propio parser/intérprete.
+
+## Notas de implementación (26/09/2026)
+- Runtime de juegos: `web/static/js/tortugame/interprete.js` (Web Worker) sobre el árbol JSON de `tortuscript/juego_ast.py`.
+  Página 🎮 Juegos (`/juego`) y tipo de proyecto `juego`.
+- **Para Marcos (confirmar):** las **lecciones** de juegos se evalúan en el servidor con una implementación de
+  referencia en Python (`tortuscript/tortugame.py`) que corre en el ejecutor educativo. Motivo: que el XP lo siga
+  calculando el servidor (integridad de la gamificación, §20 de seguridad) y que el validador pueda revisar el contenido.
+  No reemplaza al runtime de juegos: el juego se **juega** en el intérprete JS. Tests de conformidad
+  (`tests/test_tortugame.py`) exigen que las dos den el mismo registro de eventos.
+- Diferencias conocidas y documentadas: después de que una función devuelve, JS marca la línea que la llamó y Python la
+  última de adentro (solo afecta el resaltado); números enteros más allá de 2^53 dan error en JS; `range` se muestra como
+  lista en JS.

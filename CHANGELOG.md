@@ -3,6 +3,27 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — TortuGame: crear juegos de rol (26/09/2026)
+
+Rama `feat/tortugame`. Fase 3 del roadmap; implementa ADR-006, 007 y 008 (aceptadas).
+
+### Agregado
+- **🎮 Juegos** (`/juego`): se escribe un juego de rol por turnos con la API TortuGame (escena, héroe, enemigos, atacar,
+  curar, decir, dar/tiene, mover, misión, ganar/perder, dado, preguntar) y se ve en una escena animada, con lo que pasa
+  escrito debajo (también para lectores de pantalla). Se guarda en Mis proyectos.
+- **Seguridad (ADR-007):** el servidor solo analiza el código y manda un árbol con lista blanca; el navegador lo corre en
+  un Web Worker con su propio intérprete (sin `eval`) y con una CSP sin red, con topes de pasos, profundidad,
+  personajes, eventos, listas y textos. La página corta el Worker a los 3 segundos.
+- **Curso "🎮 Creá tu juego"** (5 lecciones, se abre al terminar Tortuaria). Las lecciones se evalúan en el servidor
+  comparando lo que pasa en el juego (misma semilla): vale cualquier forma de escribirlo, y si algo difiere, la pista
+  dice en qué momento.
+- Implementación de referencia en Python y **tests de conformidad**: 33 programas dan el mismo registro de eventos,
+  error y pregunta en Python y en JS. Tests de seguridad del intérprete con JSON armado a mano.
+- Referencia: sección 🎮 Juegos. Especificación: `docs/TORTUGAME.md`.
+
+### Cambiado
+- Menú: "Juegos" junto a "Tortuga". Seis cursos, 69 lecciones.
+
 ## Sin publicar — instaladores para familias, en cualquier sistema (26/09/2026)
 
 Rama `feat/instalador-agnostico`. Implementa ADR-015 (aceptada).
