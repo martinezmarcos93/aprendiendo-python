@@ -48,6 +48,10 @@ Cada lección dura unos 2 minutos y sigue el ciclo **explicar → practicar → 
 | 🐉 Tortuaria: tu primer juego de rol | 10 | un juego de rol por consola: héroe, golpes, `dado()`, ataques con funciones, combate por turnos con `mientras`, inventario con listas y el jefe final (se abre al terminar *Desafío final*) |
 
 El **camino** es la pantalla de inicio: muestra dónde estás y qué sigue. Las lecciones se desbloquean en orden.
+Quien ya programó puede elegir en la bienvenida **dónde empezar** (*Variables* o *Condicionales*): las lecciones
+anteriores quedan ⏭ salteadas, sin XP ni logros, para hacerlas cuando quiera. Al volver otro día, el inicio saluda con
+lo que pasó la última vez y un botón **▶ Continuar**; al terminar cada lección se ve qué aprendiste, qué practicaste y
+qué sigue. Ante un error hay siempre una pista propia de ese paso.
 
 ### 🎮 Motivación, sin presión
 - **XP y niveles** (10 títulos: 🐣 Aprendiz … 🏆 Maestro). Solo suma cuando mejorás tu mejor resultado.
@@ -56,9 +60,13 @@ El **camino** es la pantalla de inicio: muestra dónde estás y qué sigue. Las 
 - **25 logros** que nunca se pierden y una **liga local semanal** (Bronce → Diamante) entre los perfiles de la compu y rivales simulados; suben los 3 primeros y nadie baja.
 - **Práctica del día**: repaso espaciado e intercalado (1, 2, 4, 8 y 16 días) con los pasos de lecciones viejas.
 - **Certificado imprimible** (o PDF) al terminar cada curso.
+- **La tortuga cambia de color** con cada nivel (el lápiz sigue arrancando en verde).
+- Al terminar un curso, una pregunta opcional: **¿qué te gustaría crear?** (se puede decir "Ahora no" y no insiste).
+  Las respuestas quedan solo en la compu.
 
 ### 🧰 Herramientas
-- **🧪 Experimentar**: escribís lo que quieras, con la traducción a Python en vivo. Acepta TortuScript o Python.
+- **🧪 Experimentar**: escribís lo que quieras, con la traducción a Python en vivo. Acepta TortuScript o Python, y
+  `dado(6)` tira un dado (al evaluar ejercicios el azar es siempre el mismo, así se puede corregir).
 - **🎨 Zona Tortuga**: dibujo con `avanzar`, `retroceder`, `girar_der`, `girar_izq`, `color`, `subir_lapiz` y `bajar_lapiz`; con *paso a paso* se resalta cada línea mientras la tortuga la ejecuta. Colores en español (`"rojo"`, `"celeste"`...) o `#rrggbb`. La tortuga cambia de color con cada nivel de XP; el lápiz arranca siempre en verde.
 - **📂 Mis proyectos**: guardar, abrir, duplicar y borrar lo hecho en Experimentar y en la Zona Tortuga (hasta 30 por perfil).
 - **📖 Referencia** del lenguaje, **🗺️ Mapa** de los 30 ejercicios clásicos, **🔁 Repaso** de ejercicios (4 modos), **📊 Resumen** de hoy y **❓ Ayuda** con las preguntas más comunes.
