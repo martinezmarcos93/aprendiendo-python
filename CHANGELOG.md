@@ -3,6 +3,12 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — verificación de las páginas nuevas (26/09/2026)
+
+### Cambiado
+- `revisar_responsive.py` y `revisar_contraste.py` también revisan Ayuda, la bienvenida (contraste), un laberinto,
+  Tortuaria y la página 404. Resultado: sin desbordes y contraste AA en modo normal y alto.
+
 ## Sin publicar — pistas propias en todos los pasos (26/09/2026)
 
 Rama `content/pistas-propias`.
