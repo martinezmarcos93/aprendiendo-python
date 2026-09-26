@@ -18,6 +18,21 @@ funcion saludar(n):         →     def saludar(n):
 
 ## Cómo se usa
 
+### Para una familia (sin instalar Python)
+Bajá el paquete de tu sistema, descomprimilo y seguí `LEEME.txt`:
+
+| Sistema | Paquete | Para instalar |
+|---|---|---|
+| Linux | `TortuScript-<fecha>-linux-<arq>.tar.gz` | `sh instalar.sh` → aparece en el menú de aplicaciones |
+| Windows | `TortuScript-<fecha>-windows-<arq>.zip` (y un `…-instalador.exe` si se armó con Inno Setup) | doble clic en `instalar.bat` → menú Inicio y Escritorio |
+| macOS | `TortuScript-<fecha>-macos-<arq>.zip` | doble clic en `instalar.command` → carpeta Aplicaciones |
+
+Cada instalador comprueba que el sistema sea el suyo, no pide permisos de administrador y el desinstalador **nunca borra
+el progreso**, que se guarda en la carpeta de datos del usuario. Los paquetes se arman con un solo comando que detecta el
+sistema: `python herramientas/construir.py` (ver *Para quien mantiene el proyecto*).
+
+### Desde el código (con Python)
+
 **Requisitos:** Python 3.9 o más nuevo. Nada más: la única dependencia es Flask. `requirements.lock` fija también lo que
 Flask trae y verifica cada archivo con su hash (se rearma y se audita con `herramientas/auditar_dependencias.py`).
 
@@ -132,13 +147,16 @@ proyecto/
 - **Todo offline**: CodeMirror, confeti y las fuentes están en `web/static/`; no se pide nada a internet.
 - **Cabeceras de seguridad en toda respuesta**: una CSP que solo deja correr scripts propios (nada inline ni de afuera) y no deja enmarcar la app, más `nosniff`, `no-referrer` y `Permissions-Policy` (`web/app.py`, `CABECERAS_SEGURIDAD`).
 
-Decisiones de diseño: [`docs/decisions/`](docs/decisions/) (ADR-001 migración a web, ADR-002 cursos como datos y progreso aditivo).
+Decisiones de diseño: [`docs/decisions/`](docs/decisions/README.md) (ADR-001 a ADR-015, con su estado en el índice).
 
 ---
 
 ## Dónde se guarda el progreso
 
-En `progreso_<perfil>.json`, junto al programa (el perfil inicial es `default`). Cada guardado es atómico y deja una copia `.bak`; si el archivo se daña se aparta como `.corrupto-<fecha>` y se recupera desde la copia: nunca se pisa en silencio. El esquema es **aditivo**: los archivos de versiones anteriores se abren y se completan solos (hoy es la versión 8). Para empezar de cero un perfil, borrá su `progreso_<perfil>.json` (y el `.bak`).
+Instalado con el paquete de tu sistema, en la carpeta de datos del usuario: `~/.local/share/tortuscript` (Linux),
+`%APPDATA%\TortuScript` (Windows) o `~/Library/Application Support/TortuScript` (macOS). Desde el código, como siempre:
+
+En `progreso_<perfil>.json`, junto al programa (el perfil inicial es `default`). Cada guardado es atómico y deja una copia `.bak`; si el archivo se daña se aparta como `.corrupto-<fecha>` y se recupera desde la copia: nunca se pisa en silencio. El esquema es **aditivo**: los archivos de versiones anteriores se abren y se completan solos (hoy es la versión 10). Para empezar de cero un perfil, borrá su `progreso_<perfil>.json` (y el `.bak`).
 
 Los logs de errores internos van a `logs/tortuscript.log` y nunca se muestran al chico.
 

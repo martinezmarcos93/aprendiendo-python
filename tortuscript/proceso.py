@@ -35,6 +35,14 @@ def _falla(tipo, detalle=""):
             "mensaje": _explicacion(tipo, detalle)}
 
 
+def comando_worker():
+    """Cómo lanzar el worker: con Python (`-m tortuscript.worker`) o, si la app está instalada como ejecutable
+    (PyInstaller, ADR-015), el mismo ejecutable con `--worker` (no hay otro Python para lanzar)."""
+    if getattr(sys, "frozen", False):
+        return [sys.executable, "--worker"]
+    return [sys.executable, "-m", "tortuscript.worker"]
+
+
 def correr(pedido):
     """Ejecuta el pedido en un proceso hijo y devuelve el dict de respuesta."""
     opciones = {}
@@ -42,7 +50,7 @@ def correr(pedido):
         opciones["preexec_fn"] = _limitar
     try:
         r = subprocess.run(
-            [sys.executable, "-m", "tortuscript.worker"],
+            comando_worker(),
             input=json.dumps(pedido, ensure_ascii=False), capture_output=True,
             text=True, encoding="utf-8", timeout=TIEMPO_MAX, cwd=str(RAIZ), **opciones)
     except subprocess.TimeoutExpired:

@@ -5,3 +5,6 @@
 # Instalar:  .venv/bin/python -m pip install -r requirements-dev.txt && .venv/bin/python -m playwright install chromium
 -r requirements.txt
 playwright==1.63.0
+# PyInstaller: arma el programa instalable (herramientas/construir.py, ADR-015). Auditado 26/09/2026: GPLv2 con
+# excepción que permite distribuir programas armados con él; 6.22.3 sin CVE en OSV (ni sus dependencias instaladas).
+pyinstaller==6.22.3

@@ -83,8 +83,11 @@ def main(argv=None):
     if problema:
         print(f"❌ {problema}")
         return 1
-    configurar_logs()
     sys.path.insert(0, str(RAIZ))
+    from tortuscript import progreso, rutas
+    datos = rutas.preparar_carpeta_de_datos()          # junto al programa, o la del usuario si está instalado
+    progreso.DIRECTORIO = datos
+    configurar_logs(datos / "logs")
     try:
         puerto = args.puerto or puerto_libre()
         servidor = crear_servidor(puerto)
@@ -105,6 +108,17 @@ def main(argv=None):
     return 0
 
 
+def atender_worker():
+    """El ejecutable instalado se relanza con --worker para correr el código del chico (ADR-015). Va antes de
+    importar Flask: cada ejecución tiene que ser liviana."""
+    sys.path.insert(0, str(RAIZ))
+    from tortuscript.worker import main as worker
+    worker()
+    return 0
+
+
 if __name__ == "__main__":
     os.environ.setdefault("PYTHONUNBUFFERED", "1")
+    if sys.argv[1:2] == ["--worker"]:
+        sys.exit(atender_worker())
     sys.exit(main())

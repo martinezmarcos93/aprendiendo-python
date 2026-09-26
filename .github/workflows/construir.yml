@@ -1,0 +1,36 @@
+# Arma TortuScript instalable para Linux, Windows y macOS con el mismo comando (ADR-015).
+# SOLO corre a mano (pestaña Actions → "Construir instaladores" → Run workflow): subir cambios no lo dispara.
+name: Construir instaladores
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  construir:
+    strategy:
+      fail-fast: false
+      matrix:
+        sistema: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.sistema }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Dependencias (con hashes verificados) y PyInstaller
+        run: |
+          python -m pip install --require-hashes -r requirements.lock
+          python -m pip install pyinstaller==6.22.3
+      - name: Tests y validador
+        run: |
+          python -m unittest discover -s tests
+          python herramientas/validar_contenido.py
+      - name: Construir (detecta el sistema solo)
+        run: python herramientas/construir.py --salida dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tortuscript-${{ runner.os }}
+          path: dist/

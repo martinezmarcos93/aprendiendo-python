@@ -51,3 +51,18 @@ construcción es lo más agnóstica posible** (un solo comando para todos los si
 + Una familia no técnica puede instalar y abrir TortuScript sin saber qué es Python.
 − Cada formato suma una cadena de construcción que mantener, y en Windows posiblemente un certificado de firma.
 − El cambio de carpeta de datos toca el guardado del progreso: requiere migración cuidadosa y tests.
+
+## Notas de implementación (26/09/2026)
+- `herramientas/construir.py`: **un solo comando** que detecta el sistema (o recibe `--sistema`, que tiene que coincidir:
+  PyInstaller arma para el sistema en el que corre) y usa **una sola configuración** de PyInstaller (`onedir`, consola).
+  Lo único distinto por sistema es el empaquetado y su instalador (`instalar.sh`, `instalar.bat` + `accesos.ps1`,
+  `instalar.command`), que comprueba el sistema antes de hacer nada, no pide administrador y nunca borra el progreso.
+- `tortuscript/rutas.py`: carpeta de datos por sistema cuando está instalado; desde el código fuente, igual que antes. Copia
+  (no mueve) el progreso que hubiera junto al programa. `TORTUSCRIPT_DATOS` fuerza otra carpeta.
+- Worker instalado: `TortuScript --worker` (`proceso.comando_worker`), atendido antes de importar Flask.
+- `.github/workflows/construir.yml`: arma los tres sistemas, **solo a mano** (`workflow_dispatch`).
+- **Probado en Linux x86_64** de punta a punta (paquete de 12 MB, instalación en un HOME aislado, código del chico por el
+  worker instalado, tortuga en Chromium, datos en la carpeta del usuario, desinstalar sin perder progreso).
+  **Windows y macOS todavía no se construyeron ni probaron**: hace falta correr el comando allá o el workflow.
+- Sin ícono propio en el ejecutable (PyInstaller necesita .ico/.icns; el acceso de Linux usa el SVG de la app).
+
