@@ -158,6 +158,8 @@ python herramientas/servidor_de_prueba.py 5077 --todo-desbloqueado --abrir   # r
 python herramientas/jugar_cursos.py          # juega TODAS las lecciones por el navegador
 python herramientas/revisar_contraste.py     # contraste WCAG AA en modo normal y alto contraste
 python herramientas/revisar_responsive.py    # que nada se desborde en pantallas de 320 a 768 px
+python herramientas/simular_chicos.py --informe docs/validacion/simulacion-<fecha>.md
+                                             # prueba SIMULADA: 8 perfiles juegan y se equivocan (servidor sin --todo-desbloqueado)
 ```
 
 La rama principal es `main`. Cambios recientes: [`CHANGELOG.md`](CHANGELOG.md). Roadmap: [`docs/ROADMAP_MIMO_KIDS.md`](docs/ROADMAP_MIMO_KIDS.md).
