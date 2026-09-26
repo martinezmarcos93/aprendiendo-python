@@ -375,6 +375,8 @@ a.ficha:hover { transform: translateY(-3px); background: var(--superficie-2); }
 .pregunta-ayuda p { margin: .6rem 0 0; }
 .palabras-cierre { margin: .4rem 0; }
 .encuesta { margin: 1rem 0; }
+.pregunta-prueba { text-align: left; margin: .8rem 0; }
+.codigo-prueba { background: var(--fondo-2); border: 1px solid var(--borde); border-radius: var(--radio-chico); padding: .5rem .7rem; overflow-x: auto; }
 .opciones-encuesta { display: flex; flex-wrap: wrap; gap: .5rem; margin: .8rem 0; }
 .opcion-encuesta[aria-pressed="true"] { background: var(--violeta-osc); border-color: #c9bbff; color: #fff; }   /* 6.5:1 */
 html[data-contraste="alto"] .opcion-encuesta[aria-pressed="true"] { color: #000; }

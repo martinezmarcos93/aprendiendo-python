@@ -48,7 +48,8 @@ Cada lección dura unos 2 minutos y sigue el ciclo **explicar → practicar → 
 | 🐉 Tortuaria: tu primer juego de rol | 10 | un juego de rol por consola: héroe, golpes, `dado()`, ataques con funciones, combate por turnos con `mientras`, inventario con listas y el jefe final (se abre al terminar *Desafío final*) |
 
 El **camino** es la pantalla de inicio: muestra dónde estás y qué sigue. Las lecciones se desbloquean en orden.
-Quien ya programó puede elegir en la bienvenida **dónde empezar** (*Variables* o *Condicionales*): las lecciones
+Quien ya programó puede elegir en la bienvenida **dónde empezar** (*Variables*, *Condicionales* o lo que recomiende una
+**prueba corta de 6 preguntas**): las lecciones
 anteriores quedan ⏭ salteadas, sin XP ni logros, para hacerlas cuando quiera. Al volver otro día, el inicio saluda con
 lo que pasó la última vez y un botón **▶ Continuar**; al terminar cada lección se ve qué aprendiste, qué practicaste y
 qué sigue. Ante un error hay siempre una pista propia de ese paso.

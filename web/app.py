@@ -24,7 +24,7 @@ if str(RAIZ) not in sys.path:
 from tortuscript import contenido, evaluacion, leccion as motor, liga, logros, progreso  # noqa: E402
 from tortuscript import practica as espaciado  # noqa: E402
 from tortuscript import proyectos as mis_proyectos  # noqa: E402
-from tortuscript import intereses, respaldo  # noqa: E402
+from tortuscript import diagnostico, intereses, respaldo  # noqa: E402
 from tortuscript.ejercicios import EJERCICIOS  # noqa: E402
 from tortuscript.proceso import correr  # noqa: E402
 from tortuscript.referencia import cargar_referencia  # noqa: E402
@@ -347,7 +347,7 @@ def create_app(token=None):
         entradas = {exp: {"id": lid, "seccion": lecciones[lid][0], "numero": lecciones[lid][1]}
                     for exp, lid in progreso.PUNTOS_DE_ENTRADA.items()}
         return render_template("bienvenida.html", metas=progreso.METAS_MIN, xp_por_minuto=progreso.XP_POR_MINUTO,
-                               entradas=entradas)
+                               entradas=entradas, prueba=diagnostico.preguntas_publicas())
 
     @app.get("/ejercicios")
     def ejercicios_siguiente():
@@ -752,7 +752,7 @@ def create_app(token=None):
                 progreso.set_perfil(perfil)
                 progreso.recordar_perfil(perfil)
         entrada = datos.get("entrada")                   # diagnóstico (ADR-004): solo el punto que le toca
-        if entrada and entrada != progreso.PUNTOS_DE_ENTRADA.get(datos.get("experiencia")):
+        if entrada and entrada not in diagnostico.entradas_permitidas(datos.get("experiencia")):
             return jsonify(ok=False, mensaje="Alguna respuesta no es válida."), 400
         p = progreso.cargar_progreso()
         ok = progreso.guardar_config(p, experiencia=datos.get("experiencia"), meta_min=datos.get("meta_min"),
@@ -817,6 +817,16 @@ def create_app(token=None):
         progreso.set_perfil(nombre)
         progreso.recordar_perfil(nombre)
         return jsonify(ok=True, actual=nombre, estado=_estado())
+
+    @app.post("/api/diagnostico")
+    def api_diagnostico():
+        """Corrige la prueba de nivel (ADR-004) y recomienda dónde empezar. No guarda nada: lo elige el chico."""
+        try:
+            entrada = diagnostico.recomendar((request.get_json(silent=True) or {}).get("respuestas"))
+        except ValueError as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        seccion, lec = next((s, l) for s, l in contenido.lecciones(contenido.cargar_curso()) if l["id"] == entrada)
+        return jsonify(ok=True, entrada=entrada, seccion=seccion["titulo"], numero=lec["titulo"].partition(". ")[0])
 
     @app.post("/api/intereses/<encuesta_id>")
     def api_intereses(encuesta_id):

@@ -1,0 +1,18 @@
+{
+  "intro": "Seis preguntas cortas para ver dónde te conviene empezar. Si no sabés alguna, elegí la que te parezca: no pasa nada.",
+  "preguntas": [
+    {"seccion": "tu-primera-variable", "pregunta": "¿Qué muestra este programa?", "codigo": "puntos es 5\npuntos es puntos + 2\nmostrar puntos",
+     "opciones": ["7", "5", "puntos + 2"], "correcta": 0},
+    {"seccion": "pedir-el-nombre", "pregunta": "¿Qué hace preguntar(\"¿Tu nombre? \")?",
+     "opciones": ["Espera que la persona escriba algo", "Muestra el nombre", "Guarda el texto ¿Tu nombre?"], "correcta": 0},
+    {"seccion": "suma", "pregunta": "¿Qué muestra este programa?", "codigo": "a es 3\nb es 4\nmostrar a * b",
+     "opciones": ["12", "7", "34"], "correcta": 0},
+    {"seccion": "si-es-grande", "pregunta": "¿Qué muestra este programa?", "codigo": "n es 4\nsi n > 5:\n    mostrar \"Grande\"\nsino:\n    mostrar \"Chico\"",
+     "opciones": ["Chico", "Grande", "4"], "correcta": 0},
+    {"seccion": "repetir", "pregunta": "¿Qué muestra este programa?", "codigo": "n es 1\nrepetir 3 veces:\n    n es n * 2\nmostrar n",
+     "opciones": ["8", "6", "2"], "correcta": 0},
+    {"seccion": "tu-primera-funcion", "pregunta": "¿Qué muestra este programa?", "codigo": "funcion doble(x):\n    devolver x * 2\n\nmostrar doble(5) + 1",
+     "opciones": ["11", "12", "10"], "correcta": 0}
+  ],
+  "si_acierta_todo": "saludo-repetido"
+}
