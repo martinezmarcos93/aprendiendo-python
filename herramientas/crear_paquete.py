@@ -25,7 +25,7 @@ CARPETA_RAIZ_DEL_ZIP = "TortuScript"
 
 # Lo que va en el paquete (carpetas completas y archivos sueltos)
 INCLUIR_CARPETAS = ("tortuscript", "web", "contenido", "lanzadores", "docs", "herramientas")
-INCLUIR_ARCHIVOS = ("iniciar_web.py", "requirements.txt", "README.md", "CHANGELOG.md")
+INCLUIR_ARCHIVOS = ("iniciar_web.py", "requirements.txt", "requirements.lock", "README.md", "CHANGELOG.md")
 # Lo que NUNCA va (datos privados, basura de desarrollo)
 EXCLUIR_PARTES = {"__pycache__", ".git", ".venv", "venv", "logs", "dist", ".claude", "tests", ".pytest_cache"}
 EXCLUIR_PATRONES = ("*.pyc", "*.pyo", "progreso_*.json", "progreso_*.json.*", "config_tortuscript.json", "*.bak", "*.tmp")
@@ -103,8 +103,17 @@ def _commit_actual(raiz):
         return ""
 
 
+def _requisitos(raiz):
+    """(archivo, opción extra) para instalar: el lock con hashes si existe (versiones exactas y archivos verificados);
+    si no, requirements.txt como antes."""
+    if (Path(raiz) / "requirements.lock").is_file():
+        return "requirements.lock", " --require-hashes"
+    return "requirements.txt", ""
+
+
 def _descargar_ruedas(destino, raiz):
-    subprocess.run([sys.executable, "-m", "pip", "download", "-r", str(Path(raiz) / "requirements.txt"), "-d", str(destino),
+    archivo, _ = _requisitos(raiz)
+    subprocess.run([sys.executable, "-m", "pip", "download", "-r", str(Path(raiz) / archivo), "-d", str(destino),
                     "--only-binary=:all:"], check=True)
 
 
@@ -125,10 +134,11 @@ def crear_paquete(raiz=RAIZ, salida=None, con_ruedas=False, hoy=None):
             ruedas = sorted(carpeta.glob("*"))
         nota = ("Este paquete trae las ruedas de Flask en wheels/: se instala sin internet."
                 if ruedas else "(si no hay internet, generá el paquete con --con-ruedas).")
-        bat = ("%PY% -m pip install --no-index --find-links wheels -r requirements.txt" if ruedas
-               else ".venv\\Scripts\\python.exe -m pip install -r requirements.txt")
-        sh = ('.venv/bin/python -m pip install --no-index --find-links wheels -r requirements.txt' if ruedas
-              else '.venv/bin/python -m pip install -r requirements.txt')
+        archivo, verificar = _requisitos(raiz)
+        bat = (f"%PY% -m pip install --no-index --find-links wheels{verificar} -r {archivo}" if ruedas
+               else f".venv\\Scripts\\python.exe -m pip install{verificar} -r {archivo}")
+        sh = (f'.venv/bin/python -m pip install --no-index --find-links wheels{verificar} -r {archivo}' if ruedas
+              else f'.venv/bin/python -m pip install{verificar} -r {archivo}')
         if ruedas:
             bat = bat.replace("%PY%", ".venv\\Scripts\\python.exe")
         extras = {

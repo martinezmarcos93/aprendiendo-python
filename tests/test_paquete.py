@@ -88,6 +88,15 @@ class TestElZip(unittest.TestCase):
             self.assertFalse([n for n in nombres if "progreso_" in n or "tests/" in n or "__pycache__" in n])
             self.assertIn("25/09/2026", z.read("TortuScript/VERSION.txt").decode("utf-8"))
 
+    def test_con_lock_los_instaladores_verifican_hashes_y_lo_incluyen(self):
+        (self.raiz / "requirements.lock").write_text("Flask==3.1.3 \\\n    --hash=sha256:abc\n", encoding="utf-8")
+        with zipfile.ZipFile(self.crear()) as z:
+            bat = z.read("TortuScript/instalar.bat").decode("utf-8")
+            sh = z.read("TortuScript/instalar.sh").decode("utf-8")
+            self.assertIn("TortuScript/requirements.lock", z.namelist())
+        self.assertIn("-m pip install --require-hashes -r requirements.lock", bat)
+        self.assertIn(".venv/bin/python -m pip install --require-hashes -r requirements.lock", sh)
+
     def test_los_instaladores_instalan_flask_y_cada_uno_con_su_fin_de_linea(self):
         with zipfile.ZipFile(self.crear()) as z:
             bat = z.read("TortuScript/instalar.bat").decode("utf-8")
@@ -138,6 +147,25 @@ class TestElProyectoReal(unittest.TestCase):
                          {f"contenido/cursos/{n}.json" for n in contenido.ORDEN_CURSOS})
         self.assertGreaterEqual(len([h for h in hallados if h.startswith("web/static/fonts/")]), 6)
         self.assertGreaterEqual(len([h for h in hallados if h.startswith("web/static/vendor/")]), 7)
+
+
+
+class TestLockDelProyecto(unittest.TestCase):
+    def test_leer_lock(self):
+        import auditar_dependencias as ad
+        texto = "# comentario\nFlask==3.1.3 \\\n    --hash=sha256:aa \\\n    --hash=sha256:bb\nJinja2==3.1.6 \\\n    --hash=sha256:cc\n"
+        self.assertEqual(ad.leer_lock(texto), [("Flask", "3.1.3"), ("Jinja2", "3.1.6")])
+
+    def test_el_lock_real_fija_flask_como_requirements_y_todo_con_hashes(self):
+        import auditar_dependencias as ad
+        lock = (RAIZ / "requirements.lock").read_text(encoding="utf-8")
+        paquetes = dict(ad.leer_lock(lock))
+        flask = next(l for l in (RAIZ / "requirements.txt").read_text(encoding="utf-8").splitlines() if l.startswith("Flask=="))
+        self.assertEqual(paquetes["Flask"], flask.split("==")[1])
+        self.assertTrue({"Werkzeug", "Jinja2", "MarkupSafe", "itsdangerous", "click", "blinker"} <= set(paquetes))
+        bloques = [b for b in lock.split("\n") if ad._LINEA.match(b)]
+        self.assertEqual(len(bloques), len(paquetes))
+        self.assertGreaterEqual(lock.count("--hash=sha256:"), len(paquetes))       # al menos un hash por paquete
 
 
 if __name__ == "__main__":

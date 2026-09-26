@@ -18,11 +18,12 @@ funcion saludar(n):         →     def saludar(n):
 
 ## Cómo se usa
 
-**Requisitos:** Python 3.9 o más nuevo. Nada más: la única dependencia es Flask.
+**Requisitos:** Python 3.9 o más nuevo. Nada más: la única dependencia es Flask. `requirements.lock` fija también lo que
+Flask trae y verifica cada archivo con su hash (se rearma y se audita con `herramientas/auditar_dependencias.py`).
 
 ```bash
 python -m venv .venv                          # una sola vez
-.venv/bin/python -m pip install -r requirements.txt     # en Windows: .venv\Scripts\python.exe
+.venv/bin/python -m pip install --require-hashes -r requirements.lock   # en Windows: .venv\Scripts\python.exe
 .venv/bin/python iniciar_web.py               # abre el navegador solo
 ```
 

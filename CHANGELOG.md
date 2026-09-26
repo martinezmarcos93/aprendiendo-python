@@ -3,6 +3,22 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — lockfile con hashes y auditoría de dependencias (26/09/2026)
+
+Rama `chore/lockfile-dependencias`.
+
+### Agregado
+- `requirements.lock`: las 7 dependencias (Flask y lo que trae) con versión exacta y los hashes de PyPI. Instalar con
+  `pip install --require-hashes -r requirements.lock` rechaza cualquier archivo alterado (probado).
+- `herramientas/auditar_dependencias.py`: rearma el lock (`--generar-lock`) y consulta OSV por vulnerabilidades
+  conocidas (hoy: 0). Solo biblioteca estándar.
+
+### Cambiado
+- El paquete instalable incluye el lock y sus instaladores lo usan con `--require-hashes`, también en el modo sin
+  internet (`--con-ruedas`, probado de punta a punta).
+- Se quitó del `.venv` del proyecto un paquete (`typing_extensions`) que había quedado de un intento de instalar
+  Playwright ahí.
+
 ## Sin publicar — prueba de nivel en la bienvenida (26/09/2026)
 
 Rama `feat/prueba-de-nivel`. Segunda versión de ADR-004 (aceptada).

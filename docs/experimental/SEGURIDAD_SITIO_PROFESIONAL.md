@@ -148,7 +148,7 @@ el proyecto OWASP Secure Headers.
 | Subida de archivos | N/A | no existe |
 | Ejecución de código | PASS para el runtime educativo | subproceso, AST, builtins limitados, sin `import`, tope de pasos, salida, tiempo y memoria; **insuficiente para un runtime de juegos** |
 | Integridad de la gamificación | **PASS** | XP, estrellas, logros y progreso los calcula el servidor; el cliente no manda valores de XP |
-| Dependencias | PASS (mínimo) | una sola (Flask, versión fijada); librerías del navegador guardadas localmente, nada desde CDN; faltan auditoría automática y *lockfile* |
+| Dependencias | **PASS** (26/09/2026) | una sola directa (Flask); `requirements.lock` fija las 7 con hashes de PyPI (`--require-hashes`, también en el paquete sin internet); `herramientas/auditar_dependencias.py` consulta OSV (0 vulnerabilidades); librerías del navegador guardadas localmente. Falta correrlo en CI (no hay CI) |
 | Secretos | PASS | no hay secretos en el repo; el token de sesión se genera al arrancar |
 | Logs | Parcial | errores internos a `logs/tortuscript.log` (rotación); sin auditoría de eventos |
 | Backups | Parcial | cada guardado deja `.bak` y se recupera si el archivo se daña; no hay backups externos |
