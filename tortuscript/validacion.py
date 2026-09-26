@@ -13,7 +13,7 @@ import itertools
 import re
 from dataclasses import dataclass
 
-from . import tortuga
+from . import tortuga, tortugame
 from .contenido import HUECO, TIPOS, pasos
 from .evaluacion import SEMILLA_EVALUACION, normalizar_salida
 from .executor import ejecutar_codigo
@@ -58,6 +58,13 @@ def _correr_dibujo(codigo_tortu, entradas=None):
                                             semilla=SEMILLA_EVALUACION)
     primera = mensaje.split("\n")[0] if hay_error else ""
     return detalles.get("salida_programa", ""), primera, list(t.ultimas_palabras), registro.ordenes
+
+
+def _correr_juego(codigo_tortu, entradas=None):
+    """Un programa de TortuGame con la implementación de referencia. Devuelve (error, eventos, palabras)."""
+    r = tortugame.correr_juego(codigo_tortu, SEMILLA_EVALUACION, list(entradas or []), completar_con_vacio=True)
+    primera = r["mensaje"].split("\n")[0] if r["error"] else ""
+    return primera, r["eventos"], palabras_usadas(codigo_tortu)
 
 
 def _correr(codigo_tortu, entradas=None):
@@ -147,7 +154,13 @@ def _validar_paso(paso, donde, hallazgos):
             traducido = TraductorTortuScript().traducir_codigo(paso["tortu"]).strip()
             if traducido != (paso.get("codigo") or "").strip():
                 hallazgos.append(Hallazgo(ERROR, donde, f"el Python no es la traducción del TortuScript: {traducido!r}"))
-        if _requeridos(paso, ["texto"], donde, hallazgos) and paso.get("codigo"):
+        if _requeridos(paso, ["texto"], donde, hallazgos) and paso.get("codigo") and paso.get("juego"):
+            err, eventos, usadas = _correr_juego(paso["codigo"], entradas)
+            if err:
+                hallazgos.append(Hallazgo(ERROR, donde, f"el juego de ejemplo no corre: {err}"))
+            elif not eventos:
+                hallazgos.append(Hallazgo(ERROR, donde, "el juego de ejemplo no hace nada"))
+        elif _requeridos(paso, ["texto"], donde, hallazgos) and paso.get("codigo"):
             err, ordenes, usadas = _dibuja(paso["codigo"], entradas)
             if err:
                 hallazgos.append(Hallazgo(ERROR, donde, f"el ejemplo no corre: {err}"))
@@ -205,6 +218,13 @@ def _validar_paso(paso, donde, hallazgos):
         codigo = paso["codigo"]
         for r in respuesta:
             codigo = codigo.replace(HUECO, r, 1)
+        if paso.get("juego"):
+            err, eventos, usadas = _correr_juego(codigo, entradas)
+            if err:
+                hallazgos.append(Hallazgo(ERROR, donde, f"completado con la respuesta, el juego no corre: {err}"))
+            elif not eventos:
+                hallazgos.append(Hallazgo(ERROR, donde, "completado con la respuesta, el juego no hace nada"))
+            return set(usadas)
         salida, err, usadas, ordenes = _correr_dibujo(codigo, entradas)
         if err:
             hallazgos.append(Hallazgo(ERROR, donde, f"completado con la respuesta, no corre: {err}"))
@@ -221,6 +241,18 @@ def _validar_paso(paso, donde, hallazgos):
         if len(lineas) < 2:
             hallazgos.append(Hallazgo(ERROR, donde, "hace falta al menos 2 líneas para ordenar"))
             return set()
+        if paso.get("juego"):
+            err, eventos, usadas = _correr_juego("\n".join(lineas), entradas)
+            if err or not eventos:
+                hallazgos.append(Hallazgo(ERROR, donde, f"en el orden correcto el juego no anda: {err or 'no hace nada'}"))
+            elif len(lineas) <= 6:
+                for orden in itertools.permutations(lineas):
+                    if list(orden) != lineas:
+                        e2, ev2, _ = _correr_juego("\n".join(orden), entradas)
+                        if not e2 and tortugame.sin_lineas(ev2) == tortugame.sin_lineas(eventos):
+                            hallazgos.append(Hallazgo(AVISO, donde, "hay otro orden que hace el mismo juego; aceptá los dos al evaluar"))
+                            break
+            return set(usadas)
         salida, err, usadas, ordenes = _correr_dibujo("\n".join(lineas), entradas)
         dibujando = bool(paso.get("tortuga"))
         if err:
@@ -243,6 +275,13 @@ def _validar_paso(paso, donde, hallazgos):
     elif tipo == "escribir":
         if not _requeridos(paso, ["consigna", "solucion"], donde, hallazgos):
             return set()
+        if paso.get("juego"):
+            err, eventos, usadas = _correr_juego(paso["solucion"], entradas)
+            if err:
+                hallazgos.append(Hallazgo(ERROR, donde, f"la solución del juego no corre: {err}"))
+            elif not eventos:
+                hallazgos.append(Hallazgo(ERROR, donde, "la solución del juego no hace nada (no se podría evaluar)"))
+            return set(usadas)
         salida, err, usadas, ordenes = _correr_dibujo(paso["solucion"], entradas)
         usadas = set(usadas)
         if ("preguntar" in usadas or "input(" in paso["solucion"]) and not entradas:

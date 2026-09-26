@@ -75,7 +75,7 @@ class TestWeb(unittest.TestCase):
             with self.subTest(plantilla.name):
                 self.assertEqual(self._scripts_inline_ejecutables(plantilla.read_text(encoding="utf-8")), [])
         for ruta in ("/", "/mapa", "/resumen", "/logros", "/liga", "/referencia", "/repaso", "/experimentar",
-                     "/tortuga", "/proyectos", "/leccion/hola-mundo", "/ejercicios/1", "/practica", "/ayuda"):
+                     "/tortuga", "/proyectos", "/leccion/hola-mundo", "/ejercicios/1", "/practica", "/ayuda", "/juego"):
             with self.subTest(ruta):
                 r = self.c.get(ruta)
                 self.assertIn(r.status_code, (200, 302))
@@ -207,6 +207,41 @@ class TestWeb(unittest.TestCase):
         self.assertIsInstance(r["semilla"], int)
         otra = self.post("/api/ejecutar", {"codigo": codigo, "semilla": r["semilla"]}).get_json()
         self.assertEqual(r["salida_programa"], otra["salida_programa"])
+
+    # ── juegos (TortuGame) ──
+    def test_pagina_de_juegos_y_menu(self):
+        html = self.c.get("/juego").get_data(as_text=True)
+        self.assertIn("Creá tu juego", html)
+        self.assertIn("js/tortugame/pagina.js", html)
+        self.assertIn('href="/juego"', self.c.get("/").get_data(as_text=True))
+        self.assertEqual(self._scripts_inline_ejecutables(html), [])
+
+    def test_el_worker_de_juegos_tiene_una_csp_sin_red(self):
+        r = self.c.get("/static/js/tortugame/interprete.js")
+        self.assertEqual(r.headers["Content-Security-Policy"], "default-src 'none'; script-src 'self'")
+        r.close()
+        pagina = self.c.get("/juego").headers["Content-Security-Policy"]
+        self.assertIn("default-src 'self'", pagina)                       # la página conserva la suya
+
+    def test_el_servidor_arma_el_arbol_y_explica_los_errores(self):
+        ok = self.post("/api/juego/arbol", {"codigo": 'h es heroe("A", 10, 1)\nmostrar h.vida'}).get_json()
+        self.assertTrue(ok["ok"])
+        self.assertEqual(ok["arbol"]["k"], "programa")
+        prohibido = self.post("/api/juego/arbol", {"codigo": "import os"}).get_json()
+        self.assertFalse(prohibido["ok"])
+        self.assertIn("no se puede usar", prohibido["mensaje"])
+        sintaxis = self.post("/api/juego/arbol", {"codigo": "si x\n    mostrar 1"}).get_json()
+        self.assertFalse(sintaxis["ok"])
+        self.assertEqual(sintaxis["linea"], 1)
+        self.assertEqual(self.post("/api/juego/arbol", {"codigo": "x" * 6000}).status_code, 400)
+        self.assertEqual(self.c.post("/api/juego/arbol", json={"codigo": "mostrar 1"}).status_code, 403)   # sin token
+
+    def test_un_juego_se_guarda_en_mis_proyectos(self):
+        r = self.post("/api/proyectos", {"nombre": "Mi RPG", "tipo": "juego", "codigo": 'h es heroe("A", 10, 1)'}).get_json()
+        html = self.c.get("/proyectos").get_data(as_text=True)
+        self.assertIn("Mi RPG", html)
+        self.assertIn(f'href="/juego?proyecto={r["id"]}"', html)
+        self.assertIn("Mi RPG", self.c.get(f"/juego?proyecto={r['id']}").get_data(as_text=True))
 
     # ── páginas ──
     def test_paginas(self):

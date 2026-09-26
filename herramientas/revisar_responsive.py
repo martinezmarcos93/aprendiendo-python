@@ -19,7 +19,7 @@ sys.path.insert(0, str(RAIZ / "herramientas"))
 ANCHOS = (320, 360, 414, 768)
 RUTAS = ["/", "/leccion/hola-mundo", "/referencia", "/mapa", "/resumen", "/logros", "/liga", "/experimentar", "/tortuga",
          "/proyectos", "/repaso", "/practica", "/bienvenida", "/ayuda", "/leccion/laberinto-1", "/leccion/rpg-heroe",
-         "/no-existe"]   # la última: página de error 404
+         "/juego", "/leccion/juego-ganar", "/no-existe"]   # la última: página de error 404
 
 # Qué elementos se salen del ancho de la ventana (ignora los que se desplazan por dentro a propósito)
 JS_DESBORDE = r"""

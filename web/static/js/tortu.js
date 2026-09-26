@@ -417,6 +417,6 @@ const Tortu = (() => {
     else if (!abierta.contains(document.activeElement)) { ev.preventDefault(); primero.focus(); }
   });
 
-  return { api, leer, callar, leerSolo, hayVoz, crearEditores, ejecutarConPreguntas, mostrarConsola, veredicto,
+  return { api, leer, callar, leerSolo, hayVoz, crearEditores, ejecutarConPreguntas, pedirRespuesta, mostrarConsola, veredicto,
            limpiarResultado, actualizarEstado, celebrar, tocar, avisos };
 })();

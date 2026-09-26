@@ -20,7 +20,7 @@
         <div class="codigo-caja py-c"><span class="rotulo">Python</span><pre>{{ e.python }}</pre></div>
       </div>
       {% if e.traducible != false %}
-      <a class="boton chico celeste probar" href="{{ url_for('tortuga' if s.titulo == 'Tortuga' else 'experimentar') }}?codigo={{ e.tortu|urlencode }}">▶ Probarlo</a>
+      <a class="boton chico celeste probar" href="{{ url_for({'Tortuga': 'tortuga', 'Juegos': 'juego'}.get(s.titulo, 'experimentar')) }}?codigo={{ e.tortu|urlencode }}">▶ Probarlo</a>
       {% endif %}
     </div>
     {% endfor %}

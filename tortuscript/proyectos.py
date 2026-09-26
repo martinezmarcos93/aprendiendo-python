@@ -9,7 +9,7 @@ import re
 import secrets
 from datetime import date
 
-TIPOS = ("experimentar", "tortuga")
+TIPOS = ("experimentar", "tortuga", "juego")
 MAX_PROYECTOS = 30
 MAX_CODIGO = 5000
 MAX_NOMBRE = 40

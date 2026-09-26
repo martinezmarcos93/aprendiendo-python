@@ -13,3 +13,7 @@ escenas, diálogos, mapa, misiones, estado y guardado.
 ## Consecuencias
 + Un sistema chico que el chico puede entender entero, y que se puede probar con evaluación determinista ([ADR-009](ADR-009-determinismo.md)).
 − Otros géneros (estrategia, plataformas) esperan a que el RPG demuestre tracción (Puerta 2).
+
+## Notas de implementación (26/09/2026)
+Implementado: escenas, héroe y enemigos con estadísticas, combate con dados, curar, diálogos, inventario, mapa de 8×5,
+misiones, ganar/perder y `preguntar`. **Pendiente:** guardado de partidas (tiene que pasar por el servidor con topes, A6).

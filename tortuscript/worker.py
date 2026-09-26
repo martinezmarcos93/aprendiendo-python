@@ -18,6 +18,7 @@ import sys
 
 import secrets
 
+from . import tortugame
 from .evaluacion import SEMILLA_EVALUACION, evaluar, evaluar_dibujo, evaluar_laberinto
 from .limites import limitar_memoria_windows
 from .executor import ejecutar_codigo
@@ -43,7 +44,7 @@ def _palabras_de(fuente, tipo):
 def semilla_del_pedido(pedido):
     """Evaluar usa siempre la semilla fija (el chico no la elige); jugar usa la que manda el navegador para
     re-ejecutar con las respuestas a preguntar() o, la primera vez, una nueva al azar."""
-    if pedido.get("op") in ("evaluar", "evaluar_tortuga"):
+    if pedido.get("op") in ("evaluar", "evaluar_tortuga", "evaluar_juego"):
         return SEMILLA_EVALUACION
     semilla = pedido.get("semilla")
     if isinstance(semilla, int) and not isinstance(semilla, bool) and 0 <= semilla < 2 ** 31:
@@ -51,7 +52,21 @@ def semilla_del_pedido(pedido):
     return secrets.randbelow(2 ** 31)
 
 
+def atender_juego(pedido):
+    """TortuGame con la implementación de referencia: jugar (op "juego") o evaluar contra la solución."""
+    semilla = semilla_del_pedido(pedido)
+    entradas = list(pedido.get("entradas") or [])
+    r = tortugame.correr_juego(pedido.get("fuente", ""), semilla, entradas)
+    respuesta = {**r, "semilla": semilla, "salida": "", "salida_programa": "", "entradas": entradas}
+    if pedido.get("op") == "evaluar_juego" and not r["error"] and r["pregunta"] is None:
+        esperado = tortugame.correr_juego(pedido.get("solucion", ""), semilla, entradas, completar_con_vacio=True)
+        respuesta["evaluacion"] = tortugame.comparar(r["eventos"], esperado["eventos"])
+    return respuesta
+
+
 def atender(pedido):
+    if pedido.get("op") in ("juego", "evaluar_juego"):
+        return atender_juego(pedido)
     tipo, python = _python_de(pedido.get("fuente", ""))
     semilla = semilla_del_pedido(pedido)
     detalles = {}

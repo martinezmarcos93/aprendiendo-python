@@ -57,6 +57,30 @@
     caja.lienzo = lienzo;                      // para volver a encuadrar junto al dibujo del alumno
     return caja;
   }
+  /** Escena de TortuGame para una lección: canvas + lo que pasó escrito (también para lectores de pantalla). */
+  function escenaNueva(etiqueta) {
+    const caja = el("div", "escena-paso");
+    const c = document.createElement("canvas");
+    c.width = 640; c.height = 400; c.className = "lienzo-paso"; c.setAttribute("role", "img");
+    c.setAttribute("aria-label", etiqueta || "Escena del juego (lo que pasa está escrito abajo)");
+    const lista = el("ol", "registro-juego"); lista.setAttribute("aria-live", "polite");
+    caja.append(c, lista);
+    caja.escena = Escena.crear(c, lista);
+    caja.escena.reiniciar();
+    return caja;
+  }
+  const rapidoSiHaceFalta = () => ({ rapido: document.documentElement.dataset.movimiento === "reducido" });
+
+  /** En qué momento el juego del chico hizo otra cosa (sin mostrar la solución entera). */
+  function diferenciaDelJuego(ev, eventos) {
+    const estado = Escena.nuevoEstado();
+    for (const e of eventos.slice(0, ev.posicion || 0)) Escena.aplicar(estado, e);
+    const partes = ["🤔 ¡Casi! Tu juego hace otra cosa."];
+    if (ev.esperado) partes.push(`En el paso ${(ev.posicion || 0) + 1} tenía que pasar: ${Escena.describir(ev.esperado, estado)}`);
+    partes.push(ev.obtenido ? `Y pasó: ${Escena.describir(ev.obtenido, estado)}` : "Y tu juego terminó antes.");
+    return partes;
+  }
+
   /** Ejemplo ejecutable: con `lienzo` dibuja con la tortuga; si no, muestra el texto que imprime. */
   function bloqueEjecutable(paso, etiqueta) {
     const caja = el("div", "ejemplo-ejecutable");
@@ -75,7 +99,18 @@
     const probar = el("button", "boton chico celeste", etiqueta || "▶ Probar");
     probar.type = "button";
     caja.appendChild(probar);
-    if (paso.lienzo) {
+    if (paso.juego) {                                    // TortuGame: se juega y se anima el registro
+      probar.textContent = etiqueta || "▶ Ver el juego";
+      const escena = escenaNueva();
+      caja.appendChild(escena);
+      probar.addEventListener("click", async () => {
+        probar.disabled = true;
+        try {
+          const r = await Tortu.ejecutarConPreguntas("/api/juego/correr", { codigo: paso.codigo });
+          await escena.escena.reproducir(r.eventos || [], rapidoSiHaceFalta());
+        } finally { probar.disabled = false; }
+      });
+    } else if (paso.lienzo) {
       const c = lienzoNuevo(); c.setAttribute("aria-label", "Dibujo de la tortuga");
       const lienzo = Lienzo.crear(c); lienzo.reiniciar();
       caja.appendChild(c);
@@ -350,6 +385,7 @@
 
   function escribir(paso) {
     const dibuja = Boolean(paso.tortuga);
+    const esJuego = Boolean(paso.juego);                  // TortuGame: se evalúa comparando el registro del juego
     const python = paso.lenguaje === "python";
     cont.appendChild(el("h2", "", "⌨️ Escribí"));
     cont.appendChild(el("p", "texto-grande", paso.consigna));
@@ -359,8 +395,13 @@
     const zonaEditor = el("div", "columna-editor");
     const area = el("textarea"); area.id = "editor-paso";
     zonaEditor.appendChild(area);
-    let lienzo = null;
-    if (dibuja) {
+    let lienzo = null, escenaJuego = null;
+    if (esJuego) {
+      const duo = el("div", "duo-tortuga");
+      escenaJuego = escenaNueva();
+      duo.append(zonaEditor, escenaJuego);
+      cont.appendChild(duo);
+    } else if (dibuja) {
       const duo = el("div", "duo-tortuga");
       const derecha = el("div", "columna-lienzos");
       var objetivo = cajaObjetivo(paso);
@@ -384,13 +425,13 @@
       extraKeys: { "Ctrl-Enter": () => ejecutar(), "Cmd-Enter": () => ejecutar(), Tab: (cm) => cm.replaceSelection("    "),
                    Esc: () => run.focus() },
     });
-    editor.setSize(null, dibuja ? 260 : 180);
+    editor.setSize(null, dibuja || esJuego ? 260 : 180);
     if (paso.inicial) {                                    // proyectos guiados: se sigue desde lo que ya estaba armado
       editor.setValue(paso.inicial + "\n");
       editor.setCursor(editor.lineCount(), 0);
     }
     const acciones = el("div", "acciones");
-    const run = el("button", "boton verde", dibuja ? "▶ Dibujar" : "▶ Ejecutar"); run.type = "button";
+    const run = el("button", "boton verde", esJuego ? "▶ Jugar" : dibuja ? "▶ Dibujar" : "▶ Ejecutar"); run.type = "button";
     const pista = el("button", "boton amarillo", "💡 Pista (1/3)"); pista.type = "button";
     acciones.append(run, pista);
     zonaEditor.appendChild(acciones);
@@ -411,13 +452,14 @@
         salida.textContent = r.cancelado ? "" : (r.salida || "");
         if (!r.salida) {
           salida.textContent = "";
-          const sinSalida = dibuja ? "(tu programa no mostró texto, ¡solo dibujó!)"
+          const sinSalida = esJuego ? "(mirá lo que pasó en la escena)" : dibuja ? "(tu programa no mostró texto, ¡solo dibujó!)"
             : (r.error ? "(tu programa no llegó a mostrar nada)" : "(tu programa no mostró nada)");
           salida.appendChild(el("span", "tenue", sinSalida));
         }
         Tortu.actualizarEstado(r.estado_juego);
         Tortu.avisos(r.avisos);
         if (r.cancelado) return;
+        if (esJuego) await escenaJuego.escena.reproducir(r.eventos || [], rapidoSiHaceFalta());
         if (dibuja) {
           const vista = paso.laberinto ? Lienzo.vistaLaberinto(paso.laberinto)
             : Lienzo.vistaPara(paso.objetivo, r.ordenes);                    // que entren los dos dibujos
@@ -451,7 +493,9 @@
           no_llega: ["🧭 La tortuga no llegó a la 🏁.", "Tiene que terminar sobre la bandera. ¿Le falta un tramo?"],
           falta_usar: [`🎉 ¡Llegó! Pero este laberinto hay que resolverlo con ${(ev.usar || []).join(", ")}.`,
                        "Buscá lo que se repite y escribilo una sola vez."],
-          incorrecto: dibuja ? ["🤔 ¡Casi! Tu dibujo no es igual al objetivo.", parecido, "Compará los tamaños, los giros y los colores."]
+          sin_eventos: ["🤫 Tu juego no hizo nada.", "Empezá con una escena o creando un héroe."],
+          incorrecto: esJuego ? diferenciaDelJuego(ev, r.eventos || [])
+                    : dibuja ? ["🤔 ¡Casi! Tu dibujo no es igual al objetivo.", parecido, "Compará los tamaños, los giros y los colores."]
                              : ["🤔 ¡Casi! Tu programa corre, pero muestra otra cosa.", `Se esperaba:\n${ev.esperado}`],
         }[ev.estado] || ["Revisalo otra vez."];
         mostrarPie("mal", texto.filter(Boolean), "Reintentar", () => { ocultarPie(); editor.focus(); }, false);

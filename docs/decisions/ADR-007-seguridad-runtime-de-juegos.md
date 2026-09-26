@@ -29,3 +29,12 @@ TortuScript → JavaScript generado → eval() / new Function()
 ## Consecuencias
 + Superficie de ataque acotada y verificable con tests.
 − Escribir un intérprete propio es más trabajo que generar JS.
+
+## Notas de implementación (26/09/2026)
+- Árbol propio con lista blanca en el servidor (`juego_ast.py`): sin `import`, nombres internos, lambdas, clases,
+  funciones anidadas, porciones, argumentos con nombre ni atributos fuera de `nombre/vida/vida_max/fuerza/inventario`.
+- Intérprete sin `eval`/`Function`/red/almacenamiento/DOM; variables en `Map`, personajes sellados; el intérprete revalida
+  cada nodo. Topes: 200.000 pasos, 100 de profundidad, 50 personajes, 2.000 eventos, listas de 10.000, textos de 100.000.
+- El script del Worker se sirve con `Content-Security-Policy: default-src 'none'; script-src 'self'` (sin red).
+- La página termina el Worker a los 3 s. Tests: `tests/js/tortugame.test.mjs` (A1, A2, A5, A7, A8, A9) y
+  `tests/test_tortugame.py`. Pendiente del modelo: guardado de partidas (A6), que no está en la v1.

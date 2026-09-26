@@ -33,6 +33,8 @@ def _explicacion(tipo, detalle):
         return f"🐢 La tortuga no entendió la orden\n\n{detalle}"
     if tipo == "ErrorDado":
         return f"🎲 El dado no entendió\n\n{detalle}"
+    if tipo == "ErrorJuego":
+        return f"🎮 El juego no entendió\n\n{detalle}"
     if tipo == "CodigoNoPermitido":
         return f"🚫 Eso no se puede usar acá\n\n{detalle}"
 
@@ -128,7 +130,7 @@ def armar_mensaje_error(excepcion, archivo="<tu código>"):
     linea = _linea_del_error(excepcion, archivo)
     if linea:
         partes.append(f"📍 Mirá la línea {linea}")
-    if tipo not in ("BucleInfinito", "SalidaDemasiadoLarga", "CodigoNoPermitido", "ErrorTortuga", "ErrorDado",
+    if tipo not in ("BucleInfinito", "SalidaDemasiadoLarga", "CodigoNoPermitido", "ErrorTortuga", "ErrorDado", "ErrorJuego",
                     "MemoryError", "SinMemoria", "TardoDemasiado"):
         partes.append(f"🔧 Para curiosos (en inglés): {tipo}: {detalle}")
     return "\n\n".join(partes)

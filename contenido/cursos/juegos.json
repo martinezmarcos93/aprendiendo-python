@@ -1,0 +1,216 @@
+{
+  "id": "juegos",
+  "titulo": "Creá tu juego",
+  "icono": "🎮",
+  "descripcion": "Con TortuGame armás juegos de rol de verdad: escenas, héroes, enemigos, combates y decisiones.",
+  "version": 1,
+  "requiere": {
+    "leccion": "rpg-jefe"
+  },
+  "secciones": [
+    {
+      "id": "juegos-1",
+      "nivel": 1,
+      "titulo": "Tu primer juego",
+      "lecciones": [
+        {
+          "id": "juego-escena",
+          "titulo": "1. Tu primera escena",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "En un juego, primero elegís dónde pasa la aventura y quién es el héroe. escena elige el lugar y heroe crea al personaje con su nombre, su vida y su fuerza.",
+              "codigo": "escena(\"aldea\")\nh es heroe(\"Kira\", 20, 3)\nmision(\"Encontrá la llave perdida\")",
+              "juego": true
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué hace heroe(\"Kira\", 20, 3)?",
+              "opciones": [
+                "Crea a Kira con 20 de vida y 3 de fuerza",
+                "Muestra el texto Kira",
+                "Crea un enemigo"
+              ],
+              "correcta": 0,
+              "pista": "Los números son la vida y la fuerza, en ese orden."
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para que la aventura pase en el bosque.",
+              "codigo": "escena(___)\nh es heroe(\"Leo\", 25, 4)",
+              "fichas": [
+                "\"bosque\"",
+                "bosque",
+                "\"luna\""
+              ],
+              "respuesta": [
+                "\"bosque\""
+              ],
+              "pista": "El lugar es un texto: va entre comillas.",
+              "juego": true
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Creá la escena en el castillo, un héroe llamado Tomi con 30 de vida y 5 de fuerza, y la misión: Rescatá al dragón bueno",
+              "solucion": "escena(\"castillo\")\nh es heroe(\"Tomi\", 30, 5)\nmision(\"Rescatá al dragón bueno\")",
+              "juego": true
+            }
+          ]
+        },
+        {
+          "id": "juego-enemigo",
+          "titulo": "2. Aparece un enemigo",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Un enemigo se crea igual que el héroe. atacar(h, b) hace que h ataque a b: el daño es su fuerza más un dado. Con mientras, ataca hasta vencerlo.",
+              "codigo": "h es heroe(\"Kira\", 20, 3)\nb es enemigo(\"Bug\", 10, 1)\nmientras vivo(b):\n    atacar(h, b)\nmostrar \"¡El Bug cayó!\"",
+              "juego": true
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué hace vivo(b)?",
+              "opciones": [
+                "Dice si a b todavía le queda vida",
+                "Cura a b",
+                "Crea a b"
+              ],
+              "correcta": 0,
+              "pista": "vivo pregunta algo: devuelve verdadero o falso."
+            },
+            {
+              "tipo": "ordenar",
+              "consigna": "Ordená para que Ana ataque al Bug hasta vencerlo.",
+              "lineas": [
+                "h es heroe(\"Ana\", 20, 4)",
+                "b es enemigo(\"Bug\", 8, 1)",
+                "mientras vivo(b):",
+                "    atacar(h, b)"
+              ],
+              "pista": "Primero se crean los dos. Después, mientras el Bug viva, Ana ataca.",
+              "juego": true
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Creá al héroe Rex (25 de vida, 4 de fuerza) y al enemigo Bug (15 de vida, 2 de fuerza). Mientras el Bug esté vivo, Rex lo ataca.",
+              "solucion": "h es heroe(\"Rex\", 25, 4)\nb es enemigo(\"Bug\", 15, 2)\nmientras vivo(b):\n    atacar(h, b)",
+              "juego": true
+            }
+          ]
+        },
+        {
+          "id": "juego-dialogos",
+          "titulo": "3. Diálogos y objetos",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Los personajes pueden hablar con decir y juntar cosas con dar. tiene pregunta si lleva algo en el inventario.",
+              "codigo": "h es heroe(\"Kira\", 20, 3)\ndecir(h, \"¿Qué es eso?\")\ndar(h, \"llave\")\nsi tiene(h, \"llave\"):\n    decir(h, \"¡Encontré la llave!\")",
+              "juego": true
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "Kira ya tiene la llave. ¿Qué devuelve tiene(h, \"llave\")?",
+              "opciones": [
+                "verdadero",
+                "falso",
+                "llave"
+              ],
+              "correcta": 0,
+              "pista": "tiene contesta sí o no: si la lleva, es verdadero."
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para que Luz hable solo si tiene el mapa.",
+              "codigo": "h es heroe(\"Luz\", 20, 3)\ndar(h, \"mapa\")\nsi ___(h, \"mapa\"):\n    decir(h, \"¡A explorar!\")",
+              "fichas": [
+                "tiene",
+                "dar",
+                "decir"
+              ],
+              "respuesta": [
+                "tiene"
+              ],
+              "pista": "Hace falta la función que pregunta si lleva algo.",
+              "juego": true
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Creá a la heroína Sol (20 de vida, 3 de fuerza). Dale una espada y, si tiene la espada, que diga: ¡Lista para la aventura!",
+              "solucion": "h es heroe(\"Sol\", 20, 3)\ndar(h, \"espada\")\nsi tiene(h, \"espada\"):\n    decir(h, \"¡Lista para la aventura!\")",
+              "juego": true
+            }
+          ]
+        },
+        {
+          "id": "juego-ganar",
+          "titulo": "4. Ganar o perder",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Un buen juego tiene final. ganar y perder terminan el juego con un mensaje.",
+              "codigo": "h es heroe(\"Kira\", 20, 4)\nb es enemigo(\"Bug\", 12, 2)\nmientras vivo(h) y vivo(b):\n    atacar(h, b)\n    si vivo(b):\n        atacar(b, h)\nsi vivo(h):\n    ganar(\"¡Venciste al Bug!\")\nsino:\n    perder(\"El Bug ganó\")",
+              "juego": true
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué pasa después de ganar(\"¡Bien!\")?",
+              "opciones": [
+                "El juego termina",
+                "El juego empieza de nuevo",
+                "Aparece otro enemigo"
+              ],
+              "correcta": 0,
+              "pista": "ganar y perder le ponen el final al juego."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Max (30 de vida, 5 de fuerza) pelea contra el Troll (25 de vida, 3 de fuerza) hasta que uno caiga. Terminá con ganar o perder.",
+              "solucion": "h es heroe(\"Max\", 30, 5)\nb es enemigo(\"Troll\", 25, 3)\nmientras vivo(h) y vivo(b):\n    atacar(h, b)\n    si vivo(b):\n        atacar(b, h)\nsi vivo(h):\n    ganar(\"¡Venciste al Troll!\")\nsino:\n    perder(\"El Troll ganó\")",
+              "juego": true,
+              "nota": "(Max ataca primero y, si el Troll sigue vivo, contesta. Si Max gana: ¡Venciste al Troll! Si no: El Troll ganó)"
+            }
+          ]
+        },
+        {
+          "id": "juego-aventura",
+          "titulo": "5. Tu aventura",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Con preguntar, quien juega decide qué pasa. Cada respuesta puede llevar a otro final.",
+              "codigo": "h es heroe(\"Lua\", 20, 4)\nr es preguntar(\"¿Entrás a la cueva? \")\nsi r == \"si\":\n    escena(\"cueva\")\n    ganar(\"¡Encontraste el tesoro!\")\nsino:\n    perder(\"Te quedaste con las ganas\")",
+              "juego": true
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Para qué sirve preguntar en un juego?",
+              "opciones": [
+                "Para que quien juega decida qué pasa",
+                "Para mostrar un texto",
+                "Para crear enemigos"
+              ],
+              "correcta": 0,
+              "pista": "preguntar espera la respuesta de quien juega."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Creá al héroe Nico (20 de vida, 4 de fuerza) y preguntá: ¿Abrís la puerta? Si responde si, que aparezca el Fantasma y Nico lo ataque hasta vencerlo.",
+              "solucion": "h es heroe(\"Nico\", 20, 4)\nr es preguntar(\"¿Abrís la puerta? \")\nsi r == \"si\":\n    f es enemigo(\"Fantasma\", 10, 2)\n    mientras vivo(f):\n        atacar(h, f)\n    ganar(\"¡Ganaste!\")\nsino:\n    perder(\"Te quedaste afuera\")",
+              "juego": true,
+              "nota": "(el Fantasma tiene 10 de vida y 2 de fuerza. Al final: ganar(\"¡Ganaste!\"). Si no abre: perder(\"Te quedaste afuera\"))",
+              "entradas_prueba": [
+                "si"
+              ]
+            },
+            {
+              "tipo": "explicacion",
+              "texto": "¡Ya sabés crear juegos! Seguí inventando en 🎮 Juegos y guardá tus aventuras en Mis proyectos.",
+              "codigo": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
