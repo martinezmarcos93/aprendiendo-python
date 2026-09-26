@@ -441,7 +441,8 @@
             },
             {
               "tipo": "escribir",
-              "consigna": "El jefe tiene 50 de vida. Creá la función atacar() que devuelva 5 + dado(6). Mientras el jefe tenga vida, restale un ataque y contá los turnos. Al final mostrá: Venciste al Bug en N turnos",
+              "consigna": "El jefe tiene 50 de vida. Creá atacar() que devuelva 5 + dado(6) y atacalo mientras tenga vida. Al final mostrá: Venciste al Bug en N turnos",
+              "nota": "(contá los turnos: sumale 1 en cada ataque)",
               "solucion": "funcion atacar():\n    devolver 5 + dado(6)\n\nvida_jefe es 50\nturnos es 0\nmientras vida_jefe > 0:\n    vida_jefe es vida_jefe - atacar()\n    turnos es turnos + 1\nmostrar \"Venciste al Bug en\", turnos, \"turnos\""
             },
             {
