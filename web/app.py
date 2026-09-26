@@ -327,8 +327,9 @@ def create_app(token=None):
     def inicio():
         camino = _camino()
         p = progreso.cargar_progreso()
-        # ADR-005: se pregunta después de usar el producto (al terminar un curso) y una sola vez
-        encuesta = intereses.pendiente(p, "curso-terminado") if any(c["completo"] for c in camino) else None
+        # ADR-005: se pregunta después de usar el producto: como mucho una encuesta por curso terminado
+        terminados = sum(1 for c in camino if c["completo"])
+        encuesta = intereses.pendiente(p, "curso-terminado", cupo=terminados) if terminados else None
         return render_template("inicio.html", camino=camino, actual=motor.leccion_actual(camino),
                                regreso=progreso.regreso(p), encuesta=encuesta)
 

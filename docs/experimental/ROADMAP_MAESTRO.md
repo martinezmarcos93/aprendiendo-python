@@ -100,6 +100,10 @@ Estimaciones en **semanas-persona** (rango). "Puerta" = decisión que se toma co
 > provisoria; la prueba con chicos reales queda pendiente y puede cambiar el rumbo.
 
 ### Fase 2 — Contenido piloto "Tortuaria" (RPG por consola) (5–8 sem) · flujo A
+
+> **Estado (26/09/2026):** ítems 1–3 ✅ — curso `tortuaria` (10 lecciones, 42 pasos, 0 errores y 0 avisos del
+> validador; lo juega entero el jugador de cursos) y encuesta "¿Qué tipo de juego…?" (ADR-005). Ítem 4 (¿lo prefieren
+> los chicos?) **pendiente de chicos reales**: la prueba simulada no lo puede contestar.
 1. Diseñar 10–12 lecciones (héroe, estadísticas, enemigo, combate, dados, inventario, pociones, mapa, mazmorra, jefe) con **el motor actual** (datos + validador).
 2. Curso de misiones: cada concepto aparece porque el juego lo pide (problema → concepto → solución → resultado).
 3. Jefe final: *La Mazmorra del Bug*. Encuesta de un paso al terminar (intereses).

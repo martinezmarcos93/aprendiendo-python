@@ -1,0 +1,17 @@
+{
+  "id": "que-juego",
+  "pregunta": "¿Qué tipo de juego te gustaría crear?",
+  "ayuda": "Podés elegir varios. Queda en esta compu y nos ayuda a elegir la próxima aventura.",
+  "cuando": "curso-terminado",
+  "multiple": true,
+  "opciones": [
+    {"id": "rol", "texto": "🐉 De rol y aventura"},
+    {"id": "estrategia", "texto": "🏰 De estrategia"},
+    {"id": "plataformas", "texto": "🏃 De plataformas"},
+    {"id": "cartas", "texto": "🃏 De cartas"},
+    {"id": "puzzles", "texto": "🧩 De acertijos"},
+    {"id": "terror", "texto": "👻 De miedo"},
+    {"id": "carreras", "texto": "🏎️ De carreras"},
+    {"id": "no-se", "texto": "🤷 No sé todavía"}
+  ]
+}

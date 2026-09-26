@@ -28,7 +28,8 @@ class TestResponder(unittest.TestCase):
         p = {}
         intereses.responder(p, "que-crear", ["web", "juegos", "web"])
         self.assertEqual(p["intereses"]["que-crear"]["respuestas"], ["juegos", "web"])
-        self.assertIsNone(intereses.pendiente(p, "curso-terminado"))                   # ya contestó
+        self.assertIsNone(intereses.pendiente(p, "curso-terminado", cupo=1))           # una por curso: no insiste
+        self.assertEqual(intereses.pendiente(p, "curso-terminado", cupo=2)["id"], "que-juego")   # otro curso, otra
 
     def test_rechaza_opciones_o_encuestas_desconocidas(self):
         for mal in ([], ["inventada"], "juegos", None):
@@ -41,7 +42,7 @@ class TestResponder(unittest.TestCase):
         p = {}
         self.assertEqual(intereses.pendiente(p, "curso-terminado")["id"], "que-crear")
         intereses.omitir(p, "que-crear")
-        self.assertIsNone(intereses.pendiente(p, "curso-terminado"))
+        self.assertIsNone(intereses.pendiente(p, "curso-terminado", cupo=1))
         self.assertTrue(p["intereses"]["que-crear"]["omitida"])
 
     def test_limpiar_al_importar(self):

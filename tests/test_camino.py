@@ -192,7 +192,7 @@ class TestWebCamino(Base):
         self.assertEqual(html.count('class="parada'), 30)
         self.assertIn("¡Te toca!", html)
         self.assertIn('href="/leccion/hola-mundo"', html)
-        self.assertIn("0/54", html)
+        self.assertIn("0/64", html)
 
     def test_aprender_lleva_a_la_leccion_actual(self):
         self.post("/api/onboarding", {"meta_min": 10})
@@ -342,7 +342,7 @@ class TestWebCamino(Base):
         r = self.post("/api/intereses/que-crear", {"respuestas": ["rpg", "dibujos"]})
         self.assertTrue(r.get_json()["ok"])
         self.assertEqual(progreso.cargar_progreso()["intereses"]["que-crear"]["respuestas"], ["rpg", "dibujos"])
-        self.assertNotIn('id="encuesta"', self.c.get("/").get_data(as_text=True))       # no se repite
+        self.assertNotIn('id="encuesta"', self.c.get("/").get_data(as_text=True))       # no se repite ni encadena otra
 
     def test_intereses_rechaza_lo_invalido_y_pide_token(self):
         self.post("/api/onboarding", {"meta_min": 10})
@@ -350,6 +350,29 @@ class TestWebCamino(Base):
         self.assertEqual(self.post("/api/intereses/otra", {"omitir": True}).status_code, 400)
         self.assertEqual(self.c.post("/api/intereses/que-crear", json={"omitir": True}).status_code, 403)
         self.assertTrue(self.post("/api/intereses/que-crear", {"omitir": True}).get_json()["ok"])
+
+    # ── Tortuaria (Fase 2) ──
+    def test_tortuaria_se_abre_al_terminar_el_desafio_final(self):
+        self.post("/api/onboarding", {"meta_min": 10})
+        self._terminar_hasta("mientras")
+        self.assertEqual(self.c.get("/leccion/rpg-heroe").status_code, 302)
+        self._terminar_hasta("desafio-final")
+        self.assertEqual(self.c.get("/leccion/rpg-heroe").status_code, 200)
+
+    def test_el_jefe_final_acepta_otra_forma_con_los_dados_en_el_mismo_orden(self):
+        self.post("/api/onboarding", {"meta_min": 10})
+        self._terminar_hasta("desafio-final")
+        for _, lec in contenido.lecciones(contenido.cargar_curso("tortuaria")):
+            if lec["id"] == "rpg-jefe":
+                break
+            self._dar_por_completa(lec["id"])
+        otra = ('funcion atacar():\n    golpe es dado(6)\n    devolver golpe + 5\n\n'
+                'vida_jefe es 50\nturnos es 0\nmientras vida_jefe > 0:\n    turnos es turnos + 1\n'
+                '    vida_jefe es vida_jefe - atacar()\nmostrar "Venciste al Bug en", turnos, "turnos"')
+        r = self.post("/api/lecciones/rpg-jefe/pasos/2/evaluar", {"codigo": otra}).get_json()
+        self.assertEqual(r["evaluacion"]["estado"], "correcto")
+        mal = self.post("/api/lecciones/rpg-jefe/pasos/2/evaluar", {"codigo": 'mostrar "Venciste al Bug en 3 turnos"'}).get_json()
+        self.assertEqual(mal["evaluacion"]["estado"], "incorrecto")                  # con la semilla fija son 6 turnos
 
     def test_el_curso_de_la_tortuga_empieza_cerrado_y_se_abre_al_terminar_dos_variables(self):
         self.post("/api/onboarding", {"meta_min": 10})

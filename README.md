@@ -36,7 +36,7 @@ Si la red de tu oficina o escuela intercepta certificados SSL y `pip` falla, apu
 
 ## Qué hay adentro
 
-### 🗺️ Aprender: cuatro cursos, 54 lecciones
+### 🗺️ Aprender: cinco cursos, 64 lecciones
 Cada lección dura unos 2 minutos y sigue el ciclo **explicar → practicar → escribir**: una tarjeta que explica con un ejemplo que se puede ejecutar, preguntas de elegir, predecir lo que muestra un programa, completar con fichas, ordenar líneas y, al final, escribir el programa. Ante un error hay una pista específica; se puede reintentar y, tras dos errores, ver la respuesta (sin XP en ese paso). **No hay vidas ni castigos.**
 
 | Curso | Lecciones | De qué trata |
@@ -45,6 +45,7 @@ Cada lección dura unos 2 minutos y sigue el ciclo **explicar → practicar → 
 | 🎨 Dibujá con la tortuga | 15 | avanzar y girar, figuras con repetir, colores, lápiz, variables y funciones; al final, 3 laberintos donde la tortuga busca la salida (se abre al terminar *Dos variables*) |
 | 🛠️ Proyectos guiados | 3 | un adivinador de números, una calculadora y una casa; cada paso sigue desde el código anterior |
 | 🐍 De TortuScript a Python real | 6 | print, input, if, for/while y def, escritos en Python de verdad (se abre al terminar *Desafío final*) |
+| 🐉 Tortuaria: tu primer juego de rol | 10 | un juego de rol por consola: héroe, golpes, `dado()`, ataques con funciones, combate por turnos con `mientras`, inventario con listas y el jefe final (se abre al terminar *Desafío final*) |
 
 El **camino** es la pantalla de inicio: muestra dónde estás y qué sigue. Las lecciones se desbloquean en orden.
 

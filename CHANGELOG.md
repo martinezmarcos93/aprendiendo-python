@@ -3,6 +3,22 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — Tortuaria, el curso piloto de juego de rol (26/09/2026)
+
+Rama `feat/tortuaria`. Fase 2 del roadmap maestro.
+
+### Agregado
+- **🐉 Tortuaria: tu primer juego de rol** — 10 lecciones (42 pasos) en 4 zonas: la aldea (tu héroe, el primer golpe,
+  ¿sigue en pie?), el bosque (los dados, el ataque, una acción que se repite), la cueva (combate por turnos, el
+  inventario, pociones) y la mazmorra (**jefe final: la Mazmorra del Bug**). Cada concepto aparece porque el juego lo
+  necesita. Presenta `dado()`, las listas con `para … en` y `y`. Todos los pasos con opciones tienen pista propia.
+  Se abre al terminar *Desafío final*. En total: 5 cursos, 64 lecciones.
+- Segunda encuesta local: "¿Qué tipo de juego te gustaría crear?".
+
+### Cambiado
+- Las encuestas aparecen **como mucho una por curso terminado**: nunca dos seguidas.
+- El test del paquete toma la lista de cursos de `ORDEN_CURSOS` en vez de tenerla escrita a mano.
+
 ## Sin publicar — prueba simulada con chicos (26/09/2026)
 
 Rama `feat/simulacion-chicos`.
