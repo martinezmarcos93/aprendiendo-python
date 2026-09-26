@@ -12,6 +12,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ / "herramientas"))
 
 import crear_paquete  # noqa: E402
+from tortuscript import contenido  # noqa: E402
 
 
 def arbol(base):
@@ -134,7 +135,7 @@ class TestElProyectoReal(unittest.TestCase):
     def test_los_cursos_y_las_fuentes_viajan_completos(self):
         hallados = {p.as_posix() for p in crear_paquete.archivos_del_paquete(RAIZ)}
         self.assertEqual({h for h in hallados if h.startswith("contenido/cursos/")},
-                         {f"contenido/cursos/{n}.json" for n in ("primeros-pasos", "tortuga", "proyectos", "python-real")})
+                         {f"contenido/cursos/{n}.json" for n in contenido.ORDEN_CURSOS})
         self.assertGreaterEqual(len([h for h in hallados if h.startswith("web/static/fonts/")]), 6)
         self.assertGreaterEqual(len([h for h in hallados if h.startswith("web/static/vendor/")]), 7)
 

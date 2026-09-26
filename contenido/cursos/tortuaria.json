@@ -1,0 +1,457 @@
+{
+  "id": "tortuaria",
+  "titulo": "Tortuaria: tu primer juego de rol",
+  "icono": "🐉",
+  "descripcion": "Salvá Tortuaria de los Bugs programando un juego de rol: héroe, dados, combate e inventario.",
+  "version": 1,
+  "requiere": {
+    "leccion": "desafio-final"
+  },
+  "secciones": [
+    {
+      "id": "rpg-aldea",
+      "nivel": 1,
+      "titulo": "La aldea",
+      "lecciones": [
+        {
+          "id": "rpg-heroe",
+          "titulo": "1. Tu héroe",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "¡Bienvenido a Tortuaria! Los Bugs rompieron el mundo y hace falta un héroe. Todo héroe tiene un nombre y puntos de vida: los guardamos en variables.",
+              "codigo": "nombre es \"Tharok\"\nvida es 100\nmostrar nombre, \"tiene\", vida, \"de vida\""
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "En este juego, ¿qué guarda la variable vida?",
+              "opciones": [
+                "Cuánta vida le queda al héroe",
+                "El nombre del héroe",
+                "Cuántos Bugs hay"
+              ],
+              "correcta": 0,
+              "pista": "vida es 100 guarda un número: baja cuando el héroe recibe un golpe."
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué va a mostrar este programa?",
+              "codigo": "nombre es \"Lua\"\nfuerza es 12\nmostrar nombre, \"tiene\", fuerza, \"de fuerza\"",
+              "opciones": [
+                "Lua tiene 12 de fuerza",
+                "nombre tiene fuerza de fuerza",
+                "Lua tiene fuerza de fuerza"
+              ],
+              "correcta": 0,
+              "pista": "mostrar cambia cada variable por lo que guarda: nombre es Lua y fuerza es 12."
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para crear una heroína con 80 de vida.",
+              "codigo": "nombre es \"Kira\"\nvida es ___\nmostrar nombre, \"tiene\", vida, \"de vida\"",
+              "fichas": [
+                "80",
+                "100",
+                "nombre"
+              ],
+              "respuesta": [
+                "80"
+              ],
+              "pista": "La consigna pide 80 de vida.",
+              "salida": "Kira tiene 80 de vida"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Creá tu héroe: guardá nombre con Tharok, vida con 100 y fuerza con 15. Después mostrá: Tharok tiene 100 de vida y 15 de fuerza",
+              "solucion": "nombre es \"Tharok\"\nvida es 100\nfuerza es 15\nmostrar nombre, \"tiene\", vida, \"de vida y\", fuerza, \"de fuerza\""
+            }
+          ]
+        },
+        {
+          "id": "rpg-golpe",
+          "titulo": "2. El primer golpe",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Un Bug te muerde y perdés 20 de vida. Para cambiar una variable, la guardás de nuevo usando lo que valía antes.",
+              "codigo": "vida es 100\nvida es vida - 20\nmostrar \"Te queda\", vida, \"de vida\""
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué va a mostrar este programa?",
+              "codigo": "vida es 50\nvida es vida - 15\nmostrar vida",
+              "opciones": [
+                "35",
+                "50",
+                "15"
+              ],
+              "correcta": 0,
+              "pista": "Primero vida vale 50 y después se le restan 15."
+            },
+            {
+              "tipo": "ordenar",
+              "consigna": "Ordená: el héroe empieza con 100 de vida, recibe un golpe de 30 y muestra su vida.",
+              "lineas": [
+                "vida es 100",
+                "vida es vida - 30",
+                "mostrar vida"
+              ],
+              "pista": "Primero se crea la vida, después se resta y al final se muestra."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "El héroe tiene 100 de vida. Recibe un golpe de 25 y después toma una poción que le suma 10. Mostrá la vida que le queda.",
+              "solucion": "vida es 100\nvida es vida - 25\nvida es vida + 10\nmostrar vida"
+            }
+          ]
+        },
+        {
+          "id": "rpg-en-pie",
+          "titulo": "3. ¿Sigue en pie?",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Si la vida llega a cero, el héroe cae. El juego lo decide con si y sino.",
+              "codigo": "vida es 0\nsi vida <= 0:\n    mostrar \"Tu héroe cayó\"\nsino:\n    mostrar \"¡Seguís en pie!\""
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué va a mostrar este programa?",
+              "codigo": "vida es 30\nsi vida <= 0:\n    mostrar \"Cayó\"\nsino:\n    mostrar \"Sigue\"",
+              "opciones": [
+                "Sigue",
+                "Cayó",
+                "30"
+              ],
+              "correcta": 0,
+              "pista": "30 no es menor ni igual a 0, así que se hace lo de sino."
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para que diga Cayó solo si la vida es 0 o menos.",
+              "codigo": "vida es 10\nsi vida ___ 0:\n    mostrar \"Cayó\"\nsino:\n    mostrar \"Sigue\"",
+              "fichas": [
+                "<=",
+                ">",
+                "+"
+              ],
+              "respuesta": [
+                "<="
+              ],
+              "pista": "Buscá el signo que quiere decir menor o igual.",
+              "salida": "Sigue"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Guardá vida con 0. Si la vida es 0 o menos, mostrá Game over. Si no, mostrá A seguir.",
+              "solucion": "vida es 0\nsi vida <= 0:\n    mostrar \"Game over\"\nsino:\n    mostrar \"A seguir\""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rpg-bosque",
+      "nivel": 2,
+      "titulo": "El bosque",
+      "lecciones": [
+        {
+          "id": "rpg-dados",
+          "titulo": "4. Los dados",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "En los juegos de rol, la suerte la deciden los dados. dado(6) tira un dado de 6 caras: sale un número del 1 al 6.",
+              "codigo": "tirada es dado(6)\nmostrar \"Sacaste\", tirada"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué números puede sacar dado(20)?",
+              "opciones": [
+                "Del 1 al 20",
+                "Solo el 20",
+                "Del 0 al 19"
+              ],
+              "correcta": 0,
+              "pista": "dado(20) es un dado de 20 caras: del 1 al 20."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "Si tirás dado(6) dos veces, ¿siempre sale lo mismo?",
+              "opciones": [
+                "No, cada tirada puede ser distinta",
+                "Sí, siempre el mismo número"
+              ],
+              "correcta": 0,
+              "pista": "Es azar: no sabés qué va a salir hasta que tirás."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Tirá dos dados de 6 caras, guardalos en a y en b, y mostrá la suma.",
+              "solucion": "a es dado(6)\nb es dado(6)\nmostrar a + b",
+              "nota": "(tirá primero a y después b)"
+            }
+          ]
+        },
+        {
+          "id": "rpg-ataque",
+          "titulo": "5. El ataque",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Un ataque hace la fuerza del héroe más una tirada de dado. Así cada golpe es distinto, como en los juegos de mesa.",
+              "codigo": "fuerza es 5\ndaño es fuerza + dado(6)\nmostrar \"Hiciste\", daño, \"de daño\""
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué va a mostrar este programa?",
+              "codigo": "fuerza es 5\ndaño es fuerza + 3\nmostrar daño",
+              "opciones": [
+                "8",
+                "5",
+                "53"
+              ],
+              "correcta": 0,
+              "pista": "Se suman los números: 5 + 3."
+            },
+            {
+              "tipo": "ordenar",
+              "consigna": "Ordená el ataque: primero la fuerza, después el daño, después la vida del Bug y al final mostrala.",
+              "lineas": [
+                "fuerza es 4",
+                "daño es fuerza + 6",
+                "vida_bug es 30 - daño",
+                "mostrar vida_bug"
+              ],
+              "pista": "Cada línea usa lo que se guardó en la de arriba."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "El Bug tiene 40 de vida y tu héroe tiene fuerza 6. Calculá el daño como fuerza + dado(6), restáselo a la vida del Bug y mostrá cuánta vida le queda.",
+              "solucion": "vida_bug es 40\nfuerza es 6\ndaño es fuerza + dado(6)\nvida_bug es vida_bug - daño\nmostrar vida_bug"
+            }
+          ]
+        },
+        {
+          "id": "rpg-atacar",
+          "titulo": "6. Una acción que se repite",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Si vas a atacar muchas veces, conviene una función: la escribís una vez y la usás siempre.",
+              "codigo": "funcion atacar(fuerza):\n    devolver fuerza + dado(6)\n\nmostrar atacar(5)\nmostrar atacar(5)"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué va a mostrar este programa?",
+              "codigo": "funcion curar(vida):\n    devolver vida + 20\n\nmostrar curar(50)",
+              "opciones": [
+                "70",
+                "50",
+                "20"
+              ],
+              "correcta": 0,
+              "pista": "curar devuelve la vida más 20."
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para que la función devuelva la vida después del golpe.",
+              "codigo": "funcion golpe(vida):\n    ___ vida - 10\n\nmostrar golpe(30)",
+              "fichas": [
+                "devolver",
+                "mostrar",
+                "si"
+              ],
+              "respuesta": [
+                "devolver"
+              ],
+              "pista": "Una función entrega su resultado con devolver.",
+              "salida": "20"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Creá la función atacar(fuerza) que devuelva fuerza + dado(6). Usala dos veces con fuerza 3 y mostrá la suma de los dos ataques.",
+              "solucion": "funcion atacar(fuerza):\n    devolver fuerza + dado(6)\n\nmostrar atacar(3) + atacar(3)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rpg-cueva",
+      "nivel": 3,
+      "titulo": "La cueva",
+      "lecciones": [
+        {
+          "id": "rpg-combate",
+          "titulo": "7. Combate por turnos",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Un combate sigue MIENTRAS el enemigo tenga vida. En cada vuelta atacás una vez y contás un turno.",
+              "codigo": "vida_bug es 20\nturnos es 0\nmientras vida_bug > 0:\n    vida_bug es vida_bug - dado(6)\n    turnos es turnos + 1\nmostrar \"Ganaste en\", turnos, \"turnos\""
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué va a mostrar este programa?",
+              "codigo": "vida_bug es 9\nmientras vida_bug > 0:\n    vida_bug es vida_bug - 3\nmostrar vida_bug",
+              "opciones": [
+                "0",
+                "3",
+                "-3"
+              ],
+              "correcta": 0,
+              "pista": "Resta 3 mientras la vida sea mayor que 0: 9, 6, 3 y 0."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuándo termina mientras vida_bug > 0?",
+              "opciones": [
+                "Cuando vida_bug llega a 0 o menos",
+                "Después de 3 vueltas",
+                "Nunca termina"
+              ],
+              "correcta": 0,
+              "pista": "mientras repite hasta que la condición deja de cumplirse."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "El Bug tiene 30 de vida. Mientras tenga vida, restale dado(6) y contá los turnos. Al final mostrá: Ganaste en N turnos",
+              "solucion": "vida_bug es 30\nturnos es 0\nmientras vida_bug > 0:\n    vida_bug es vida_bug - dado(6)\n    turnos es turnos + 1\nmostrar \"Ganaste en\", turnos, \"turnos\""
+            }
+          ]
+        },
+        {
+          "id": "rpg-inventario",
+          "titulo": "8. El inventario",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Un héroe lleva cosas en su inventario. Una lista guarda muchas cosas juntas, entre corchetes. Con para recorrés la lista de a una.",
+              "codigo": "inventario es [\"espada\", \"escudo\", \"poción\"]\npara objeto en inventario:\n    mostrar \"Llevás:\", objeto"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué va a mostrar este programa?",
+              "codigo": "bolsa es [\"oro\", \"mapa\"]\npara cosa en bolsa:\n    mostrar cosa",
+              "opciones": [
+                "oro\nmapa",
+                "bolsa",
+                "cosa\ncosa"
+              ],
+              "correcta": 0,
+              "pista": "para muestra cada cosa de la lista, en orden."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuántas veces se repite para objeto en [\"a\", \"b\", \"c\"]?",
+              "opciones": [
+                "3",
+                "1",
+                "Nunca termina"
+              ],
+              "correcta": 0,
+              "pista": "Se repite una vez por cada cosa de la lista."
+            },
+            {
+              "tipo": "ordenar",
+              "consigna": "Ordená para mostrar lo que hay en el cofre.",
+              "lineas": [
+                "cofre es [\"gema\", \"llave\"]",
+                "para cosa en cofre:",
+                "    mostrar cosa"
+              ],
+              "pista": "Primero la lista, después para y adentro lo que se repite."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Guardá en inventario una espada, un arco y una poción (en ese orden) y mostrá cada objeto con para.",
+              "solucion": "inventario es [\"espada\", \"arco\", \"poción\"]\npara objeto en inventario:\n    mostrar objeto"
+            }
+          ]
+        },
+        {
+          "id": "rpg-pociones",
+          "titulo": "9. Pociones",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Si la vida está baja y te quedan pociones, tomás una. Para pedir dos cosas a la vez se usa y.",
+              "codigo": "vida es 20\npociones es 2\nsi vida < 30 y pociones > 0:\n    vida es vida + 50\n    pociones es pociones - 1\nmostrar \"Vida:\", vida, \"Pociones:\", pociones"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué va a mostrar este programa?",
+              "codigo": "vida es 50\npociones es 1\nsi vida < 30 y pociones > 0:\n    mostrar \"Tomás una poción\"\nsino:\n    mostrar \"No hace falta\"",
+              "opciones": [
+                "No hace falta",
+                "Tomás una poción"
+              ],
+              "correcta": 0,
+              "pista": "Con y, se tienen que cumplir las dos cosas. 50 no es menor que 30."
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para que solo tome una poción si la vida es baja y además le quedan.",
+              "codigo": "vida es 10\npociones es 0\nsi vida < 30 ___ pociones > 0:\n    mostrar \"Poción\"\nsino:\n    mostrar \"No podés\"",
+              "fichas": [
+                "y",
+                "o",
+                "no"
+              ],
+              "respuesta": [
+                "y"
+              ],
+              "pista": "Tienen que cumplirse las dos cosas a la vez.",
+              "salida": "No podés"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Tu héroe tiene 15 de vida y 1 poción. Si la vida es menor que 30 y le quedan pociones, sumale 50 a la vida y restale una poción. Al final mostrá la vida.",
+              "solucion": "vida es 15\npociones es 1\nsi vida < 30 y pociones > 0:\n    vida es vida + 50\n    pociones es pociones - 1\nmostrar vida"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rpg-mazmorra",
+      "nivel": 4,
+      "titulo": "La mazmorra",
+      "lecciones": [
+        {
+          "id": "rpg-jefe",
+          "titulo": "10. Jefe final: la Mazmorra del Bug",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "¡Llegaste al jefe! Para vencerlo vas a usar todo lo que aprendiste: variables, dados, una función, mientras y si.",
+              "codigo": null
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "El jefe tiene 50 de vida. ¿Qué sirve para atacarlo hasta vencerlo?",
+              "opciones": [
+                "mientras vida_jefe > 0:",
+                "si vida_jefe > 0:",
+                "mostrar vida_jefe"
+              ],
+              "correcta": 0,
+              "pista": "si decide una sola vez. mientras repite hasta que deja de cumplirse."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "El jefe tiene 50 de vida. Creá la función atacar() que devuelva 5 + dado(6). Mientras el jefe tenga vida, restale un ataque y contá los turnos. Al final mostrá: Venciste al Bug en N turnos",
+              "solucion": "funcion atacar():\n    devolver 5 + dado(6)\n\nvida_jefe es 50\nturnos es 0\nmientras vida_jefe > 0:\n    vida_jefe es vida_jefe - atacar()\n    turnos es turnos + 1\nmostrar \"Venciste al Bug en\", turnos, \"turnos\""
+            },
+            {
+              "tipo": "explicacion",
+              "texto": "¡Salvaste Tortuaria! Ya sabés armar lo básico de un juego de rol: héroe, dados, combate e inventario. Inventá tu propia aventura en Experimentar.",
+              "codigo": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

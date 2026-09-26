@@ -46,10 +46,15 @@ def problemas(encuesta):
     return errores
 
 
-def pendiente(progreso, momento):
-    """La primera encuesta de ese momento que el chico todavía no contestó ni dejó para después, o None."""
+def pendiente(progreso, momento, cupo=1):
+    """La primera encuesta de ese momento que el chico todavía no contestó ni dejó para después, o None.
+    `cupo`: cuántas encuestas de ese momento corresponden hasta ahora (una por curso terminado): así nunca aparecen
+    dos seguidas."""
     ya = progreso.get("intereses") or {}
-    return next((e for e in cargar_encuestas().values() if e["cuando"] == momento and e["id"] not in ya), None)
+    del_momento = [e for e in cargar_encuestas().values() if e["cuando"] == momento]
+    if sum(1 for e in del_momento if e["id"] in ya) >= cupo:
+        return None
+    return next((e for e in del_momento if e["id"] not in ya), None)
 
 
 def responder(progreso, encuesta_id, respuestas, hoy=None):
