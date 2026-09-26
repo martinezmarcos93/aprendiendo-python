@@ -13,7 +13,8 @@ import argparse
 import sys
 
 RUTAS = ["/", "/leccion/hola-mundo", "/referencia", "/mapa", "/resumen", "/logros", "/liga", "/experimentar",
-         "/tortuga", "/proyectos", "/repaso", "/practica"]
+         "/tortuga", "/proyectos", "/repaso", "/practica", "/bienvenida", "/ayuda", "/leccion/laberinto-1",
+         "/leccion/rpg-heroe", "/no-existe"]   # la última: página de error 404
 
 JS = r"""
 () => {
