@@ -3,6 +3,12 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — privacidad explicada en la Ayuda (26/09/2026)
+
+### Agregado
+- Pregunta 🔒 "¿Qué guarda TortuScript y quién lo ve?": el apodo, el progreso, los proyectos, los ajustes y los
+  intereses; todo en un archivo por perfil en esta compu, sin envíos a internet; cómo lo borra un adulto.
+
 ## Sin publicar — lockfile con hashes y auditoría de dependencias (26/09/2026)
 
 Rama `chore/lockfile-dependencias`.

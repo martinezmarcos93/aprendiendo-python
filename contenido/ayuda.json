@@ -20,6 +20,8 @@
     {"icono": "🔧", "pregunta": "¿Qué hago si algo no anda?",
      "respuesta": ["Recargá la página: tu progreso está guardado.", "Si aparece un código como 8F72A1, anotalo y contáselo a un adulto.", "El adulto puede buscar ese código en el archivo logs/tortuscript.log, dentro de la carpeta de TortuScript."]},
     {"icono": "🌐", "pregunta": "¿Necesito internet?",
-     "respuesta": ["No. TortuScript corre en tu compu, sin internet, sin cuentas y sin publicidad."]}
+     "respuesta": ["No. TortuScript corre en tu compu, sin internet, sin cuentas y sin publicidad."]},
+    {"icono": "🔒", "pregunta": "¿Qué guarda TortuScript y quién lo ve?",
+     "respuesta": ["Guarda tu apodo, tu progreso, tus proyectos, tus ajustes y lo que contestaste sobre qué te gustaría crear.", "Todo queda en esta compu, en un archivo por perfil (progreso_<tu perfil>.json). No se manda a internet y nadie más lo ve.", "Para borrarlo, un adulto puede borrar ese archivo y su copia .bak de la carpeta de TortuScript."]}
   ]
 }
