@@ -31,6 +31,21 @@
         {% for exp, e in entradas.items() %}
         <button class="opcion-paso" type="button" role="radio" aria-checked="false" data-valor="{{ e.id }}" data-para="{{ exp }}" hidden>⏩ En «{{ e.seccion }}» <small class="tenue">(lección {{ e.numero }}; las anteriores las podés hacer cuando quieras)</small></button>
         {% endfor %}
+        <button class="opcion-paso" type="button" role="radio" aria-checked="false" data-valor="" data-prueba data-para="bastante" hidden>🧪 Hacé una prueba corta <small class="tenue">(6 preguntas, para ver dónde te conviene empezar)</small></button>
+      </div>
+      <div id="bv-prueba" hidden>
+        <p class="tenue">{{ prueba.intro }}</p>
+        {% for p in prueba.preguntas %}
+        <div class="pregunta-prueba">
+          <p><b>{{ loop.index }}.</b> {{ p.pregunta }}</p>
+          {% if p.codigo %}<pre class="codigo-prueba">{{ p.codigo }}</pre>{% endif %}
+          <div class="opciones" role="radiogroup" aria-label="Pregunta {{ loop.index }}" data-campo="prueba" data-indice="{{ loop.index0 }}">
+            {% for o in p.opciones %}<button class="opcion-paso" type="button" role="radio" aria-checked="false" data-valor="{{ o }}">{{ o }}</button>{% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+        <div class="acciones" style="justify-content:center"><button class="boton violeta" id="bv-corregir" type="button" disabled>Ver dónde empiezo</button></div>
+        <div class="tenue atajo" id="bv-resultado" role="status"></div>
       </div>
     </div>
     <div class="acciones" style="justify-content:center"><button class="boton verde grande" id="bv-sig-2" type="button" disabled>Seguir ➡</button></div>

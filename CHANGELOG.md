@@ -3,6 +3,17 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — prueba de nivel en la bienvenida (26/09/2026)
+
+Rama `feat/prueba-de-nivel`. Segunda versión de ADR-004 (aceptada).
+
+### Agregado
+- Quien elige "Bastante" puede hacer una **prueba corta** (6 preguntas, una por sección del curso 1). El servidor la
+  corrige (el navegador no recibe las respuestas) y recomienda empezar en la primera sección con un error, o en
+  *Desafíos* si acertó todo. Es opcional: "Desde el principio" sigue elegido.
+- Las preguntas son datos (`contenido/diagnostico.json`) y los tests comprueban que la opción correcta sea lo que
+  muestra el código, que ninguna otra lo sea y que los textos cumplan las reglas de estilo.
+
 ## Sin publicar — textos más cortos (26/09/2026)
 
 ### Cambiado

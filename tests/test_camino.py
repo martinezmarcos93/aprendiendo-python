@@ -317,10 +317,24 @@ class TestWebCamino(Base):
         planas = leccion.lecciones_planas(leccion.estado_cursos(contenido.todos_los_cursos(), progreso.cargar_progreso(), {}))
         self.assertIn(next(l["estado"] for l in planas if l["id"] == "hola-mundo"), ("hecha", "perfecta"))
 
+    def test_prueba_de_nivel_recomienda_y_la_bienvenida_la_ofrece(self):
+        from tortuscript import diagnostico
+        html = self.c.get("/bienvenida").get_data(as_text=True)
+        self.assertIn("Hacé una prueba corta", html)
+        self.assertNotIn('"correcta"', html)
+        buenas = [p["opciones"][p["correcta"]] for p in diagnostico.cargar()["preguntas"]]
+        r = self.post("/api/diagnostico", {"respuestas": buenas}).get_json()
+        self.assertEqual((r["entrada"], r["seccion"]), ("saludo-repetido", "Desafíos"))
+        self.assertEqual(self.post("/api/diagnostico", {"respuestas": ["x"]}).status_code, 400)
+        ok = self.post("/api/onboarding", {"meta_min": 10, "experiencia": "bastante", "entrada": "tu-primera-funcion"})
+        self.assertTrue(ok.get_json()["ok"])
+        self.assertIn("repetir", progreso.cargar_progreso()["salteadas"])
+
     def test_la_entrada_tiene_que_corresponder_a_la_experiencia(self):
         for datos in ({"experiencia": "nunca", "entrada": "tu-primera-variable"},
                       {"experiencia": "poquito", "entrada": "si-es-grande"},
-                      {"experiencia": "bastante", "entrada": "desafio-final"}):
+                      {"experiencia": "bastante", "entrada": "desafio-final"},        # no es comienzo de sección
+                      {"experiencia": "bastante", "entrada": "hola-mundo"}):
             with self.subTest(datos):
                 self.assertEqual(self.post("/api/onboarding", {"meta_min": 10, **datos}).status_code, 400)
         self.assertEqual(progreso.cargar_progreso()["salteadas"], {})

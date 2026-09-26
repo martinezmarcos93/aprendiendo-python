@@ -7,6 +7,10 @@
   const errorFinal = document.getElementById("bv-error-final");
   const respuestas = { experiencia: null, entrada: "", meta_min: 10 };
   const bloqueEntrada = document.getElementById("bv-entrada");
+  const bloquePrueba = document.getElementById("bv-prueba");
+  const opcionPrueba = bloqueEntrada.querySelector("[data-prueba]");
+  const textoPrueba = opcionPrueba.innerHTML;
+  const prueba = [];                     // respuestas de la prueba de nivel (ADR-004), por pregunta
 
   function elegir(grupo, boton) {
     for (const x of grupo.querySelectorAll(".opcion-paso")) {
@@ -17,9 +21,11 @@
 
   /** Quien ya programó puede elegir empezar más adelante (ADR-004); "desde el principio" queda elegido. */
   function mostrarEntrada(experiencia) {
-    const opcion = bloqueEntrada.querySelector(`[data-para="${experiencia}"]`);
-    for (const b of bloqueEntrada.querySelectorAll("[data-para]")) b.hidden = b !== opcion;
+    const opcion = bloqueEntrada.querySelector(`[data-para="${experiencia}"]:not([data-prueba])`);
+    for (const b of bloqueEntrada.querySelectorAll("[data-para]")) b.hidden = b.dataset.para !== experiencia;
     bloqueEntrada.hidden = !opcion;
+    bloquePrueba.hidden = true;
+    opcionPrueba.dataset.valor = ""; opcionPrueba.innerHTML = textoPrueba;
     elegir(bloqueEntrada.querySelector('[role="radiogroup"]'), bloqueEntrada.querySelector('[data-valor=""]'));
     respuestas.entrada = "";
   }
@@ -43,8 +49,14 @@
       if (campo === "experiencia") {
         respuestas.experiencia = b.dataset.valor; document.getElementById("bv-sig-2").disabled = false;
         mostrarEntrada(b.dataset.valor);
-      } else if (campo === "entrada") respuestas.entrada = b.dataset.valor;
-      else respuestas.meta_min = Number(b.dataset.valor);
+      } else if (campo === "entrada") {
+        respuestas.entrada = b.dataset.valor;
+        bloquePrueba.hidden = !b.hasAttribute("data-prueba") || Boolean(b.dataset.valor);
+      } else if (campo === "prueba") {
+        prueba[Number(grupo.dataset.indice)] = b.dataset.valor;
+        const total = bloquePrueba.querySelectorAll('[data-campo="prueba"]').length;
+        document.getElementById("bv-corregir").disabled = prueba.filter((x) => x !== undefined).length < total;
+      } else respuestas.meta_min = Number(b.dataset.valor);
     });
   }
   document.querySelector('[data-campo="meta_min"] [data-valor="10"]').classList.add("elegida");
@@ -57,6 +69,17 @@
     ir(2);
   });
   nombre.addEventListener("keydown", (ev) => { if (ev.key === "Enter") document.getElementById("bv-sig-1").click(); });
+  document.getElementById("bv-corregir").addEventListener("click", async () => {
+    const resultado = document.getElementById("bv-resultado");
+    try {
+      const r = await Tortu.api("/api/diagnostico", { respuestas: prueba });
+      opcionPrueba.dataset.valor = r.entrada;
+      opcionPrueba.textContent = `⏩ En «${r.seccion}» (lección ${r.numero}, según tu prueba)`;
+      respuestas.entrada = r.entrada;
+      bloquePrueba.hidden = true;
+      resultado.textContent = "";
+    } catch (e) { resultado.textContent = "No se pudo corregir la prueba. Podés empezar desde el principio."; }
+  });
   document.getElementById("bv-sig-2").addEventListener("click", () => ir(3));
 
   document.getElementById("bv-empezar").addEventListener("click", async () => {

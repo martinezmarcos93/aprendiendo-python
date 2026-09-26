@@ -32,4 +32,8 @@ hay caminos personalizados ni reordenamiento algorítmico.
 - **Precisión:** una lección salteada cuenta como superada **solo para el orden del camino y los `requiere`** (si no,
   quien empieza en *Condicionales* tendría cerrado el curso de la tortuga, que pide *Dos variables*). Para todo lo que
   la ADR enumera (completada, XP, logros, liga) no cuenta, y tampoco para el certificado del curso.
+- **Segunda versión (26/09/2026): prueba de nivel.** Quien elige "bastante" puede hacer una prueba corta: 6 preguntas,
+  una por sección del curso 1 (`contenido/diagnostico.json`, validada por tests). La corrige el servidor y recomienda el
+  comienzo de la primera sección con un error (todo bien → *Desafíos*). Sigue siendo solo un punto de entrada: sin
+  caminos personalizados. "Desde el principio" viene elegido y la prueba es opcional.
 
