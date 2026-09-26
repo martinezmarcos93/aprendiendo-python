@@ -1,6 +1,6 @@
 # ADR-007: Seguridad del runtime de juegos
 
-## Estado: Propuesta (26/09/2026) — **no autoriza implementación**
+## Estado: Aceptada (26/09/2026) — decisión de Marcos
 
 > Ver la regla de gobernanza en el [índice](README.md). Origen: revisión crítica de `docs/experimental/` (26/09/2026).
 
@@ -8,7 +8,7 @@
 "Corre en el navegador" no significa "es seguro". **Un Web Worker no es por sí mismo un sandbox suficiente**: por
 defecto tiene `fetch`, `WebSocket`, `IndexedDB` e `importScripts`.
 
-## Decisión propuesta
+## Decisión
 ```
 Código TortuScript → parser → AST propio → validador → intérprete TortuGame → Web Worker → Canvas
 ```

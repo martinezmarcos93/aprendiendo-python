@@ -1,10 +1,10 @@
 # ADR-013: Separación TortuScript Desktop / TortuScript Cloud
 
-## Estado: Propuesta (26/09/2026) — **no autoriza implementación**
+## Estado: Aceptada (26/09/2026) — decisión de Marcos
 
 > Ver la regla de gobernanza en el [índice](README.md). Origen: revisión crítica de `docs/experimental/` (26/09/2026).
 
-## Decisión propuesta
+## Decisión
 ```
                  TORTUSCRIPT
           ┌──────────┴──────────┐

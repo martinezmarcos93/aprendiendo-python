@@ -1,6 +1,7 @@
 # ADR-015: Cómo llega TortuScript a las familias (instaladores)
 
-## Estado: Propuesta (26/09/2026) — **no autoriza implementación**
+## Estado: Aceptada (26/09/2026) — decisión de Marcos: **el sistema se detecta solo o lo elige el usuario, y la
+construcción es lo más agnóstica posible** (un solo comando para todos los sistemas)
 
 > Ver la regla de gobernanza en el [índice](README.md). Origen: pendiente "instalador nativo por sistema operativo"
 > (`docs/ROADMAP_MIMO_KIDS.md`) y la regla del vault: Windows → PyInstaller + Inno Setup; Linux → evaluar
@@ -26,7 +27,7 @@
 | **D. Linux: Flatpak** | cualquier distro | sandbox del sistema, actualizaciones por Flathub | cadena de construcción y publicación más pesada; revisión de Flathub |
 | **E. Seguir con el .zip** | quien ya tiene Python | ya existe | no sirve para familias no técnicas |
 
-## Decisión propuesta
+## Decisión
 1. **Primero, que Marcos defina el sistema objetivo** (dato de la Fase 0). Sin eso no se construye ningún instalador.
 2. Si es **Windows**: opción A, siguiendo `instaladores/distribucion-windows.md` del vault.
 3. Si es **Linux**: **AppImage** (B) como primer formato, por ser el de menor complejidad, sin root y para cualquier
