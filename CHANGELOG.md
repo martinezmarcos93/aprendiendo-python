@@ -3,6 +3,14 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — tests que ejecutan el JavaScript de la tortuga (26/09/2026)
+
+### Agregado
+- `tests/js/tortuga.test.mjs` ejecuta de verdad `web/static/js/tortuga.js` (con `node:test` y un canvas falso, sin
+  dependencias): el cuerpo usa el color del nivel, el lápiz arranca verde y `color` cambia solo el lápiz, el estado del
+  lápiz, y el laberinto. Una prueba de mutación (volver a pintar el cuerpo con el color del lápiz) los hace fallar.
+- `tests/test_js.py` los corre dentro de la suite (se saltean si no hay Node).
+
 ## Sin publicar — privacidad explicada en la Ayuda (26/09/2026)
 
 ### Agregado

@@ -147,7 +147,7 @@ Los logs de errores internos van a `logs/tortuscript.log` y nunca se muestran al
 ## Para quien mantiene el proyecto
 
 ```bash
-python -m unittest discover tests            # tests (335)
+python -m unittest discover tests            # tests (438; los de JavaScript se saltean si no hay Node)
 python herramientas/validar_contenido.py     # valida todos los cursos
 python herramientas/crear_paquete.py         # arma dist/TortuScript-<fecha>.zip para instalar en otra compu
 ```
