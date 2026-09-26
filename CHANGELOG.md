@@ -3,6 +3,12 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — textos más cortos (26/09/2026)
+
+### Cambiado
+- Consigna del jefe final de Tortuaria (188 → 140 caracteres; el detalle de contar turnos pasa a la nota) y
+  explicación del techo en *Proyecto casa* (166 → 150). La auditoría ya no marca textos de más de 160 caracteres.
+
 ## Sin publicar — verificación de las páginas nuevas (26/09/2026)
 
 ### Cambiado

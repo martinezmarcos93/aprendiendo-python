@@ -151,7 +151,7 @@
             },
             {
               "tipo": "explicacion",
-              "texto": "Después de las paredes la tortuga vuelve al inicio mirando hacia arriba. Avanza 100 hasta la esquina de arriba, gira 30 y dibuja el techo, otro triángulo de lado 100.",
+              "texto": "Después de las paredes, la tortuga vuelve al inicio mirando hacia arriba. Sube 100 hasta la esquina, gira 30 y dibuja el techo: otro triángulo de lado 100.",
               "codigo": "repetir 4 veces:\n    avanzar 100\n    girar_der 90\navanzar 100\ngirar_der 30\nrepetir 3 veces:\n    avanzar 100\n    girar_der 120",
               "lienzo": true
             },
