@@ -37,7 +37,8 @@
                 "mostrar \"Hola\"",
                 "print \"Hola\""
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "En Python, lo que se muestra va entre paréntesis después de print."
             },
             {
               "tipo": "predecir",
@@ -47,7 +48,8 @@
                 "edad",
                 "edad = 12"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "print(edad) muestra lo que guarda edad, no la palabra edad."
             },
             {
               "tipo": "completar",
@@ -61,7 +63,8 @@
               "respuesta": [
                 "print"
               ],
-              "salida": "Hola"
+              "salida": "Hola",
+              "pista": "En Python, mostrar se escribe en inglés."
             },
             {
               "tipo": "completar",
@@ -75,7 +78,8 @@
               "respuesta": [
                 "="
               ],
-              "salida": "Leo"
+              "salida": "Leo",
+              "pista": "En Python, para guardar se usa un solo signo igual."
             },
             {
               "tipo": "escribir",
@@ -111,7 +115,8 @@
                 "Muestra un texto en pantalla",
                 "Guarda un número"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "input es el preguntar de Python."
             },
             {
               "tipo": "predecir",
@@ -125,7 +130,8 @@
               "pregunta": "La persona escribe Leo. ¿Qué muestra este programa?",
               "entradas_prueba": [
                 "Leo"
-              ]
+              ],
+              "pista": "nombre guarda lo que escribió la persona, y el + lo pega después de Hola."
             },
             {
               "tipo": "explicacion",
@@ -148,7 +154,8 @@
               "pregunta": "La persona escribe 4. ¿Qué muestra este programa?",
               "entradas_prueba": [
                 "4"
-              ]
+              ],
+              "pista": "int convierte lo que se escribió en un número, así que se puede sumar."
             },
             {
               "tipo": "completar",
@@ -165,7 +172,8 @@
               "salida": "rojo",
               "entradas_prueba": [
                 "rojo"
-              ]
+              ],
+              "pista": "En Python, preguntar se escribe input."
             },
             {
               "tipo": "escribir",
@@ -208,7 +216,8 @@
                 "elseif",
                 "otherwise"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "sino en inglés es else."
             },
             {
               "tipo": "predecir",
@@ -218,7 +227,8 @@
                 "Par",
                 "7"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "7 dividido 2 sobra 1: no es par, así que se hace lo del else."
             },
             {
               "tipo": "completar",
@@ -232,7 +242,8 @@
               "respuesta": [
                 "if"
               ],
-              "salida": "Menor"
+              "salida": "Menor",
+              "pista": "En Python, si se escribe if."
             },
             {
               "tipo": "ordenar",
@@ -243,7 +254,8 @@
                 "    print(\"Mayor\")",
                 "else:",
                 "    print(\"Menor\")"
-              ]
+              ],
+              "pista": "Primero n. Después if con su parte corrida y else con la suya."
             },
             {
               "tipo": "escribir",
@@ -297,7 +309,8 @@
                 "Ja",
                 "JaJa"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "range(2) repite dos veces, y cada print va en su propia línea."
             },
             {
               "tipo": "predecir",
@@ -307,7 +320,8 @@
                 "45",
                 "x\nx"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "x toma cada número de la lista, en orden, y se muestra uno por línea."
             },
             {
               "tipo": "completar",
@@ -321,7 +335,8 @@
               "respuesta": [
                 "range"
               ],
-              "salida": "Hola\nHola\nHola\nHola"
+              "salida": "Hola\nHola\nHola\nHola",
+              "pista": "El repetir de Python es for con range y el número de veces."
             },
             {
               "tipo": "escribir",
@@ -360,7 +375,8 @@
                 "give",
                 "back"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "devolver en inglés es return."
             },
             {
               "tipo": "predecir",
@@ -370,7 +386,8 @@
                 "triple",
                 "34"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "triple(4) devuelve 4 * 3."
             },
             {
               "tipo": "completar",
@@ -384,7 +401,8 @@
               "respuesta": [
                 "def"
               ],
-              "salida": "5"
+              "salida": "5",
+              "pista": "En Python, la palabra función se escribe def."
             },
             {
               "tipo": "escribir",
@@ -434,7 +452,8 @@
               ],
               "entradas_prueba": [
                 "4"
-              ]
+              ],
+              "pista": "Primero se pide el número, después se calcula el doble y al final se muestra."
             },
             {
               "tipo": "escribir",

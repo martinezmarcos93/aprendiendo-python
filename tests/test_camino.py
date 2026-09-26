@@ -374,6 +374,14 @@ class TestWebCamino(Base):
         mal = self.post("/api/lecciones/rpg-jefe/pasos/2/evaluar", {"codigo": 'mostrar "Venciste al Bug en 3 turnos"'}).get_json()
         self.assertEqual(mal["evaluacion"]["estado"], "incorrecto")                  # con la semilla fija son 6 turnos
 
+    def test_un_error_muestra_la_pista_propia_del_paso(self):
+        self.post("/api/onboarding", {"meta_min": 10})
+        paso = contenido.cargar_curso()["secciones"][0]["lecciones"][0]["pasos"][2]
+        r = self.post("/api/lecciones/hola-mundo/pasos/2/comprobar", {"respuesta": ["sumar"]}).get_json()
+        self.assertFalse(r["ok"])
+        self.assertEqual(r["pista"], paso["pista"])
+        self.assertNotEqual(r["pista"], leccion.PISTAS_GENERICAS["completar"])
+
     def test_el_curso_de_la_tortuga_empieza_cerrado_y_se_abre_al_terminar_dos_variables(self):
         self.post("/api/onboarding", {"meta_min": 10})
         html = self.c.get("/").get_data(as_text=True)

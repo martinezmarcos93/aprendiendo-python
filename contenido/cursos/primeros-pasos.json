@@ -42,7 +42,8 @@
               "respuesta": [
                 "mostrar"
               ],
-              "salida": "Hola"
+              "salida": "Hola",
+              "pista": "La palabra que hace aparecer un texto en pantalla es la que viste en el ejemplo."
             },
             {
               "tipo": "ordenar",
@@ -50,7 +51,8 @@
               "lineas": [
                 "mostrar \"Hola\"",
                 "mostrar \"Chau\""
-              ]
+              ],
+              "pista": "La computadora hace las líneas de arriba hacia abajo: lo que sale primero va arriba."
             },
             {
               "tipo": "predecir",
@@ -110,7 +112,8 @@
                 "mostrar \"4 + 4\"",
                 "mostrar \"ocho\""
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Si la cuenta está entre comillas, la compu la muestra como texto y no la calcula."
             },
             {
               "tipo": "completar",
@@ -124,11 +127,12 @@
               "respuesta": [
                 "5"
               ],
-              "salida": "9"
+              "salida": "9",
+              "pista": "¿Qué número sumado a 4 da 9? Ojo: entre comillas sería un texto, no un número."
             },
             {
               "tipo": "escribir",
-              "consigna": "Utiliza mostrar 7+3 con comillas y luego en el renglon de abajo sin comillas, veras la diferencia",
+              "consigna": "Usá mostrar con 7+3 entre comillas y, en el renglón de abajo, sin comillas. Vas a ver la diferencia.",
               "solucion": "mostrar \"7 + 3\"\nmostrar 7 + 3"
             }
           ]
@@ -150,7 +154,8 @@
                 "ABC",
                 "A B C"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Cada mostrar escribe en una línea nueva."
             },
             {
               "tipo": "completar",
@@ -164,7 +169,8 @@
               "respuesta": [
                 "mostrar"
               ],
-              "salida": "Hola\nChau"
+              "salida": "Hola\nChau",
+              "pista": "Para que aparezca Chau hace falta la misma orden que mostró Hola."
             },
             {
               "tipo": "ordenar",
@@ -173,7 +179,8 @@
                 "mostrar 1",
                 "mostrar 2",
                 "mostrar 3"
-              ]
+              ],
+              "pista": "La línea que va arriba es la que se ve primero."
             },
             {
               "tipo": "escribir",
@@ -206,7 +213,8 @@
                 "7 es puntos",
                 "puntos 7 es"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Primero va el nombre de la variable, después es y al final lo que guarda."
             },
             {
               "tipo": "predecir",
@@ -243,7 +251,8 @@
                 "es",
                 "lugar"
               ],
-              "salida": "20"
+              "salida": "20",
+              "pista": "Arriba se guarda con es. Abajo se muestra el nombre de la variable."
             },
             {
               "tipo": "escribir",
@@ -271,7 +280,8 @@
                 "mascota es Luna",
                 "\"mascota\" es Luna"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Los textos van entre comillas. El nombre de la variable, no."
             },
             {
               "tipo": "predecir",
@@ -281,7 +291,8 @@
                 "animal",
                 "\"perro\""
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "mostrar animal muestra lo que guarda animal, sin las comillas."
             },
             {
               "tipo": "ordenar",
@@ -289,7 +300,8 @@
               "lineas": [
                 "comida es \"pizza\"",
                 "mostrar comida"
-              ]
+              ],
+              "pista": "No se puede mostrar algo que todavía no se guardó."
             },
             {
               "tipo": "completar",
@@ -303,7 +315,8 @@
               "respuesta": [
                 "\"frutilla\""
               ],
-              "salida": "frutilla"
+              "salida": "frutilla",
+              "pista": "Un texto va entre comillas. Sin comillas, la compu busca una variable con ese nombre."
             },
             {
               "tipo": "escribir",
@@ -329,7 +342,8 @@
                 "3",
                 "7"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Se muestra solo y. Fijate cuánto vale y."
             },
             {
               "tipo": "predecir",
@@ -339,7 +353,8 @@
                 "4\n3",
                 "7"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Cada mostrar va en su propia línea, en el orden en que están."
             },
             {
               "tipo": "predecir",
@@ -360,7 +375,8 @@
                 "b es 2",
                 "mostrar a",
                 "mostrar b"
-              ]
+              ],
+              "pista": "Primero se guardan las dos variables. Después se muestran: a antes que b."
             },
             {
               "tipo": "escribir",
@@ -396,7 +412,8 @@
                 "Muestra un texto en pantalla",
                 "Guarda un número"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Pensá qué pasa cuando un programa te hace una pregunta: espera que respondas."
             },
             {
               "tipo": "predecir",
@@ -410,7 +427,8 @@
               "pregunta": "La persona escribe Ana. ¿Qué muestra este programa?",
               "entradas_prueba": [
                 "Ana"
-              ]
+              ],
+              "pista": "nombre guarda lo que escribió la persona, y mostrar muestra eso."
             },
             {
               "tipo": "completar",
@@ -427,7 +445,8 @@
               "salida": "11",
               "entradas_prueba": [
                 "11"
-              ]
+              ],
+              "pista": "La palabra que le hace una pregunta a la persona es la de esta lección."
             },
             {
               "tipo": "ordenar",
@@ -438,7 +457,8 @@
               ],
               "entradas_prueba": [
                 "rojo"
-              ]
+              ],
+              "pista": "Para mostrar el color, primero hay que preguntarlo."
             },
             {
               "tipo": "escribir",
@@ -468,7 +488,8 @@
                 "Hola nombre",
                 "HolaLeo"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "El + pega los textos. Fijate que Hola termina con un espacio."
             },
             {
               "tipo": "predecir",
@@ -493,7 +514,8 @@
               "respuesta": [
                 "+"
               ],
-              "salida": "Chau Lu"
+              "salida": "Chau Lu",
+              "pista": "Para pegar dos textos se usa el mismo signo que para sumar."
             },
             {
               "tipo": "ordenar",
@@ -504,7 +526,8 @@
               ],
               "entradas_prueba": [
                 "Ana"
-              ]
+              ],
+              "pista": "Primero se pregunta el nombre. Después se lo usa para saludar."
             },
             {
               "tipo": "escribir",
@@ -540,7 +563,8 @@
               "pregunta": "La persona escribe pizza. ¿Qué muestra?",
               "entradas_prueba": [
                 "pizza"
-              ]
+              ],
+              "pista": "comida guarda lo que escribió la persona, y el + lo pega después de Comés."
             },
             {
               "tipo": "elegir",
@@ -568,7 +592,8 @@
               "salida": "Sabor: menta",
               "entradas_prueba": [
                 "menta"
-              ]
+              ],
+              "pista": "Para pegar el texto con lo que guarda sabor se usa el signo de sumar."
             },
             {
               "tipo": "ordenar",
@@ -580,7 +605,8 @@
               ],
               "entradas_prueba": [
                 "fútbol"
-              ]
+              ],
+              "pista": "Primero se pregunta, después se usa la respuesta y al final se felicita."
             },
             {
               "tipo": "escribir",
@@ -616,7 +642,8 @@
                 "64",
                 "6 + 4"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Sin comillas, la compu hace la cuenta."
             },
             {
               "tipo": "elegir",
@@ -626,7 +653,8 @@
                 "mostrar \"9 + 1\"",
                 "mostrar 91"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Si está entre comillas, se muestra tal cual y no se calcula."
             },
             {
               "tipo": "completar",
@@ -640,7 +668,8 @@
               "respuesta": [
                 "+"
               ],
-              "salida": "9"
+              "salida": "9",
+              "pista": "¿Qué cuenta con 7 y 2 da 9?"
             },
             {
               "tipo": "escribir",
@@ -666,7 +695,8 @@
                 "7",
                 "52"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "La estrellita quiere decir multiplicar: 5 veces 2."
             },
             {
               "tipo": "predecir",
@@ -676,7 +706,8 @@
                 "13",
                 "94"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "El - resta: a 9 le sacás 4."
             },
             {
               "tipo": "elegir",
@@ -686,7 +717,8 @@
                 "x",
                 "por"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "En programación no se multiplica con x: se usa una estrellita."
             },
             {
               "tipo": "completar",
@@ -700,7 +732,8 @@
               "respuesta": [
                 "*"
               ],
-              "salida": "18"
+              "salida": "18",
+              "pista": "¿Qué cuenta con 6 y 3 da 18? Probá multiplicar."
             },
             {
               "tipo": "escribir",
@@ -726,7 +759,8 @@
                 "25",
                 "a + b"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "a vale 2 y b vale 5: la compu hace la cuenta con esos números."
             },
             {
               "tipo": "predecir",
@@ -736,7 +770,8 @@
                 "13",
                 "n - 3"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "n vale 10: a 10 le restás 3."
             },
             {
               "tipo": "completar",
@@ -750,7 +785,8 @@
               "respuesta": [
                 "*"
               ],
-              "salida": "16"
+              "salida": "16",
+              "pista": "Multiplicar se escribe con una estrellita."
             },
             {
               "tipo": "escribir",
@@ -794,7 +830,8 @@
                 "5",
                 "9"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "9 es mayor que 5, así que se hace lo que está adentro del si."
             },
             {
               "tipo": "completar",
@@ -808,7 +845,8 @@
               "respuesta": [
                 "si"
               ],
-              "salida": "Grande"
+              "salida": "Grande",
+              "pista": "Para decidir según una condición se usa si."
             },
             {
               "tipo": "ordenar",
@@ -817,7 +855,8 @@
                 "n es 15",
                 "si n > 10:",
                 "    mostrar \"Grande\""
-              ]
+              ],
+              "pista": "Primero guardás n, después preguntás con si, y adentro va lo que se muestra."
             },
             {
               "tipo": "escribir",
@@ -856,7 +895,8 @@
                 "2",
                 "5"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "% da lo que sobra al dividir. 10 dividido 5 da justo: no sobra nada."
             },
             {
               "tipo": "elegir",
@@ -866,7 +906,8 @@
                 "si n % 2 = 0:",
                 "si n + 2 == 0:"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Un número es par si al dividirlo por 2 no sobra nada. Para comparar se usa ==, no =."
             },
             {
               "tipo": "completar",
@@ -880,7 +921,8 @@
               "respuesta": [
                 "=="
               ],
-              "salida": "Par"
+              "salida": "Par",
+              "pista": "Para preguntar si dos cosas son iguales se usan dos signos igual."
             },
             {
               "tipo": "escribir",
@@ -906,7 +948,8 @@
                 "Par",
                 "Par\nImpar"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "7 dividido 2 sobra 1, así que no es par: se hace lo de sino."
             },
             {
               "tipo": "predecir",
@@ -931,7 +974,8 @@
               "respuesta": [
                 "sino"
               ],
-              "salida": "Menor"
+              "salida": "Menor",
+              "pista": "Cuando el si no se cumple, se hace lo que está en sino."
             },
             {
               "tipo": "ordenar",
@@ -942,7 +986,8 @@
                 "    mostrar \"Mayor\"",
                 "sino:",
                 "    mostrar \"Menor\""
-              ]
+              ],
+              "pista": "Primero n. Después si, con lo suyo adentro. Al final sino, con lo suyo adentro."
             },
             {
               "tipo": "escribir",
@@ -977,7 +1022,8 @@
                 "Ja",
                 "JaJaJa"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Se muestra Ja tres veces, y cada mostrar va en una línea nueva."
             },
             {
               "tipo": "predecir",
@@ -1002,7 +1048,8 @@
               "respuesta": [
                 "4"
               ],
-              "salida": "Hola\nHola\nHola\nHola"
+              "salida": "Hola\nHola\nHola\nHola",
+              "pista": "El número que va antes de veces dice cuántas veces se repite."
             },
             {
               "tipo": "ordenar",
@@ -1010,7 +1057,8 @@
               "lineas": [
                 "repetir 3 veces:",
                 "    mostrar \"Tortuga\""
-              ]
+              ],
+              "pista": "Primero va repetir. Lo que se repite va abajo, corrido con 4 espacios."
             },
             {
               "tipo": "escribir",
@@ -1038,7 +1086,8 @@
                 "5\n5\n5",
                 "6\n7\n8"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "En cada vuelta primero se muestra n y después se le suma 1: 5, luego 6, luego 7."
             },
             {
               "tipo": "predecir",
@@ -1048,7 +1097,8 @@
                 "10",
                 "0"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "mostrar está afuera del repetir: se muestra una sola vez, al final. Cada vuelta suma 10."
             },
             {
               "tipo": "completar",
@@ -1062,7 +1112,8 @@
               "respuesta": [
                 "n"
               ],
-              "salida": "1\n2\n3"
+              "salida": "1\n2\n3",
+              "pista": "Para que n crezca de a 1, a n hay que sumarle 1."
             },
             {
               "tipo": "elegir",
@@ -1072,7 +1123,8 @@
                 "Compara n con 1",
                 "Muestra n"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "n es n + 1 toma lo que vale n, le suma 1 y lo vuelve a guardar en n."
             },
             {
               "tipo": "escribir",
@@ -1098,7 +1150,8 @@
                 "5",
                 "0"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "total empieza en 0 y en cada una de las 4 vueltas se le suma 5."
             },
             {
               "tipo": "predecir",
@@ -1123,7 +1176,8 @@
               "respuesta": [
                 "suma"
               ],
-              "salida": "3"
+              "salida": "3",
+              "pista": "Al final se muestra la variable donde se fue guardando la suma."
             },
             {
               "tipo": "elegir",
@@ -1133,7 +1187,8 @@
                 "Porque es opcional",
                 "Porque va siempre primero"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Lo que está corrido se repite. Lo que no está corrido se hace una vez, después."
             },
             {
               "tipo": "escribir",
@@ -1166,7 +1221,8 @@
                 "decir_hola",
                 "Nada"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "La última línea usa la función, y la función muestra un texto."
             },
             {
               "tipo": "predecir",
@@ -1196,7 +1252,8 @@
               "respuesta": [
                 "\"Leo\""
               ],
-              "salida": "Hola Leo"
+              "salida": "Hola Leo",
+              "pista": "Leo es un texto: va entre comillas."
             },
             {
               "tipo": "ordenar",
@@ -1205,7 +1262,8 @@
                 "funcion saludar(nombre):",
                 "    mostrar \"Hola \" + nombre",
                 "saludar(\"Ana\")"
-              ]
+              ],
+              "pista": "Primero se crea la función con su contenido corrido. Después se la usa."
             },
             {
               "tipo": "escribir",
@@ -1232,7 +1290,8 @@
                 "7",
                 "34"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "a vale 3 y b vale 4. La estrellita multiplica."
             },
             {
               "tipo": "predecir",
@@ -1259,7 +1318,8 @@
                 "10",
                 "20"
               ],
-              "salida": "30"
+              "salida": "30",
+              "pista": "¿Qué dos números sumados dan 30? El primero va en a y el segundo en b."
             },
             {
               "tipo": "elegir",
@@ -1269,7 +1329,8 @@
                 "Un punto",
                 "Un signo más"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Fijate cómo están separados el 3 y el 4 en multiplicar(3, 4)."
             },
             {
               "tipo": "escribir",
@@ -1295,7 +1356,8 @@
                 "9",
                 "mas_uno"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "mas_uno(9) devuelve 9 + 1, y mostrar muestra ese resultado."
             },
             {
               "tipo": "predecir",
@@ -1305,7 +1367,8 @@
                 "1",
                 "x"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "x guarda lo que devolvió mas_uno(1), o sea 1 + 1."
             },
             {
               "tipo": "elegir",
@@ -1315,7 +1378,8 @@
                 "Escribe el resultado en pantalla",
                 "Repite la función"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "devolver no escribe en pantalla: entrega el resultado a quien usó la función."
             },
             {
               "tipo": "completar",
@@ -1329,7 +1393,8 @@
               "respuesta": [
                 "devolver"
               ],
-              "salida": "12"
+              "salida": "12",
+              "pista": "Para que la función entregue el resultado se usa devolver."
             },
             {
               "tipo": "escribir",
@@ -1363,7 +1428,8 @@
                 "Hola Lu",
                 "Hola n\nHola n\nHola n"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "n guarda Lu, y se repite 3 veces, cada una en su línea."
             },
             {
               "tipo": "ordenar",
@@ -1372,7 +1438,8 @@
                 "nombre es \"Ana\"",
                 "repetir 2 veces:",
                 "    mostrar \"Hola \" + nombre"
-              ]
+              ],
+              "pista": "Primero se guarda el nombre. Después va repetir y, corrido, lo que se repite."
             },
             {
               "tipo": "completar",
@@ -1386,7 +1453,8 @@
               "respuesta": [
                 "3"
               ],
-              "salida": "Chau Leo\nChau Leo\nChau Leo"
+              "salida": "Chau Leo\nChau Leo\nChau Leo",
+              "pista": "El número antes de veces dice cuántas veces se repite."
             },
             {
               "tipo": "escribir",
@@ -1412,7 +1480,8 @@
                 "b gana",
                 "10"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "10 es mayor que 3, así que se cumple el si."
             },
             {
               "tipo": "predecir",
@@ -1437,7 +1506,8 @@
               "respuesta": [
                 ">"
               ],
-              "salida": "6"
+              "salida": "6",
+              "pista": "Si a es mayor que b, se muestra a. ¿Qué signo quiere decir mayor que?"
             },
             {
               "tipo": "escribir",
@@ -1463,7 +1533,8 @@
                 "5\n5\n5",
                 "5\n6\n7"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "c vale 1, después 2, después 3. Se muestra 5 * c cada vez."
             },
             {
               "tipo": "completar",
@@ -1477,7 +1548,8 @@
               "respuesta": [
                 "contador"
               ],
-              "salida": "4\n8\n12"
+              "salida": "4\n8\n12",
+              "pista": "Para la tabla se multiplica n por el número que va cambiando en cada vuelta."
             },
             {
               "tipo": "ordenar",
@@ -1488,7 +1560,8 @@
                 "repetir 3 veces:",
                 "    mostrar n * contador",
                 "    contador es contador + 1"
-              ]
+              ],
+              "pista": "Primero las dos variables. Después repetir, y adentro mostrar antes de sumarle 1 al contador."
             },
             {
               "tipo": "escribir",
@@ -1514,7 +1587,8 @@
                 "4\n4",
                 "3\n2"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Primero se muestra n y después se le resta 1: 4, luego 3."
             },
             {
               "tipo": "predecir",
@@ -1524,7 +1598,8 @@
                 "2",
                 "1"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "mostrar está afuera del repetir. n empieza en 2 y le restás 1 dos veces."
             },
             {
               "tipo": "completar",
@@ -1538,7 +1613,8 @@
               "respuesta": [
                 "-"
               ],
-              "salida": "3\n2\n1"
+              "salida": "3\n2\n1",
+              "pista": "Para contar para atrás, en cada vuelta n tiene que bajar."
             },
             {
               "tipo": "elegir",
@@ -1548,7 +1624,8 @@
                 "Corrido 4 espacios, dentro del repetir",
                 "No se puede"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Lo que no está corrido se hace una vez, cuando termina el repetir."
             },
             {
               "tipo": "escribir",
@@ -1574,7 +1651,8 @@
                 "Lutiene9",
                 "a tiene b"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Las comas separan lo que se muestra, y entre cada cosa queda un espacio."
             },
             {
               "tipo": "predecir",
@@ -1584,7 +1662,8 @@
                 "5",
                 "Suma: 2 + 3"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "La cuenta sin comillas se calcula. La coma deja un espacio entre el texto y el resultado."
             },
             {
               "tipo": "completar",
@@ -1598,7 +1677,8 @@
               "respuesta": [
                 ","
               ],
-              "salida": "El número es 7"
+              "salida": "El número es 7",
+              "pista": "Para mostrar un texto y un número juntos, se separan con coma."
             },
             {
               "tipo": "escribir",
@@ -1624,7 +1704,8 @@
                 "dos\ndos\ndos",
                 "1\n2\n3"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "n vale 1, 2 y 3 en las vueltas, pero solo muestra algo cuando n es 2."
             },
             {
               "tipo": "predecir",
@@ -1634,7 +1715,8 @@
                 "1\n3",
                 "1\n2\n3\n4"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Muestra n solo cuando es par. n va de 1 a 4."
             },
             {
               "tipo": "completar",
@@ -1648,7 +1730,8 @@
               "respuesta": [
                 "+"
               ],
-              "salida": "2\n4\n6"
+              "salida": "2\n4\n6",
+              "pista": "n tiene que avanzar de a 1 en cada vuelta para recorrer del 1 al 6."
             },
             {
               "tipo": "ordenar",
@@ -1659,7 +1742,8 @@
                 "    si n % 2 == 0:",
                 "        mostrar n",
                 "    n es n + 1"
-              ]
+              ],
+              "pista": "El si va dentro del repetir, y mostrar va dentro del si. n es n + 1 se hace en cada vuelta."
             },
             {
               "tipo": "escribir",
@@ -1685,7 +1769,8 @@
                 "Entrá",
                 "luna"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "La clave es luna, no sol: no se cumple el si."
             },
             {
               "tipo": "predecir",
@@ -1710,7 +1795,8 @@
               "respuesta": [
                 "=="
               ],
-              "salida": "Correcto"
+              "salida": "Correcto",
+              "pista": "Para preguntar si la clave es igual a abc se usan dos signos igual."
             },
             {
               "tipo": "elegir",
@@ -1720,7 +1806,8 @@
                 "si clave = \"pez\":",
                 "si \"pez\" clave:"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Para comparar se usa ==. Con un solo = se guarda, no se compara."
             },
             {
               "tipo": "escribir",
@@ -1746,7 +1833,8 @@
                 "Hola",
                 "Hola\nHola"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "n vale 1, 2 y 3 mientras sea menor o igual que 3: son tres vueltas."
             },
             {
               "tipo": "predecir",
@@ -1756,7 +1844,8 @@
                 "10\n9\n8",
                 "9\n8"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Se repite mientras n sea mayor que 8. Cuando n llega a 8, para."
             },
             {
               "tipo": "completar",
@@ -1770,7 +1859,8 @@
               "respuesta": [
                 "<="
               ],
-              "salida": "1\n2\n3"
+              "salida": "1\n2\n3",
+              "pista": "Para que también muestre el 3, la condición tiene que incluirlo: menor o igual."
             },
             {
               "tipo": "elegir",
@@ -1780,7 +1870,8 @@
                 "Termina enseguida",
                 "Muestra un error de suma"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Si n nunca cambia, la condición se cumple siempre."
             },
             {
               "tipo": "escribir",
@@ -1807,7 +1898,8 @@
                 "Positivo",
                 "-3"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "-3 no es mayor que 0, así que se hace lo de sino."
             },
             {
               "tipo": "ordenar",
@@ -1819,7 +1911,8 @@
                 "    sino:",
                 "        mostrar \"No\"",
                 "es_par(4)"
-              ]
+              ],
+              "pista": "Primero la función: si con su parte y sino con la suya, todo corrido. Al final, se la usa."
             },
             {
               "tipo": "completar",
@@ -1833,7 +1926,8 @@
               "respuesta": [
                 "n * 2"
               ],
-              "salida": "8"
+              "salida": "8",
+              "pista": "El doble de n es n multiplicado por 2."
             },
             {
               "tipo": "escribir",

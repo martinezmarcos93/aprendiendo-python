@@ -3,6 +3,21 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — pistas propias en todos los pasos (26/09/2026)
+
+Rama `content/pistas-propias`.
+
+### Agregado
+- **142 pistas nuevas**, una por cada paso de elegir, predecir, completar u ordenar que usaba la pista genérica
+  (primeros pasos, tortuga y Python real). Explican el razonamiento sin dar la respuesta. Ahora es cierto lo que dice
+  el README: ante un error hay una pista específica.
+- El validador revisa el estilo de las pistas (frases cortas, sin jerga, tildes) y **avisa si un paso nuevo queda sin
+  pista propia**. Un test exige que no falte ninguna.
+
+### Corregido
+- Consigna de *Texto o cuenta* con tuteo y sin tildes ("Utiliza… renglon… veras") → voseo y ortografía correctos.
+- Informe de la prueba simulada actualizado: 0 pasos sin pista propia.
+
 ## Sin publicar — Tortuaria, el curso piloto de juego de rol (26/09/2026)
 
 Rama `feat/tortuaria`. Fase 2 del roadmap maestro.

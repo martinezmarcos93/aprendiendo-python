@@ -246,5 +246,22 @@ class TestValidadorConDado(unittest.TestCase):
         self.assertEqual(errores(EXPL, explicado, paso), [])
 
 
+class TestPistasPropias(unittest.TestCase):
+    def test_todos_los_pasos_con_opciones_tienen_pista_propia(self):
+        faltan = [f"{lec['id']}#{i}" for curso in contenido.todos_los_cursos() for _, lec in contenido.lecciones(curso)
+                  for i, p in enumerate(lec["pasos"])
+                  if p["tipo"] in ("elegir", "predecir", "completar", "ordenar") and not p.get("pista")]
+        self.assertEqual(faltan, [])
+
+    def test_el_validador_avisa_si_falta_la_pista_o_si_esta_mal_escrita(self):
+        def avisos(*pasos):
+            return [h.mensaje for h in validar_curso(curso_con(*pasos)) if h.nivel == AVISO]
+        sin = {"tipo": "elegir", "pregunta": "¿Cuál?", "opciones": ["a", "b"], "correcta": 0}
+        self.assertTrue(any("sin «pista» propia" in m for m in avisos(EXPL, sin)))
+        con_jerga = {**sin, "pista": "Es un string."}
+        self.assertTrue(any("jerga" in m for m in avisos(EXPL, con_jerga)))
+        self.assertEqual(avisos(EXPL, {**sin, "pista": "Fijate en la primera."}), [])
+
+
 if __name__ == "__main__":
     unittest.main()

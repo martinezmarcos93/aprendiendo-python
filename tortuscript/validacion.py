@@ -77,7 +77,7 @@ def _palabras(codigo_tortu):
 
 
 def _textos_del_paso(paso):
-    campos = ("texto", "consigna", "pregunta", "nota")
+    campos = ("texto", "consigna", "pregunta", "nota", "pista")
     return [paso[c] for c in campos if isinstance(paso.get(c), str)]
 
 
@@ -139,6 +139,8 @@ def _validar_paso(paso, donde, hallazgos):
             hallazgos.append(Hallazgo(ERROR, donde, f"«{campo}» solo sirve en pasos «escribir»"))
     if paso.get("usar") and paso.get("laberinto") is None:
         hallazgos.append(Hallazgo(ERROR, donde, "«usar» por ahora solo se comprueba en los laberintos"))
+    if tipo in ("elegir", "predecir", "completar", "ordenar") and not paso.get("pista"):
+        hallazgos.append(Hallazgo(AVISO, donde, "sin «pista» propia: ante un error se vería la pista genérica"))
 
     if tipo == "explicacion":
         if paso.get("tortu"):                      # TortuScript y Python lado a lado: el Python es la traducción exacta

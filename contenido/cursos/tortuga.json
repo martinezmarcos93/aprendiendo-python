@@ -31,7 +31,8 @@
                 "subir",
                 "mostrar"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "La orden de la tortuga para ir hacia adelante es la del ejemplo de esta lección."
             },
             {
               "tipo": "elegir",
@@ -56,7 +57,8 @@
               "respuesta": [
                 "150"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "El número dice cuánto camina la tortuga: para una línea larga hace falta un número grande."
             },
             {
               "tipo": "escribir",
@@ -85,7 +87,8 @@
                 "45",
                 "360"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Una vuelta entera son 360 grados. Un cuarto de vuelta es la cuarta parte."
             },
             {
               "tipo": "elegir",
@@ -95,7 +98,8 @@
                 "180",
                 "100"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Una vuelta completa deja a la tortuga mirando para el mismo lado que al principio."
             },
             {
               "tipo": "completar",
@@ -109,7 +113,8 @@
               "respuesta": [
                 "90"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Para una esquina de L la tortuga gira un cuarto de vuelta."
             },
             {
               "tipo": "ordenar",
@@ -163,7 +168,8 @@
                 "45 grados",
                 "180 grados"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Las esquinas de un cuadrado son rectas: un cuarto de vuelta."
             },
             {
               "tipo": "completar",
@@ -181,7 +187,8 @@
                 "90",
                 "90"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Los tres giros del cuadrado son iguales: un cuarto de vuelta cada uno."
             },
             {
               "tipo": "escribir",
@@ -219,7 +226,8 @@
               ],
               "correcta": 0,
               "cuenta": "trazos",
-              "lienzo": true
+              "lienzo": true,
+              "pista": "Cada vuelta dibuja una línea con avanzar. Contá cuántas vueltas hay."
             },
             {
               "tipo": "completar",
@@ -233,7 +241,8 @@
               "respuesta": [
                 "4"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Un cuadrado tiene 4 lados iguales."
             },
             {
               "tipo": "ordenar",
@@ -243,7 +252,8 @@
                 "    avanzar 60",
                 "    girar_der 90"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Primero va repetir. Abajo, corrido, avanzar y después el giro."
             },
             {
               "tipo": "escribir",
@@ -288,7 +298,8 @@
               "respuesta": [
                 "120"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Para cerrar un triángulo, entre los tres giros la tortuga tiene que dar una vuelta entera: 360 dividido 3."
             },
             {
               "tipo": "predecir",
@@ -301,7 +312,8 @@
               ],
               "correcta": 0,
               "cuenta": "trazos",
-              "lienzo": true
+              "lienzo": true,
+              "pista": "Cada vuelta dibuja una línea. Contá cuántas veces se repite."
             },
             {
               "tipo": "escribir",
@@ -355,7 +367,8 @@
               "respuesta": [
                 "72"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "El pentágono tiene 5 lados: la vuelta entera, 360, se reparte en 5 giros."
             },
             {
               "tipo": "escribir",
@@ -390,7 +403,8 @@
                 "color verde",
                 "pintar \"verde\""
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "El color va entre comillas, como todo texto."
             },
             {
               "tipo": "elegir",
@@ -400,7 +414,8 @@
                 "Verde",
                 "Negra"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "La línea toma el último color que se eligió antes de avanzar."
             },
             {
               "tipo": "completar",
@@ -414,7 +429,8 @@
               "respuesta": [
                 "\"rojo\""
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "El color es un texto: va entre comillas. Y el cuadrado tiene que ser rojo."
             },
             {
               "tipo": "escribir",
@@ -457,7 +473,8 @@
                 "bajar_lapiz",
                 "color"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "Si el lápiz está arriba, no toca la hoja."
             },
             {
               "tipo": "completar",
@@ -471,7 +488,8 @@
               "respuesta": [
                 "subir_lapiz"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Para dejar un espacio, la tortuga tiene que avanzar sin dibujar."
             },
             {
               "tipo": "escribir",
@@ -502,7 +520,8 @@
               ],
               "correcta": 0,
               "cuenta": "trazos",
-              "lienzo": true
+              "lienzo": true,
+              "pista": "Cada vuelta dibuja una línea. Contá cuántas veces se repite."
             },
             {
               "tipo": "completar",
@@ -516,7 +535,8 @@
               "respuesta": [
                 "144"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "La estrella de 5 puntas gira mucho en cada punta: más que un cuarto de vuelta. Fijate el giro del ejemplo."
             },
             {
               "tipo": "ordenar",
@@ -527,7 +547,8 @@
                 "    avanzar 90",
                 "    girar_der 144"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Primero se elige el color. Después va repetir y, corrido, avanzar y girar."
             },
             {
               "tipo": "escribir",
@@ -562,7 +583,8 @@
                 "Cambia el color",
                 "La tortuga gira más"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "lado es lo que avanza la tortuga en cada lado: si crece, el cuadrado crece."
             },
             {
               "tipo": "completar",
@@ -576,7 +598,8 @@
               "respuesta": [
                 "lado"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Para que el tamaño salga de la variable, avanzar tiene que usar la variable."
             },
             {
               "tipo": "ordenar",
@@ -587,7 +610,8 @@
                 "    avanzar lado",
                 "    girar_der 90"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Primero se guarda el lado. Después va repetir y, adentro, avanzar lado y el giro."
             },
             {
               "tipo": "escribir",
@@ -633,7 +657,8 @@
               "respuesta": [
                 "100"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Lo que va entre paréntesis es el tamaño del lado que querés."
             },
             {
               "tipo": "ordenar",
@@ -645,7 +670,8 @@
                 "        girar_der 90",
                 "cuadrado(80)"
               ],
-              "tortuga": true
+              "tortuga": true,
+              "pista": "Primero la función con todo su contenido corrido. Al final, se la usa."
             },
             {
               "tipo": "escribir",
@@ -674,7 +700,8 @@
                 "Achica el lado",
                 "Cambia el color"
               ],
-              "correcta": 0
+              "correcta": 0,
+              "pista": "En cada vuelta lado vale 10 más que antes."
             },
             {
               "tipo": "predecir",
@@ -687,7 +714,8 @@
               ],
               "correcta": 0,
               "cuenta": "trazos",
-              "lienzo": true
+              "lienzo": true,
+              "pista": "Cada vuelta dibuja una línea con avanzar. Contá las vueltas."
             },
             {
               "tipo": "escribir",
@@ -911,7 +939,8 @@
               ],
               "correcta": 0,
               "cuenta": "trazos",
-              "lienzo": true
+              "lienzo": true,
+              "pista": "Cada vuelta tiene dos avanzar: dos líneas por vuelta."
             },
             {
               "tipo": "escribir",

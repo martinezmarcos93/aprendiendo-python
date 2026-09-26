@@ -19,7 +19,7 @@
 | Vale (11) | nunca | 768px, tam=grande | usa pistas · error 30% | 7 | 7 | 308 | 70% | 1 / 0 |
 | Nico (12) | nunca | 1280px | normal · error 20% | 9 | 9 | 420 | 85% | 0 / 0 |
 
-Total: 62 lecciones y 363 pasos jugados en 249 s.
+Total: 62 lecciones y 363 pasos jugados en 256 s.
 
 ## Robustez (lo que sí mide)
 
@@ -44,9 +44,9 @@ Los errores de la simulación son al azar: esta lista muestra **dónde se probó
 
 ## Señales objetivas en el contenido (no dependen de la simulación)
 
-- Pasos de elegir/predecir/completar/ordenar **sin pista propia** (usan la genérica): **137**.
-  Primeros: hola-mundo#3, hola-mundo#4, texto-o-cuenta#4, texto-o-cuenta#5, dos-lineas#2, dos-lineas#3, dos-lineas#4, tu-primera-variable#2, tu-primera-variable#5, variable-de-texto#2, variable-de-texto#3, variable-de-texto#4 …
-- Consignas de más de 160 caracteres: **1** → proyecto-casa#3 (166)
+- Pasos de elegir/predecir/completar/ordenar **sin pista propia** (usan la genérica): **0**.
+  Primeros: 
+- Consignas de más de 160 caracteres: **2** → proyecto-casa#3 (166), rpg-jefe#3 (188)
 
 ## Veredicto de la Puerta 1 (simulada)
 
