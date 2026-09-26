@@ -1,6 +1,6 @@
 # ADR-003: Estrategia de producto local y validación antes de crecer
 
-## Estado: Propuesta (26/09/2026) — **no autoriza implementación**
+## Estado: Aceptada (26/09/2026) — decisión de Marcos
 
 > Ver la regla de gobernanza en el [índice](README.md). Origen: revisión crítica de `docs/experimental/` (26/09/2026).
 
@@ -9,7 +9,7 @@ Los documentos de `docs/experimental/` plantean, a la vez, plataforma, cuentas, 
 comunidad: en la práctica, un producto nuevo encima del actual. El producto actual (local, sin cuentas, 4 cursos, 51
 lecciones) funciona y todavía no se validó con chicos reales.
 
-## Decisión propuesta
+## Decisión
 - **TortuScript Desktop** sigue siendo local, offline y gratuito (ver [ADR-013](ADR-013-desktop-y-cloud.md)).
 - Los perfiles siguen siendo locales durante esta etapa.
 - **No se implementan cuentas ni backend remoto** hasta validar demanda (Puerta 0 del roadmap maestro: los chicos

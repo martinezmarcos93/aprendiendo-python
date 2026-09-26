@@ -1,10 +1,10 @@
 # ADR-010: Sin comunidad en la V1
 
-## Estado: Propuesta (26/09/2026) — **no autoriza implementación**
+## Estado: Aceptada (26/09/2026) — decisión de Marcos
 
 > Ver la regla de gobernanza en el [índice](README.md). Origen: revisión crítica de `docs/experimental/` (26/09/2026).
 
-## Decisión propuesta
+## Decisión
 La V1 no tiene chat, amigos, mensajes, perfiles públicos, ranking global ni publicación pública de proyectos.
 La **liga local** (perfiles de la misma PC + rivales simulados) es la única competencia.
 

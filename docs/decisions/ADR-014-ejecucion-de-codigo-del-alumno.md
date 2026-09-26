@@ -1,10 +1,10 @@
 # ADR-014: Ejecución del código del alumno
 
-## Estado: Propuesta (26/09/2026) — **no autoriza implementación**
+## Estado: Aceptada (26/09/2026) — decisión de Marcos
 
 > Ver la regla de gobernanza en el [índice](README.md). Origen: revisión crítica de `docs/experimental/` (26/09/2026).
 
-## Decisión propuesta
+## Decisión
 1. **Ningún servidor remoto o público ejecutará código arbitrario del alumno.**
 2. El runtime educativo **local** puede ejecutar el código del alumno en un subproceso controlado, con las restricciones
    actuales ([ADR-001](ADR-001-migracion-a-web.md): AST validado, sin `import`, builtins limitados, límites de tiempo,

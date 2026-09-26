@@ -7,7 +7,8 @@
 > **Las cifras de esfuerzo son estimaciones de orden de magnitud** (no hay medición previa de este tipo de trabajo en el proyecto) y deben revisarse al cerrar cada fase.
 
 > **Gobernanza (26/09/2026):** las decisiones que estructuran este roadmap están en [`docs/decisions/`](../decisions/README.md)
-> como ADR-003 a ADR-014, todas en estado *Propuesta*. **Ninguna fase de este documento está autorizada** hasta que su ADR
+> como ADR-003 a ADR-015. **Actualización 26/09/2026: todas aceptadas por Marcos.** Las cuentas (ADR-012) siguen
+> condicionadas por ADR-003 (validar demanda) y por los requisitos legales sobre datos de menores. **Ninguna fase de este documento está autorizada** hasta que su ADR
 > pase a *Aceptada*. Cada fase tiene un presupuesto de esfuerzo y una puerta de decisión; **no hay fecha global de
 > finalización**. Las cifras no incluyen mantenimiento, soporte, hosting, asesoramiento legal, pentest ni arte.
 
@@ -112,7 +113,7 @@ Estimaciones en **semanas-persona** (rango). "Puerta" = decisión que se toma co
 
 ### Fase 3 — Runtime de juegos en el navegador (10–16 sem) · flujo D
 
-> **Estado (26/09/2026):** bloqueada hasta que se acepten ADR-006, 007 y 008. Ya existe el borrador del modelo de
+> **Estado (26/09/2026):** **habilitada** — Marcos aceptó todas las ADR (incluidas 006, 007 y 008). Antes estaba bloqueada. Ya existe el borrador del modelo de
 > amenazas que pide ADR-007: [`MODELO_DE_AMENAZAS_RUNTIME_JUEGOS.md`](MODELO_DE_AMENAZAS_RUNTIME_JUEGOS.md).
 1. Especificar la API **TortuGame** en español (entidades, escenas, colisiones, combate, inventario, diálogos, guardado).
 2. Ejecutor JS en el navegador (canvas), sin servidor y sin `import` libre; API acotada, límites de tiempo/CPU (Web Worker).

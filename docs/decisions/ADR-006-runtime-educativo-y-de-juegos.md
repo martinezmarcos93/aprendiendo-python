@@ -1,6 +1,6 @@
 # ADR-006: Separación del runtime educativo y el runtime de juegos
 
-## Estado: Propuesta (26/09/2026) — **no autoriza implementación**
+## Estado: Aceptada (26/09/2026) — decisión de Marcos
 
 > Ver la regla de gobernanza en el [índice](README.md). Origen: revisión crítica de `docs/experimental/` (26/09/2026).
 
@@ -10,7 +10,7 @@ limitados, límites de tiempo, memoria, pasos y salida). La academia de juegos p
 corre en el navegador. Eso convierte a TortuScript en un lenguaje educativo con **dos destinos**, no en un simple
 pseudolenguaje traducido a Python.
 
-## Decisión propuesta
+## Decisión
 ```
 Runtime educativo:  TortuScript → Python → subproceso local controlado     (se mantiene)
 Runtime de juegos:  TortuScript → TortuGame → intérprete propio → Canvas    (sistema aparte)

@@ -1,7 +1,7 @@
 # ADR-012: Modelo futuro de cuenta adulta con perfiles hijo
 
-## Estado: Propuesta (26/09/2026) — **implementación NO AUTORIZADA**
-Dependencias: validación de producto ([ADR-003](ADR-003-producto-local-y-validacion.md)) y requisitos legales sobre datos de menores.
+## Estado: Aceptada (26/09/2026) — decisión de Marcos. Es **el modelo** para cuando haya cuentas; su **implementación** sigue
+condicionada por [ADR-003](ADR-003-producto-local-y-validacion.md) (no hay cuentas hasta validar demanda) y por los requisitos legales sobre datos de menores.
 
 > Ver la regla de gobernanza en el [índice](README.md). Origen: revisión crítica de `docs/experimental/` (26/09/2026).
 
@@ -9,7 +9,7 @@ Dependencias: validación de producto ([ADR-003](ADR-003-producto-local-y-valida
 `docs/experimental/PRODUCTO_COMPLETO_Y_CUENTAS.md` registró como "decidido" el modelo padre → hijos y la opción C
 (híbrida). Esta ADR lo baja a **Propuesta**: documenta la dirección, pero no la autoriza.
 
-## Decisión propuesta
+## Decisión
 ```
 Cuenta adulta (email + contraseña)
  ├── Perfil hijo A   (sin email ni contraseña propios)

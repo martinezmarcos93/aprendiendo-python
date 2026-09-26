@@ -1,10 +1,10 @@
 # ADR-008: Alcance inicial de TortuGame
 
-## Estado: Propuesta (26/09/2026) — **no autoriza implementación**
+## Estado: Aceptada (26/09/2026) — decisión de Marcos
 
 > Ver la regla de gobernanza en el [índice](README.md). Origen: revisión crítica de `docs/experimental/` (26/09/2026).
 
-## Decisión propuesta
+## Decisión
 **TortuGame v1 = RPG por turnos.** Entidades acotadas: personaje, enemigos, estadísticas, combate, inventario, objetos,
 escenas, diálogos, mapa, misiones, estado y guardado.
 
