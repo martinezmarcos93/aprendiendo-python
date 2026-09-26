@@ -92,6 +92,12 @@ Estimaciones en **semanas-persona** (rango). "Puerta" = decisión que se toma co
 > Nada de esto necesitó cambiar el esquema del progreso (sigue en v8). Pendiente de los criterios: revisión automática
 > de contraste y responsive (`herramientas/revisar_*.py` necesitan Playwright, que no está instalado). La **Puerta 1**
 > y la Fase 0 (probar con chicos reales) no se pueden cerrar desde el código.
+>
+> **Actualización (26/09/2026, más tarde):** Marcos aceptó ADR-004, 005 y 009 → ítem 4 ✅ (diagnóstico e intereses).
+> Por decisión de Marcos, la prueba con chicos es por ahora **simulada**
+> ([`docs/validacion/simulacion-2026-09-26.md`](../validacion/simulacion-2026-09-26.md)): **robustez PASA** (8 perfiles,
+> 62 lecciones, sin errores ni trabas); **retención y gusto: sin respuesta**. Con eso se abre la Fase 2 de forma
+> provisoria; la prueba con chicos reales queda pendiente y puede cambiar el rumbo.
 
 ### Fase 2 — Contenido piloto "Tortuaria" (RPG por consola) (5–8 sem) · flujo A
 1. Diseñar 10–12 lecciones (héroe, estadísticas, enemigo, combate, dados, inventario, pociones, mapa, mazmorra, jefe) con **el motor actual** (datos + validador).

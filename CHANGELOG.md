@@ -3,6 +3,19 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — prueba simulada con chicos (26/09/2026)
+
+Rama `feat/simulacion-chicos`.
+
+### Agregado
+- `herramientas/simular_chicos.py`: **8 perfiles sintéticos** (10 a 14 años; celular, tablet y compu; letra enorme,
+  alto contraste, solo teclado; quien usa pistas y quien se rinde rápido; con y sin diagnóstico) juegan por la interfaz
+  real y se equivocan de forma reproducible. Escribe un informe en Markdown.
+- Primer informe: [`docs/validacion/simulacion-2026-09-26.md`](docs/validacion/simulacion-2026-09-26.md).
+  **Robustez: pasa** (62 lecciones, 363 pasos, 0 errores de consola, 0 trabas, 0 desbordes). **Retención y gusto: sin
+  respuesta** (una simulación no los mide). Hallazgo real de la auditoría de contenido: 137 pasos usan la pista
+  genérica en vez de una propia.
+
 ## Sin publicar — intereses locales (26/09/2026)
 
 Rama `feat/intereses`. Implementa ADR-005 (aceptada). Esquema del progreso **v10** (aditivo: campo `intereses`).
