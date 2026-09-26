@@ -111,6 +111,9 @@ Estimaciones en **semanas-persona** (rango). "Puerta" = decisión que se toma co
 - **Puerta 2:** define si el eje "juegos" justifica construir el runtime (Fase 3).
 
 ### Fase 3 — Runtime de juegos en el navegador (10–16 sem) · flujo D
+
+> **Estado (26/09/2026):** bloqueada hasta que se acepten ADR-006, 007 y 008. Ya existe el borrador del modelo de
+> amenazas que pide ADR-007: [`MODELO_DE_AMENAZAS_RUNTIME_JUEGOS.md`](MODELO_DE_AMENAZAS_RUNTIME_JUEGOS.md).
 1. Especificar la API **TortuGame** en español (entidades, escenas, colisiones, combate, inventario, diálogos, guardado).
 2. Ejecutor JS en el navegador (canvas), sin servidor y sin `import` libre; API acotada, límites de tiempo/CPU (Web Worker).
 3. **Evaluación determinista** con semilla (simulaciones reproducibles) en vez de comparar solo texto/dibujo.
