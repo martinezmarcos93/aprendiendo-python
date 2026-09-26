@@ -151,11 +151,11 @@ el proyecto OWASP Secure Headers.
 | Dependencias | **PASS** (26/09/2026) | una sola directa (Flask); `requirements.lock` fija las 7 con hashes de PyPI (`--require-hashes`, también en el paquete sin internet); `herramientas/auditar_dependencias.py` consulta OSV (0 vulnerabilidades); librerías del navegador guardadas localmente. Falta correrlo en CI (no hay CI) |
 | Secretos | PASS | no hay secretos en el repo; el token de sesión se genera al arrancar |
 | Logs | Parcial | errores internos a `logs/tortuscript.log` (rotación); sin auditoría de eventos |
-| Backups | Parcial | cada guardado deja `.bak` y se recupera si el archivo se daña; no hay backups externos |
+| Backups | Parcial | cada guardado deja `.bak` y se recupera si el archivo se daña; el progreso se puede **exportar a un archivo** y traer en otra compu (26/09/2026); no hay copias automáticas fuera de la compu (a propósito: todo es local) |
 | Manejo de errores | **PASS** (26/09/2026) | se explican los errores del chico sin trazas; páginas 403/404/500 propias (JSON en la API) sin trazas ni rutas; el 500 muestra un código de referencia que queda en el log con la traza |
 | `robots.txt` / `sitemap.xml` / `security.txt` | N/A / TODO | no aplican a una app local; sí si se publica |
 | CI/CD, SAST/DAST | TODO | hoy hay tests y un validador de contenido, sin pipeline ni escaneos |
-| Privacidad y menores | Parcial | todo el progreso queda en la PC, sin datos personales ni terceros; falta política formal |
+| Privacidad y menores | Parcial | todo queda en la PC, sin terceros ni envíos; la Ayuda explica **qué se guarda, dónde, quién lo ve y cómo se borra** (26/09/2026); intereses solo con opciones cerradas (ADR-005); falta una política formal para una versión en línea |
 
 ## 23. Cómo convertirlo en una especificación verificable
 Crear en el repositorio `docs/security/` (cuando se decida publicar) con, al menos: `SECURITY.md`, `SECURITY_CHECKLIST.md`, `THREAT_MODEL.md`,
