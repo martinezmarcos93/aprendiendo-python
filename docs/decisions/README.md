@@ -29,3 +29,4 @@ Las medidas de endurecimiento que no condicionan el modelo de producto (p. ej. s
 | [ADR-012](ADR-012-cuenta-adulto-perfiles-hijo.md) | Cuenta adulta → perfiles hijo | Propuesta (implementación no autorizada) |
 | [ADR-013](ADR-013-desktop-y-cloud.md) | TortuScript Desktop / Cloud | Propuesta |
 | [ADR-014](ADR-014-ejecucion-de-codigo-del-alumno.md) | Ejecución del código del alumno | Propuesta |
+| [ADR-015](ADR-015-distribucion-a-familias.md) | Instaladores para las familias (Windows / Linux) | Propuesta |
