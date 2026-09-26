@@ -3,6 +3,26 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). Todavía no hay una
 versión publicada de la app web: los cambios de versión se consultan antes de fijarlos.
 
+## Sin publicar — instaladores para familias, en cualquier sistema (26/09/2026)
+
+Rama `feat/instalador-agnostico`. Implementa ADR-015 (aceptada).
+
+### Agregado
+- `herramientas/construir.py`: **un solo comando** arma TortuScript instalable, sin Python para la familia. Detecta el
+  sistema (o se elige con `--sistema`) y usa una única configuración; por sistema solo cambia el paquete y su
+  instalador: Linux `.tar.gz` + `instalar.sh` (menú de aplicaciones), Windows `.zip` + `instalar.bat` (menú Inicio y
+  Escritorio; además un `.exe` si está Inno Setup), macOS `.zip` + `instalar.command`. Cada instalador comprueba que el
+  sistema sea el suyo y el desinstalador nunca borra el progreso.
+- `tortuscript/rutas.py`: instalado, el progreso y los logs van a la carpeta de datos del usuario de cada sistema
+  (desde el código fuente, todo sigue igual). Si había progreso junto al programa, se copia.
+- El ejecutable instalado corre el código de los chicos relanzándose con `--worker` (mismos límites de tiempo y memoria).
+- Workflow de GitHub para armar los tres sistemas, **solo a mano**.
+- **Probado en Linux** de punta a punta. **Windows y macOS: sin probar todavía.**
+
+### Cambiado
+- `requirements-dev.txt` suma `pyinstaller==6.22.3` (auditado: licencia con excepción para distribuir, sin CVE).
+- README: instalación para familias, dónde se guardan los datos, versión del esquema (10) y enlace al índice de ADR.
+
 ## Sin publicar — tests que ejecutan el JavaScript de la tortuga (26/09/2026)
 
 ### Agregado
