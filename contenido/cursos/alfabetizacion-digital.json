@@ -32,9 +32,9 @@
             {
               "tipo": "predecir",
               "pregunta": "Una app recibe un número y calcula el doble. ¿Qué hace primero?",
-              "codigo": "número es 5\nresultado es número * 2\nmostrar resultado",
+              "codigo": "a es 5\nresultado es a + 3\nmostrar resultado",
               "opciones": [
-                "10",
+                "8",
                 "5",
                 "0"
               ],
