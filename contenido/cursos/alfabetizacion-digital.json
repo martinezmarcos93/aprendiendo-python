@@ -35,9 +35,9 @@
               "pregunta": "Una app recibe un número y calcula el doble. ¿Qué hace primero?",
               "codigo": "número es 5\\nresultado es número * 2\\nmostrar resultado",
               "opciones": [
-                "Recibe un dato",
-                "Muestra el resultado",
-                "Apaga la computadora"
+                "10",
+                "5",
+                "0"
               ],
               "correcta": 0,
               "pista": "Antes de calcular, la app necesita saber qué número recibió."
@@ -90,9 +90,9 @@
               "pregunta": "Si un programa está escrito en Python, ¿qué es Python?",
               "codigo": "nombre es \"Ana\"\\nmostrar nombre",
               "opciones": [
-                "El lenguaje usado para escribirlo",
-                "La computadora donde funciona",
-                "La red que usa"
+                "Ana",
+                "Python",
+                "navegador"
               ],
               "correcta": 0,
               "pista": "Python es el idioma con el que se escribieron sus instrucciones."
@@ -124,9 +124,9 @@
               "pregunta": "Si cambiás una instrucción del código, ¿qué puede pasar?",
               "codigo": "saludo es \"Hola\"\\nmostrar saludo",
               "opciones": [
-                "Puede cambiar lo que hace el programa",
-                "La pantalla se convierte en una impresora",
-                "Internet deja de existir"
+                "Hola",
+                "código",
+                "nada"
               ],
               "correcta": 0,
               "pista": "Cambiar una instrucción puede cambiar el resultado."
@@ -169,9 +169,9 @@
               "pregunta": "Cuando escribís una dirección web y apretás Enter, ¿qué hace el navegador?",
               "codigo": "pagina es \"Inicio\"\\nmostrar pagina",
               "opciones": [
-                "Pide recursos y arma la página que ves",
-                "Crea una computadora nueva",
-                "Borra el sitio web"
+                "Inicio",
+                "Firefox",
+                "servidor"
               ],
               "correcta": 0,
               "pista": "El navegador solicita recursos y los presenta en pantalla."
@@ -224,9 +224,9 @@
               "pregunta": "Si dos computadoras están conectadas a una misma red, ¿qué posibilidad existe?",
               "codigo": "dispositivo es \"PC\"\\nmostrar dispositivo",
               "opciones": [
-                "Pueden comunicarse usando esa red",
-                "Una se convierte automáticamente en monitor de la otra",
-                "Las dos dejan de ejecutar programas"
+                "PC",
+                "Internet",
+                "monitor"
               ],
               "correcta": 0,
               "pista": "La función principal de una red es permitir comunicación entre dispositivos."
@@ -258,9 +258,9 @@
               "pregunta": "Una app pide la lista de personajes al servidor. ¿Qué debería recibir?",
               "codigo": "pedido es \"personajes\"\\nmostrar pedido",
               "opciones": [
-                "Los datos solicitados",
-                "Un cable nuevo",
-                "Una ventana del navegador"
+                "personajes",
+                "pedido",
+                "teclado"
               ],
               "correcta": 0,
               "pista": "El servidor responde al pedido con los datos o recursos disponibles."
@@ -303,9 +303,9 @@
               "pregunta": "Tocás un botón que dice Comprar. ¿Qué pertenece claramente al frontend?",
               "codigo": "boton es \"Comprar\"\\nmostrar boton",
               "opciones": [
-                "El botón que ves y tocás",
-                "La tabla privada de productos del servidor",
-                "El cable bajo la calle"
+                "Comprar",
+                "backend",
+                "servidor"
               ],
               "correcta": 0,
               "pista": "El botón forma parte de la interfaz con la que interactuás."
@@ -348,9 +348,9 @@
               "pregunta": "Una web muestra el saldo de una cuenta. ¿Qué parte podría consultar el saldo guardado?",
               "codigo": "saldo es 500\\nmostrar saldo",
               "opciones": [
-                "El backend",
-                "El color del botón",
-                "El teclado"
+                "500",
+                "0",
+                "5000"
               ],
               "correcta": 0,
               "pista": "El backend puede aplicar lógica y consultar datos antes de responder."
@@ -400,9 +400,9 @@
               "pregunta": "Una app guarda el nombre de una persona. ¿Qué está guardando?",
               "codigo": "precio es 500\\nmostrar precio",
               "opciones": [
-                "Un dato de texto",
-                "Una red de Internet",
-                "Un servidor físico"
+                "500",
+                "precio",
+                "0"
               ],
               "correcta": 0,
               "pista": "\"Ana\" es información de texto."
@@ -445,9 +445,9 @@
               "pregunta": "Una tienda necesita encontrar el precio de un producto. ¿Qué podría hacer?",
               "codigo": "producto es \"espada\"\\nmostrar producto",
               "opciones": [
-                "Consultar la base de datos",
-                "Reiniciar el monitor",
-                "Cambiar el navegador"
+                "espada",
+                "productos",
+                "servidor"
               ],
               "correcta": 0,
               "pista": "La base de datos puede almacenar y devolver el precio."
@@ -490,9 +490,9 @@
               "pregunta": "Una app pide el clima a un servicio mediante una API. ¿Qué espera recibir?",
               "codigo": "respuesta es \"soleado\"\\nmostrar respuesta",
               "opciones": [
-                "Una respuesta con datos del clima",
-                "Un nuevo teclado",
-                "Una copia física del servidor"
+                "soleado",
+                "API",
+                "navegador"
               ],
               "correcta": 0,
               "pista": "La API permite pedir datos y recibir una respuesta del servicio."
@@ -546,9 +546,9 @@
               "pregunta": "Una app recibe datos privados. ¿Qué debería importar?",
               "codigo": "dato_privado es \"clave\"\\nmostrar dato_privado",
               "opciones": [
-                "Protegerlos y limitar quién puede acceder",
-                "Publicarlos automáticamente",
-                "Guardarlos en cualquier lugar sin protección"
+                "clave",
+                "contraseña pública",
+                "monitor"
               ],
               "correcta": 0,
               "pista": "La seguridad busca reducir accesos indebidos y proteger información."
@@ -581,9 +581,9 @@
               "pregunta": "¿Qué pieza guarda mejor la idea de cada parte?",
               "codigo": "respuesta es \"inventario\"\\nmostrar respuesta",
               "opciones": [
-                "Cada parte cumple una función diferente",
-                "Todo es exactamente lo mismo",
-                "Los datos reemplazan al frontend"
+                "inventario",
+                "frontend",
+                "base de datos"
               ],
               "correcta": 0,
               "pista": "La gracia de una arquitectura es separar responsabilidades."
