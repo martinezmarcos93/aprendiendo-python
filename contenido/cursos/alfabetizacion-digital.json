@@ -16,7 +16,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Un programa es una lista de instrucciones que una computadora puede seguir para hacer una tarea. Un juego, una calculadora y una app son programas."
+              "texto": "Un programa es una lista de instrucciones que una computadora puede seguir para hacer una tarea. Un juego, una calculadora y una app son programas.",
+              "codigo": "programa es \"calculadora\"\\nmostrar programa"
             },
             {
               "tipo": "elegir",
@@ -32,7 +33,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Una app recibe un número y calcula el doble. ¿Qué hace primero?",
-              "codigo": "número → calcular → mostrar",
+              "codigo": "número es 5\\nresultado es número * 2\\nmostrar resultado",
               "opciones": [
                 "Recibe un dato",
                 "Muestra el resultado",
@@ -59,7 +60,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Un lenguaje de programación permite escribir instrucciones de una forma que una computadora puede procesar. Python, JavaScript y Kotlin son lenguajes."
+              "texto": "Un lenguaje de programación permite escribir instrucciones de una forma que una computadora puede procesar. Python, JavaScript y Kotlin son lenguajes.",
+              "codigo": "lenguaje es \"Python\"\\nmostrar lenguaje"
             },
             {
               "tipo": "elegir",
@@ -86,7 +88,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Si un programa está escrito en Python, ¿qué es Python?",
-              "codigo": "Python → programa",
+              "codigo": "nombre es \"Ana\"\\nmostrar nombre",
               "opciones": [
                 "El lenguaje usado para escribirlo",
                 "La computadora donde funciona",
@@ -103,7 +105,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "El código es el texto que contiene las instrucciones de un programa. Leer código es parecido a leer una receta: importa qué dice y en qué orden."
+              "texto": "El código es el texto que contiene las instrucciones de un programa. Leer código es parecido a leer una receta: importa qué dice y en qué orden.",
+              "codigo": "codigo es \"instrucciones\"\\nmostrar codigo"
             },
             {
               "tipo": "elegir",
@@ -119,7 +122,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Si cambiás una instrucción del código, ¿qué puede pasar?",
-              "codigo": "mostrar \"Hola\" → mostrar \"Chau\"",
+              "codigo": "saludo es \"Hola\"\\nmostrar saludo",
               "opciones": [
                 "Puede cambiar lo que hace el programa",
                 "La pantalla se convierte en una impresora",
@@ -147,7 +150,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "El navegador es el programa que usás para visitar sitios web. Chrome, Firefox y Edge son navegadores. El navegador pide y muestra recursos de una web."
+              "texto": "El navegador es el programa que usás para visitar sitios web. Chrome, Firefox y Edge son navegadores. El navegador pide y muestra recursos de una web.",
+              "codigo": "navegador es \"Firefox\"\\nmostrar navegador"
             },
             {
               "tipo": "elegir",
@@ -163,7 +167,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Cuando escribís una dirección web y apretás Enter, ¿qué hace el navegador?",
-              "codigo": "dirección → pedir recursos → mostrar página",
+              "codigo": "pagina es \"Inicio\"\\nmostrar pagina",
               "opciones": [
                 "Pide recursos y arma la página que ves",
                 "Crea una computadora nueva",
@@ -190,7 +194,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Una red conecta dispositivos para que puedan comunicarse. Internet es una enorme red de redes. Tu computadora puede usar una red para comunicarse con otros equipos."
+              "texto": "Una red conecta dispositivos para que puedan comunicarse. Internet es una enorme red de redes. Tu computadora puede usar una red para comunicarse con otros equipos.",
+              "codigo": "internet es \"red de redes\"\\nmostrar internet"
             },
             {
               "tipo": "elegir",
@@ -217,7 +222,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Si dos computadoras están conectadas a una misma red, ¿qué posibilidad existe?",
-              "codigo": "PC A ↔ red ↔ PC B",
+              "codigo": "dispositivo es \"PC\"\\nmostrar dispositivo",
               "opciones": [
                 "Pueden comunicarse usando esa red",
                 "Una se convierte automáticamente en monitor de la otra",
@@ -234,7 +239,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Un servidor es un programa o computadora que ofrece un servicio a otros programas o dispositivos. Una web puede pedirle datos a un servidor."
+              "texto": "Un servidor es un programa o computadora que ofrece un servicio a otros programas o dispositivos. Una web puede pedirle datos a un servidor.",
+              "codigo": "servidor es \"responde pedidos\"\\nmostrar servidor"
             },
             {
               "tipo": "elegir",
@@ -250,7 +256,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Una app pide la lista de personajes al servidor. ¿Qué debería recibir?",
-              "codigo": "app → pedido → servidor → datos",
+              "codigo": "pedido es \"personajes\"\\nmostrar pedido",
               "opciones": [
                 "Los datos solicitados",
                 "Un cable nuevo",
@@ -278,7 +284,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Frontend es la parte de una aplicación con la que interactuás directamente. En una web incluye la interfaz que ves en el navegador."
+              "texto": "Frontend es la parte de una aplicación con la que interactuás directamente. En una web incluye la interfaz que ves en el navegador.",
+              "codigo": "frontend es \"boton\"\\nmostrar frontend"
             },
             {
               "tipo": "elegir",
@@ -294,7 +301,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Tocás un botón que dice Comprar. ¿Qué pertenece claramente al frontend?",
-              "codigo": "[ Comprar ]",
+              "codigo": "boton es \"Comprar\"\\nmostrar boton",
               "opciones": [
                 "El botón que ves y tocás",
                 "La tabla privada de productos del servidor",
@@ -322,7 +329,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Backend es la parte que trabaja detrás de la interfaz. Puede procesar reglas, consultar datos y responder pedidos. No tiene que ser visible para el usuario."
+              "texto": "Backend es la parte que trabaja detrás de la interfaz. Puede procesar reglas, consultar datos y responder pedidos. No tiene que ser visible para el usuario.",
+              "codigo": "backend es \"procesa datos\"\\nmostrar backend"
             },
             {
               "tipo": "elegir",
@@ -338,7 +346,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Una web muestra el saldo de una cuenta. ¿Qué parte podría consultar el saldo guardado?",
-              "codigo": "frontend → backend → datos",
+              "codigo": "saldo es 500\\nmostrar saldo",
               "opciones": [
                 "El backend",
                 "El color del botón",
@@ -373,7 +381,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Un dato es una pieza de información que un programa puede guardar, procesar o mostrar: un nombre, una edad, un precio o una imagen."
+              "texto": "Un dato es una pieza de información que un programa puede guardar, procesar o mostrar: un nombre, una edad, un precio o una imagen.",
+              "codigo": "dato es \"precio\"\\nmostrar dato"
             },
             {
               "tipo": "elegir",
@@ -389,7 +398,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Una app guarda el nombre de una persona. ¿Qué está guardando?",
-              "codigo": "nombre = \"Ana\"",
+              "codigo": "precio es 500\\nmostrar precio",
               "opciones": [
                 "Un dato de texto",
                 "Una red de Internet",
@@ -417,7 +426,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Una base de datos organiza información para poder guardarla, buscarla y relacionarla. Una tienda puede tener productos, precios y stock en una base de datos."
+              "texto": "Una base de datos organiza información para poder guardarla, buscarla y relacionarla. Una tienda puede tener productos, precios y stock en una base de datos.",
+              "codigo": "base_datos es \"productos\"\\nmostrar base_datos"
             },
             {
               "tipo": "elegir",
@@ -433,7 +443,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Una tienda necesita encontrar el precio de un producto. ¿Qué podría hacer?",
-              "codigo": "producto → buscar en base de datos → precio",
+              "codigo": "producto es \"espada\"\\nmostrar producto",
               "opciones": [
                 "Consultar la base de datos",
                 "Reiniciar el monitor",
@@ -461,7 +471,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Una API es una forma definida para que un programa pida algo a otro programa o servicio. Es como un mostrador con pedidos que tienen reglas conocidas."
+              "texto": "Una API es una forma definida para que un programa pida algo a otro programa o servicio. Es como un mostrador con pedidos que tienen reglas conocidas.",
+              "codigo": "api es \"pedido\"\\nmostrar api"
             },
             {
               "tipo": "elegir",
@@ -477,7 +488,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Una app pide el clima a un servicio mediante una API. ¿Qué espera recibir?",
-              "codigo": "app → API → servicio del clima → respuesta",
+              "codigo": "respuesta es \"soleado\"\\nmostrar respuesta",
               "opciones": [
                 "Una respuesta con datos del clima",
                 "Un nuevo teclado",
@@ -505,7 +516,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "La seguridad digital busca proteger dispositivos, cuentas y datos. Contraseñas únicas, actualizaciones y cuidado con enlaces sospechosos son prácticas básicas."
+              "texto": "La seguridad digital busca proteger dispositivos, cuentas y datos. Contraseñas únicas, actualizaciones y cuidado con enlaces sospechosos son prácticas básicas.",
+              "codigo": "seguridad es \"proteger\"\\nmostrar seguridad"
             },
             {
               "tipo": "elegir",
@@ -532,7 +544,7 @@
             {
               "tipo": "predecir",
               "pregunta": "Una app recibe datos privados. ¿Qué debería importar?",
-              "codigo": "datos privados → proteger → usar solo cuando corresponde",
+              "codigo": "dato_privado es \"clave\"\\nmostrar dato_privado",
               "opciones": [
                 "Protegerlos y limitar quién puede acceder",
                 "Publicarlos automáticamente",
@@ -549,7 +561,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Ahora juntá las piezas: una persona usa el frontend, el frontend puede hablar con un backend, el backend puede consultar datos y devolver una respuesta."
+              "texto": "Ahora juntá las piezas: una persona usa el frontend, el frontend puede hablar con un backend, el backend puede consultar datos y devolver una respuesta.",
+              "codigo": "pieza es \"frontend\"\\nmostrar pieza"
             },
             {
               "tipo": "ordenar",
@@ -566,7 +579,7 @@
             {
               "tipo": "predecir",
               "pregunta": "¿Qué pieza guarda mejor la idea de cada parte?",
-              "codigo": "persona → frontend → backend → datos → respuesta → frontend",
+              "codigo": "respuesta es \"inventario\"\\nmostrar respuesta",
               "opciones": [
                 "Cada parte cumple una función diferente",
                 "Todo es exactamente lo mismo",
