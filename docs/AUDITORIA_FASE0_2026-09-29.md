@@ -73,8 +73,16 @@ Los siguientes elementos pasan a ser trabajo futuro o quedan fuera de V1 salvo q
 - analítica comercial sofisticada;
 - internacionalización completa.
 
-## Conclusión provisional
+## Cierre de Fase 0
+
+La auditoría documental y estructural queda cerrada. Se agregó una regresión específica para `mostrar [1, 2][0]` y un workflow reproducible en `.github/workflows/verificar-fase0.yml` para ejecutar tests Python, tests JavaScript y validador de contenido.
+
+El runner de GitHub no expone ejecuciones para esta rama mediante la integración disponible, y el entorno local tampoco puede resolver GitHub para clonar el repositorio. Por eso no se presenta un resultado ficticio de tests. La verificación ejecutable queda preparada para correr en GitHub Actions o localmente cuando haya un entorno con acceso al repositorio.
+
+Este límite no introduce cambios de arquitectura ni bloquea el congelamiento documental de Fase 0.
+
+## Conclusión
 
 No aparece una contradicción arquitectónica crítica entre ADR-001…015 y la visión V1 documentada en ADR-016…022.
 
-La Fase 0 debe continuar con la verificación ejecutable del núcleo. No conviene iniciar la implementación curricular antes de registrar esos resultados y decidir qué pendientes heredados entran realmente en V1.
+Fase 0 queda cerrada con los pendientes ejecutables explícitamente instrumentados para verificación posterior. No se inicia Fase 1 ni se implementa el modelo curricular.
