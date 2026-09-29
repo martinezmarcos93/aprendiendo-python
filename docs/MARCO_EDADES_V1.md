@@ -4,11 +4,11 @@
 
 Fase 3 establece hipótesis de diseño pedagógico. Las edades son rangos operativos para diseñar y probar contenido, no categorías psicológicas rígidas.
 
-La referencia externa más útil para esta fase es el K–12 Computer Science Framework, que organiza hitos en los finales de Grades 2, 5, 8 y 12 y describe progresiones de abstracción, descomposición, creación, prueba y debugging. citeturn0search0turn0search1
+La referencia externa utilizada para esta fase es el K–12 Computer Science Framework, que organiza hitos en los finales de Grades 2, 5, 8 y 12 y describe progresiones de abstracción, descomposición, creación, prueba y debugging.
 
 También resulta relevante la progresión Use → Modify → Create, en la que el alumno primero interactúa con un artefacto existente, luego lo modifica y finalmente crea uno propio. citeturn0search6
 
-Estas fuentes sirven como marco curricular, no como validación de que una edad concreta deba recibir una actividad concreta.
+Estas fuentes sirven como marco curricular, no como validación de que una edad concreta deba recibir una actividad concreta. La investigación se registra en este documento como referencia de diseño, no como evidencia de límites rígidos por edad.
 
 ## Franjas operativas iniciales
 
