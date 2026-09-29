@@ -65,6 +65,12 @@ No se implementaron:
 
 La Fase 5 queda limitada al contenido y su integración con el camino existente.
 
+## Verificación
+
+El workflow de GitHub Actions asociado al commit de cierre ejecutó correctamente 478 tests Python/JavaScript y el validador de contenido. El Nivel 0 reportó 52 pasos revisados, 0 errores y 0 avisos. El resto del contenido mantiene 3 avisos históricos de equivalencia en pasos `ordenar`, sin errores.
+
+Durante la verificación también se corrigió una regresión pendiente del traductor: `mostrar` ahora se reconoce correctamente cuando recibe una expresión indexada como una lista.
+
 ## Criterio de cierre
 
 Fase 5 queda cerrada cuando el curso nuevo pasa el validador de contenido y la suite de tests, y el camino conserva la compatibilidad con el progreso histórico.
