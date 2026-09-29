@@ -2,8 +2,8 @@
   "id": "python-real",
   "titulo": "De TortuScript a Python real",
   "icono": "🐍",
-  "descripcion": "Tus programas, escritos como los escriben los programadores de verdad.",
-  "version": 1,
+  "descripcion": "Puente y fundamentos de Python: conceptos equivalentes a TortuScript, Python real, datos, listas y resolución de problemas.",
+  "version": 2,
   "requiere": {
     "leccion": "desafio-final"
   },
@@ -474,6 +474,206 @@
               "tipo": "explicacion",
               "texto": "¡Ya escribís Python real! Probá lo que quieras en Experimentar: ahí también corre Python directo.",
               "codigo": "print(\"¡Hola, Python!\")"
+            }
+          ]
+        },
+        {
+          "id": "py-datos",
+          "titulo": "7. Datos y tipos",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "En Python, cada dato tiene un tipo. Los números sirven para calcular, los textos para palabras y los booleanos para responder verdadero o falso.",
+              "codigo": "edad = 12\\nnombre = \"Luna\"\\nes_mayor = edad >= 18\\nprint(type(edad).__name__)"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué tipo de dato guarda \"Luna\"?",
+              "opciones": [
+                "texto",
+                "número",
+                "booleano"
+              ],
+              "correcta": 0,
+              "pista": "Está entre comillas, así que es texto."
+            },
+            {
+              "tipo": "predecir",
+              "codigo": "edad = 12\\nes_mayor = edad >= 18\\nprint(es_mayor)",
+              "opciones": [
+                "False",
+                "True",
+                "18"
+              ],
+              "correcta": 0,
+              "pista": "12 no llega a 18, por eso la comparación es falsa."
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para guardar un número y luego calcular su doble.",
+              "codigo": "n = 7\\nresultado = ___ * 2\\nprint(resultado)",
+              "fichas": [
+                "n",
+                "7",
+                "resultado"
+              ],
+              "respuesta": [
+                "n"
+              ],
+              "salida": "14",
+              "pista": "El doble se calcula usando el dato que guardaste en n."
+            },
+            {
+              "tipo": "ordenar",
+              "consigna": "Ordená el programa para guardar una edad, calcular si es mayor y mostrar el resultado.",
+              "lineas": [
+                "edad = 15",
+                "es_mayor = edad >= 18",
+                "print(es_mayor)"
+              ],
+              "pista": "Primero necesitás el dato; después podés calcular y mostrar."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Guardá 20 en edad, calculá si es mayor o igual a 18 y mostrá el resultado.",
+              "solucion": "edad = 20\\nes_mayor = edad >= 18\\nprint(es_mayor)",
+              "lenguaje": "python",
+              "palabras_pista": [
+                "=",
+                "print"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "py-listas",
+          "titulo": "8. Listas",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Una lista guarda varios datos en un mismo lugar. Las posiciones empiezan en 0: el primer elemento está en la posición 0.",
+              "codigo": "frutas = [\"manzana\", \"pera\", \"banana\"]\\nprint(frutas[0])"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué elemento devuelve frutas[1]?",
+              "opciones": [
+                "manzana",
+                "pera",
+                "banana"
+              ],
+              "correcta": 1,
+              "pista": "La primera posición es 0; la segunda es 1."
+            },
+            {
+              "tipo": "predecir",
+              "codigo": "puntos = [10, 20, 30]\\nprint(puntos[2])",
+              "opciones": [
+                "10",
+                "20",
+                "30"
+              ],
+              "correcta": 2,
+              "pista": "Contá las posiciones desde cero: 0, 1, 2."
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para mostrar el segundo elemento de la lista.",
+              "codigo": "enemigos = [\"goblin\", \"orco\", \"troll\"]\\nprint(enemigos[___])",
+              "fichas": [
+                "1",
+                "0",
+                "2"
+              ],
+              "respuesta": [
+                "1"
+              ],
+              "salida": "orco",
+              "pista": "Segundo significa posición 1 porque la cuenta empieza en cero."
+            },
+            {
+              "tipo": "ordenar",
+              "consigna": "Ordená el programa para crear una lista, elegir un elemento y mostrarlo.",
+              "lineas": [
+                "objetos = [\"llave\", \"pocion\", \"mapa\"]",
+                "objeto = objetos[2]",
+                "print(objeto)"
+              ],
+              "pista": "Primero existe la lista; después podés acceder a una posición."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Creá una lista con \"rojo\", \"verde\" y \"azul\", y mostr á el segundo elemento.",
+              "solucion": "colores = [\"rojo\", \"verde\", \"azul\"]\\nprint(colores[1])",
+              "lenguaje": "python",
+              "palabras_pista": [
+                "[]",
+                "print"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "py-problemas",
+          "titulo": "9. Reto: resolver un problema",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Programar no es solo conocer instrucciones. También hay que separar un problema en datos, decisiones y pasos. Vamos a combinar variables, condiciones, listas y repetición.",
+              "codigo": "numeros = [3, 8, 5]\\nmayores = 0\\nfor n in numeros:\\n    if n >= 5:\\n        mayores = mayores + 1\\nprint(mayores)"
+            },
+            {
+              "tipo": "predecir",
+              "codigo": "numeros = [2, 6, 9]\\nmayores = 0\\nfor n in numeros:\\n    if n >= 5:\\n        mayores = mayores + 1\\nprint(mayores)",
+              "opciones": [
+                "1",
+                "2",
+                "3"
+              ],
+              "correcta": 1,
+              "pista": "Solo 6 y 9 cumplen la condición."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué conviene identificar primero al resolver un problema?",
+              "opciones": [
+                "Qué datos tenemos y qué resultado buscamos",
+                "El color del código",
+                "Cuántas líneas tendrá exactamente"
+              ],
+              "correcta": 0,
+              "pista": "Antes de escribir, necesitás entender la entrada y el objetivo."
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá el contador para sumar un punto cada vez que el número sea mayor o igual a 10.",
+              "codigo": "puntos = 0\\nfor n in [4, 10, 12]:\\n    if n >= 10:\\n        puntos = puntos + ___\\nprint(puntos)",
+              "fichas": [
+                "1",
+                "0",
+                "n"
+              ],
+              "respuesta": [
+                "1"
+              ],
+              "salida": "2",
+              "pista": "Cada número que cumple la condición agrega un punto."
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Escribí un programa que recorra [3, 7, 2, 9], cuente cuántos números son mayores o iguales a 5 y muestre el total.",
+              "solucion": "numeros = [3, 7, 2, 9]\\nmayores = 0\\nfor n in numeros:\\n    if n >= 5:\\n        mayores = mayores + 1\\nprint(mayores)",
+              "lenguaje": "python",
+              "palabras_pista": [
+                "for",
+                "if",
+                "print"
+              ]
+            },
+            {
+              "tipo": "explicacion",
+              "texto": "Este tipo de problema es la base de muchos programas reales: recibir datos, procesarlos con reglas y producir un resultado. A partir de acá, los proyectos pueden combinar estas piezas en programas cada vez más grandes.",
+              "codigo": "datos = [4, 12, 7]\\nresultado = 0\\nfor dato in datos:\\n    if dato >= 10:\\n        resultado = resultado + dato\\nprint(resultado)"
             }
           ]
         }
