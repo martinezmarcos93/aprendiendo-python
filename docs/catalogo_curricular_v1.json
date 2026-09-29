@@ -27,38 +27,44 @@
   "itinerarios": [
     {
       "id": "alfabetizacion-tecnologica",
-      "estado_acceso": "gratuito",
-      "profundidad": "introductoria"
+      "profundidad": "introductoria",
+      "estado_acceso": "por_definir"
     },
     {
       "id": "python-fundamentos",
-      "estado_acceso": "gratuito",
-      "profundidad": "principal"
+      "profundidad": "principal",
+      "estado_acceso": "por_definir"
     },
     {
       "id": "web-esencial",
-      "estado_acceso": "premium",
-      "profundidad": "introductoria"
+      "profundidad": "introductoria",
+      "estado_acceso": "por_definir"
     },
     {
       "id": "sql-fundamentos",
-      "estado_acceso": "premium",
-      "profundidad": "intermedia"
+      "profundidad": "intermedia",
+      "estado_acceso": "por_definir"
     },
     {
       "id": "proyecto-integrador",
-      "estado_acceso": "premium",
-      "profundidad": "integradora"
+      "profundidad": "integradora",
+      "estado_acceso": "por_definir"
     },
     {
       "id": "nivel-avanzado",
-      "estado_acceso": "premium",
       "profundidad": "avanzada",
       "fuentes": [
         "curso-python-datos",
         "curso-desarrollo-aplicaciones",
         "curso-orquestacion-streaming-llm"
-      ]
+      ],
+      "estado_acceso": "por_definir"
     }
+  ],
+  "reglas_acceso": [
+    "Los estados gratuito/premium/prueba representan disponibilidad conceptual, no una suscripción real.",
+    "La asignación comercial concreta no se fija por itinerario completo en V1.",
+    "Una unidad puede cambiar de estado sin modificar su contenido ni su evaluación.",
+    "bloqueado_por_prerrequisito expresa una dependencia curricular, no una decisión comercial."
   ]
 }
