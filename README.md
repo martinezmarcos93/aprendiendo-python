@@ -1,6 +1,8 @@
-# 🐢 TortuScript → Python
+# 🐢 TortuScript
 
-Una aplicación para que chicos de 10 a 14 años aprendan a programar en Python usando **TortuScript**, un pseudolenguaje en español que se traduce solo a Python real. Se usa en el navegador, **corre en tu compu** (sin internet, sin cuentas y sin anuncios) y se parece a las apps de lecciones cortas: explicación, práctica, feedback al instante, racha, logros y una liga de amigos.
+TortuScript es el núcleo de una futura plataforma progresiva de aprendizaje tecnológico para niños y adolescentes. La V1 actual se concentra en programación con Python y está evolucionando hacia un itinerario que incluye alfabetización tecnológica, Web esencial (HTML/CSS/JS), SQL y proyectos integradores. La edad exacta de cada itinerario sigue siendo una decisión curricular pendiente de validación.
+
+El producto local actual enseña Python usando **TortuScript**, un pseudolenguaje en español que se traduce solo a Python real. Se usa en el navegador, **corre en tu compu** (sin internet, sin cuentas y sin anuncios) y se parece a las apps de lecciones cortas: explicación, práctica, feedback al instante, racha, logros y una liga de amigos.
 
 ```
 # TortuScript               →     Python
@@ -193,6 +195,6 @@ python herramientas/simular_chicos.py --informe docs/validacion/simulacion-<fech
                                              # prueba SIMULADA: 8 perfiles juegan y se equivocan (servidor sin --todo-desbloqueado)
 ```
 
-La rama principal es `main`. Cambios recientes: [`CHANGELOG.md`](CHANGELOG.md). Roadmap: [`docs/ROADMAP_MIMO_KIDS.md`](docs/ROADMAP_MIMO_KIDS.md).
+La rama principal es `main`. El roadmap de finalización V1 hasta el 31/12/2026 está en `docs/ROADMAP_V1_2026-12-31.md`; la definición de producto está en `docs/PRODUCTO_V1.md`. Cambios recientes: [`CHANGELOG.md`](CHANGELOG.md). Roadmap: [`docs/ROADMAP_MIMO_KIDS.md`](docs/ROADMAP_MIMO_KIDS.md).
 
 *Hecho con 🐢 y mucho amor para aprender a programar de a poco.*
