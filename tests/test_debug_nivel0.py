@@ -1,13 +1,13 @@
 import unittest
-from tortuscript import contenido
-from tortuscript.validacion import validar_curso, ERROR
+from tortuscript.translator import TraductorTortuScript
+from tortuscript.executor import ejecutar_codigo
 
 class TestDebugNivel0(unittest.TestCase):
     def test_muestra(self):
-        curso=contenido.cargar_curso("alfabetizacion-digital")
-        for h in validar_curso(curso):
-            if h.nivel == ERROR:
-                print("DEBUG_ERROR", h)
+        fuente='programa es "calculadora"\\nmostrar programa'
+        py=TraductorTortuScript().traducir_codigo(fuente)
+        print("DEBUG_NIVEL0_PY",repr(py))
+        print("DEBUG_NIVEL0_EXEC",repr(ejecutar_codigo(py)))
         self.assertTrue(False)
 
 if __name__ == "__main__":
