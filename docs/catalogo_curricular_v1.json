@@ -67,5 +67,54 @@
     "Una unidad puede cambiar de estado sin modificar su contenido ni su evaluación.",
     "bloqueado_por_prerrequisito expresa una dependencia curricular, no una decisión comercial.",
     "por_definir es un estado documental interno del catálogo V1 y no es un estado de acceso del motor."
+  ],
+  "franjas_edad": [
+    {
+      "id": "exploradores",
+      "nombre": "Exploradores",
+      "edad_aproximada": "8-10",
+      "estado": "hipotesis"
+    },
+    {
+      "id": "constructores",
+      "nombre": "Constructores",
+      "edad_aproximada": "10-12",
+      "estado": "hipotesis"
+    },
+    {
+      "id": "creadores",
+      "nombre": "Creadores",
+      "edad_aproximada": "12-14",
+      "estado": "hipotesis"
+    },
+    {
+      "id": "desarrolladores",
+      "nombre": "Desarrolladores",
+      "edad_aproximada": "14-17",
+      "estado": "hipotesis"
+    }
+  ],
+  "competencias_base": [
+    "reconocer_entrada_salida",
+    "usar_variables",
+    "construir_condicionales",
+    "usar_repeticion",
+    "definir_funciones",
+    "usar_estructuras_de_datos",
+    "depurar_programas",
+    "leer_html",
+    "modificar_css",
+    "responder_a_eventos_js",
+    "consultar_datos_sql",
+    "relacionar_tablas",
+    "integrar_interfaz_logica_datos"
+  ],
+  "reglas_modelo": [
+    "La edad, el nivel y la dificultad son dimensiones independientes.",
+    "Las competencias tienen identidad propia y no incorporan una edad.",
+    "Los prerrequisitos pueden referir a unidades o competencias.",
+    "Las fuentes curriculares externas se registran como trazabilidad y no como dependencias de ejecución.",
+    "El catálogo debe poder representar actividades que el motor actual todavía no soporte.",
+    "Las franjas de edad son hipótesis operativas y no límites psicológicos rígidos."
   ]
 }
