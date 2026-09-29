@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "descripcion": "Esquema inicial conceptual del catálogo de TortuScript. No reemplaza todavía el formato operativo de contenido/cursos.",
+  "estados_acceso": [
+    "gratuito",
+    "premium",
+    "prueba",
+    "bloqueado_por_prerrequisito",
+    "no_publicado"
+  ],
+  "campos_unidad": [
+    "id",
+    "titulo",
+    "franja_edad",
+    "nivel",
+    "dificultad",
+    "competencias",
+    "prerrequisitos",
+    "duracion_estimada",
+    "lenguaje",
+    "tipo_actividad",
+    "proyecto",
+    "fuente_curricular",
+    "modulo_fuente",
+    "estado_acceso"
+  ],
+  "itinerarios": [
+    {
+      "id": "alfabetizacion-tecnologica",
+      "estado_acceso": "gratuito",
+      "profundidad": "introductoria"
+    },
+    {
+      "id": "python-fundamentos",
+      "estado_acceso": "gratuito",
+      "profundidad": "principal"
+    },
+    {
+      "id": "web-esencial",
+      "estado_acceso": "premium",
+      "profundidad": "introductoria"
+    },
+    {
+      "id": "sql-fundamentos",
+      "estado_acceso": "premium",
+      "profundidad": "intermedia"
+    },
+    {
+      "id": "proyecto-integrador",
+      "estado_acceso": "premium",
+      "profundidad": "integradora"
+    },
+    {
+      "id": "nivel-avanzado",
+      "estado_acceso": "premium",
+      "profundidad": "avanzada",
+      "fuentes": [
+        "curso-python-datos",
+        "curso-desarrollo-aplicaciones",
+        "curso-orquestacion-streaming-llm"
+      ]
+    }
+  ]
+}
