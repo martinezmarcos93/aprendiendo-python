@@ -603,7 +603,7 @@
             },
             {
               "tipo": "escribir",
-              "consigna": "Creá una lista con \"rojo\", \"verde\" y \"azul\", y mostr á el segundo elemento.",
+              "consigna": "Creá una lista con \"rojo\", \"verde\" y \"azul\", y mostrá el segundo elemento.",
               "solucion": "colores = [\"rojo\", \"verde\", \"azul\"]\\nprint(colores[1])",
               "lenguaje": "python",
               "palabras_pista": [
