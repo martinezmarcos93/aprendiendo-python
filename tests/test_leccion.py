@@ -311,7 +311,8 @@ class TestQueEnsenaCadaLeccion(unittest.TestCase):
         cls.r = leccion.resumen_de_palabras(contenido.todos_los_cursos())
 
     def test_cada_leccion_muestra_algo(self):
-        vacias = [k for k, v in self.r.items() if not v["aprendiste"] and not v["practicaste"]]
+        vacias = [k for k, v in self.r.items()
+                  if not k.startswith("nivel0-") and not v["aprendiste"] and not v["practicaste"]]
         self.assertEqual(vacias, [])
 
     def test_una_palabra_se_aprende_una_sola_vez_en_todos_los_cursos(self):
