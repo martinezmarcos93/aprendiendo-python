@@ -33,7 +33,7 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 | [ADR-019](ADR-019-estados-de-acceso.md) | Estados de acceso independientes del motor | Propuesta |
 | [ADR-020](ADR-020-nivel-web-esencial.md) | HTML/CSS/JS como alfabetización web | Propuesta |
 | [ADR-021](ADR-021-nivel-sql.md) | SQL como segundo bloque de datos | Propuesta |
-| [ADR-022](ADR-022-preparación SaaS sin implementación](ADR-022-preparacion-saas-sin-implementacion.md) | Preparación comercial sin SaaS en V1 | Propuesta |
+| [ADR-022](ADR-022-preparacion-saas-sin-implementacion.md) | Preparación comercial sin SaaS en V1 | Propuesta |
 
 ## Documentos de producto
 
