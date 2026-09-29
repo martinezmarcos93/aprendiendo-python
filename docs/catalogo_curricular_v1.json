@@ -28,27 +28,27 @@
     {
       "id": "alfabetizacion-tecnologica",
       "profundidad": "introductoria",
-      "estado_acceso": "por_definir"
+      "disponibilidad_comercial": "por_definir"
     },
     {
       "id": "python-fundamentos",
       "profundidad": "principal",
-      "estado_acceso": "por_definir"
+      "disponibilidad_comercial": "por_definir"
     },
     {
       "id": "web-esencial",
       "profundidad": "introductoria",
-      "estado_acceso": "por_definir"
+      "disponibilidad_comercial": "por_definir"
     },
     {
       "id": "sql-fundamentos",
       "profundidad": "intermedia",
-      "estado_acceso": "por_definir"
+      "disponibilidad_comercial": "por_definir"
     },
     {
       "id": "proyecto-integrador",
       "profundidad": "integradora",
-      "estado_acceso": "por_definir"
+      "disponibilidad_comercial": "por_definir"
     },
     {
       "id": "nivel-avanzado",
@@ -58,13 +58,14 @@
         "curso-desarrollo-aplicaciones",
         "curso-orquestacion-streaming-llm"
       ],
-      "estado_acceso": "por_definir"
+      "disponibilidad_comercial": "por_definir"
     }
   ],
   "reglas_acceso": [
-    "Los estados gratuito/premium/prueba representan disponibilidad conceptual, no una suscripción real.",
-    "La asignación comercial concreta no se fija por itinerario completo en V1.",
+    "Los estados gratuito/premium/prueba/bloqueado_por_prerrequisito/no_publicado representan disponibilidad conceptual.",
+    "La disponibilidad comercial concreta no se fija por itinerario completo en V1.",
     "Una unidad puede cambiar de estado sin modificar su contenido ni su evaluación.",
-    "bloqueado_por_prerrequisito expresa una dependencia curricular, no una decisión comercial."
+    "bloqueado_por_prerrequisito expresa una dependencia curricular, no una decisión comercial.",
+    "por_definir es un estado documental interno del catálogo V1 y no es un estado de acceso del motor."
   ]
 }
