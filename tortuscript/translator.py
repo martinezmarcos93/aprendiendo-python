@@ -282,7 +282,7 @@ class TraductorTortuScript:
         t = linea.tokens[sig]
         if linea.norm(sig) == "es":
             return False
-        if t.type == tokenize.OP and t.string in ("=", "+=", "-=", "*=", "/=", ".", "[", ",", ")"):
+        if t.type == tokenize.OP and t.string in ("=", "+=", "-=", "*=", "/=", ".", ",", ")"):
             return False
         return True
 
