@@ -34,6 +34,24 @@ class TestCursosReales(unittest.TestCase):
                 self.assertNotIn(lec["id"], vistos, f"{lec['id']} está en {p.stem} y en {vistos.get(lec['id'])}")
                 vistos[lec["id"]] = p.stem
 
+    def test_nivel_0_cubre_el_diccionario_digital_basico(self):
+        curso = contenido.cargar_curso("alfabetizacion-digital")
+        self.assertEqual(curso["secciones"][0]["id"], "mundo-digital")
+        self.assertEqual(curso["secciones"][1]["id"], "datos-y-servicios")
+        ids = [l["id"] for _, l in contenido.lecciones(curso)]
+        esperadas = {
+            "nivel0-programa", "nivel0-lenguaje", "nivel0-codigo", "nivel0-navegador",
+            "nivel0-internet", "nivel0-servidor", "nivel0-frontend", "nivel0-backend",
+            "nivel0-datos", "nivel0-base-datos", "nivel0-api", "nivel0-seguridad",
+            "nivel0-integracion",
+        }
+        self.assertEqual(set(ids), esperadas)
+        self.assertEqual(len(ids), 13)
+        for _, lec in contenido.lecciones(curso):
+            self.assertGreaterEqual(len(lec["pasos"]), 3)
+            self.assertEqual(lec["pasos"][0]["tipo"], "explicacion")
+            self.assertTrue(all(p.get("pista") for p in lec["pasos"] if p["tipo"] in ("elegir", "predecir", "ordenar", "completar")))
+
     def test_el_curso_principal_conserva_sus_30_ejercicios_en_orden(self):
         # El índice de cada 'escribir' es la clave del progreso guardado: no puede cambiar de lugar.
         ej = contenido.ejercicios()
@@ -78,7 +96,7 @@ class TestVariosCursos(unittest.TestCase):
     def test_el_orden_de_cursos_incluye_todos_los_archivos(self):
         archivos = {p.stem for p in contenido.CARPETA.glob("*.json")}
         self.assertEqual(set(contenido.ids_cursos()), archivos)
-        self.assertEqual(contenido.ids_cursos()[0], contenido.CURSO_PRINCIPAL)
+        self.assertEqual(contenido.ids_cursos()[0], "alfabetizacion-digital")
 
     def test_curso_de_tortuga_todos_los_pasos_de_dibujo_estan_marcados(self):
         curso = contenido.cargar_curso("tortuga")
