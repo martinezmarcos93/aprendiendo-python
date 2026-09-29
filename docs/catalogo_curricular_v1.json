@@ -28,7 +28,202 @@
     {
       "id": "alfabetizacion-tecnologica",
       "profundidad": "introductoria",
-      "disponibilidad_comercial": "por_definir"
+      "disponibilidad_comercial": "por_definir",
+      "unidades": [
+        {
+          "id": "nivel0-programa",
+          "titulo": "¿Qué es un programa?",
+          "competencias": [
+            "reconocer_programas"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-lenguaje",
+          "titulo": "Los idiomas de las computadoras",
+          "competencias": [
+            "reconocer_lenguajes_programacion"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-codigo",
+          "titulo": "El código",
+          "competencias": [
+            "reconocer_codigo"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-navegador",
+          "titulo": "El navegador",
+          "competencias": [
+            "comprender_navegador"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-internet",
+          "titulo": "Internet y las redes",
+          "competencias": [
+            "comprender_redes_internet"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-servidor",
+          "titulo": "El servidor",
+          "competencias": [
+            "comprender_servidores"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-frontend",
+          "titulo": "Frontend: lo que ves",
+          "competencias": [
+            "reconocer_frontend"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-backend",
+          "titulo": "Backend: lo que trabaja detrás",
+          "competencias": [
+            "reconocer_backend"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "media"
+        },
+        {
+          "id": "nivel0-datos",
+          "titulo": "Los datos",
+          "competencias": [
+            "reconocer_datos"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-base-datos",
+          "titulo": "La base de datos",
+          "competencias": [
+            "comprender_bases_datos"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "media"
+        },
+        {
+          "id": "nivel0-api",
+          "titulo": "La API",
+          "competencias": [
+            "comprender_api"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "media"
+        },
+        {
+          "id": "nivel0-seguridad",
+          "titulo": "Seguridad digital",
+          "competencias": [
+            "reconocer_riesgos_digitales"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "media"
+        },
+        {
+          "id": "nivel0-integracion",
+          "titulo": "Una app por dentro",
+          "competencias": [
+            "explicar_flujo_aplicacion"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "media"
+        }
+      ]
     },
     {
       "id": "python-fundamentos",
@@ -107,7 +302,20 @@
     "responder_a_eventos_js",
     "consultar_datos_sql",
     "relacionar_tablas",
-    "integrar_interfaz_logica_datos"
+    "integrar_interfaz_logica_datos",
+    "reconocer_programas",
+    "reconocer_lenguajes_programacion",
+    "reconocer_codigo",
+    "comprender_navegador",
+    "comprender_redes_internet",
+    "comprender_servidores",
+    "reconocer_frontend",
+    "reconocer_backend",
+    "reconocer_datos",
+    "comprender_bases_datos",
+    "comprender_api",
+    "reconocer_riesgos_digitales",
+    "explicar_flujo_aplicacion"
   ],
   "reglas_modelo": [
     "La edad, el nivel y la dificultad son dimensiones independientes.",
