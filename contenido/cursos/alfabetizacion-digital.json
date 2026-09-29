@@ -30,25 +30,25 @@
               "pista": "Un programa contiene instrucciones que una computadora puede ejecutar."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Una app recibe un número y calcula el doble. ¿Qué hace primero?",
-              "codigo": "a es 5\nresultado es a + 3\nmostrar resultado",
+              "tipo": "elegir",
+              "pregunta": "¿Qué describe mejor a un programa?",
               "opciones": [
-                "8",
-                "5",
-                "0"
+                "Un conjunto de instrucciones para una tarea",
+                "Una red de computadoras",
+                "Un dispositivo físico"
               ],
               "correcta": 0,
               "pista": "Antes de calcular, la app necesita saber qué número recibió."
             },
             {
-              "tipo": "ordenar",
-              "consigna": "Ordená lo que hace una calculadora al recibir 5 + 3.",
-              "lineas": [
-                "numero es 5",
-                "resultado es numero + 3",
-                "mostrar resultado"
+              "tipo": "elegir",
+              "pregunta": "¿Qué describe mejor a un programa?",
+              "opciones": [
+                "Un conjunto de instrucciones para una tarea",
+                "Una red de computadoras",
+                "Un dispositivo físico"
               ],
+              "correcta": 0,
               "pista": "Primero llegan los datos, después se calcula y al final se muestra el resultado."
             }
           ]
@@ -84,13 +84,12 @@
               "pista": "Python es un lenguaje; Internet es una red y Chrome es un navegador."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Si un programa está escrito en Python, ¿qué es Python?",
-              "codigo": "nombre es \"Ana\"\nmostrar nombre",
+              "tipo": "elegir",
+              "pregunta": "¿Qué describe mejor a un lenguaje de programación?",
               "opciones": [
-                "Ana",
-                "Python",
-                "navegador"
+                "Un medio para escribir instrucciones",
+                "Un navegador",
+                "Una base de datos"
               ],
               "correcta": 0,
               "pista": "Python es el idioma con el que se escribieron sus instrucciones."
@@ -117,13 +116,12 @@
               "pista": "El código describe qué debe hacer el programa."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Si cambiás una instrucción del código, ¿qué puede pasar?",
-              "codigo": "saludo es \"Hola\"\nmostrar saludo",
+              "tipo": "elegir",
+              "pregunta": "¿Qué describe mejor al código?",
               "opciones": [
-                "Hola",
-                "código",
-                "nada"
+                "Las instrucciones escritas de un programa",
+                "El monitor",
+                "La conexión Wi-Fi"
               ],
               "correcta": 0,
               "pista": "Cambiar una instrucción puede cambiar el resultado."
@@ -161,25 +159,25 @@
               "pista": "Firefox es un programa para navegar por la Web."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Cuando escribís una dirección web y apretás Enter, ¿qué hace el navegador?",
-              "codigo": "pagina es \"Inicio\"\nmostrar pagina",
+              "tipo": "elegir",
+              "pregunta": "¿Qué hace principalmente un navegador?",
               "opciones": [
-                "Inicio",
-                "Firefox",
-                "servidor"
+                "Pedir y mostrar recursos de sitios web",
+                "Guardar toda la Internet",
+                "Crear hardware"
               ],
               "correcta": 0,
               "pista": "El navegador solicita recursos y los presenta en pantalla."
             },
             {
-              "tipo": "ordenar",
-              "consigna": "Ordená una visita simple a una página web.",
-              "lineas": [
-                "direccion es \"sitio\"",
-                "pedido es direccion",
-                "mostrar pedido"
+              "tipo": "elegir",
+              "pregunta": "¿Qué hace principalmente un navegador?",
+              "opciones": [
+                "Pedir y mostrar recursos de sitios web",
+                "Guardar toda la Internet",
+                "Crear hardware"
               ],
+              "correcta": 0,
               "pista": "Primero indicás qué querés visitar; después el navegador pide lo necesario."
             }
           ]
@@ -215,13 +213,12 @@
               "pista": "Una red permite intercambiar información entre dispositivos."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Si dos computadoras están conectadas a una misma red, ¿qué posibilidad existe?",
-              "codigo": "dispositivo es \"PC\"\nmostrar dispositivo",
+              "tipo": "elegir",
+              "pregunta": "¿Qué describe mejor a Internet?",
               "opciones": [
-                "PC",
-                "Internet",
-                "monitor"
+                "Una red de redes",
+                "Un único servidor",
+                "Un lenguaje"
               ],
               "correcta": 0,
               "pista": "La función principal de una red es permitir comunicación entre dispositivos."
@@ -248,25 +245,25 @@
               "pista": "Servidor viene de servir: responde pedidos y ofrece recursos."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Una app pide la lista de personajes al servidor. ¿Qué debería recibir?",
-              "codigo": "pedido es \"personajes\"\nmostrar pedido",
+              "tipo": "elegir",
+              "pregunta": "¿Qué puede hacer un servidor?",
               "opciones": [
-                "personajes",
-                "pedido",
-                "teclado"
+                "Recibir pedidos y ofrecer recursos o datos",
+                "Ser el navegador",
+                "Ser una contraseña"
               ],
               "correcta": 0,
               "pista": "El servidor responde al pedido con los datos o recursos disponibles."
             },
             {
-              "tipo": "ordenar",
-              "consigna": "Ordená una consulta simple a un servidor.",
-              "lineas": [
-                "pedido es \"personajes\"",
-                "respuesta es pedido",
-                "mostrar respuesta"
+              "tipo": "elegir",
+              "pregunta": "¿Qué puede hacer un servidor?",
+              "opciones": [
+                "Recibir pedidos y ofrecer recursos o datos",
+                "Ser el navegador",
+                "Ser una contraseña"
               ],
+              "correcta": 0,
               "pista": "La respuesta del servidor llega después del pedido."
             }
           ]
@@ -291,13 +288,12 @@
               "pista": "El frontend es la parte visible e interactiva para el usuario."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Tocás un botón que dice Comprar. ¿Qué pertenece claramente al frontend?",
-              "codigo": "boton es \"Comprar\"\nmostrar boton",
+              "tipo": "elegir",
+              "pregunta": "¿Qué pertenece al frontend?",
               "opciones": [
-                "Comprar",
-                "backend",
-                "servidor"
+                "La parte de la interfaz con la que interactuás",
+                "La base de datos",
+                "El cable de red"
               ],
               "correcta": 0,
               "pista": "El botón forma parte de la interfaz con la que interactuás."
@@ -335,13 +331,12 @@
               "pista": "El backend puede ejecutar lógica y trabajar con datos."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Una web muestra el saldo de una cuenta. ¿Qué parte podría consultar el saldo guardado?",
-              "codigo": "saldo es 500\nmostrar saldo",
+              "tipo": "elegir",
+              "pregunta": "¿Qué pertenece al backend?",
               "opciones": [
-                "500",
-                "0",
-                "5000"
+                "La parte que procesa lógica o datos detrás de la interfaz",
+                "El botón visible",
+                "El teclado"
               ],
               "correcta": 0,
               "pista": "El backend puede aplicar lógica y consultar datos antes de responder."
@@ -386,13 +381,12 @@
               "pista": "Un precio es información que un programa puede guardar y procesar."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Una app guarda el nombre de una persona. ¿Qué está guardando?",
-              "codigo": "precio es 500\nmostrar precio",
+              "tipo": "elegir",
+              "pregunta": "¿Qué es un dato?",
               "opciones": [
-                "500",
-                "precio",
-                "0"
+                "Información que un programa puede guardar o procesar",
+                "Una red",
+                "Un navegador"
               ],
               "correcta": 0,
               "pista": "\"Ana\" es información de texto."
@@ -430,25 +424,25 @@
               "pista": "Una base de datos está pensada para almacenar y consultar información."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Una tienda necesita encontrar el precio de un producto. ¿Qué podría hacer?",
-              "codigo": "producto es \"espada\"\nmostrar producto",
+              "tipo": "elegir",
+              "pregunta": "¿Qué hace una base de datos?",
               "opciones": [
-                "espada",
-                "productos",
-                "servidor"
+                "Información organizada que se puede guardar y consultar",
+                "Una pantalla",
+                "Un lenguaje"
               ],
               "correcta": 0,
               "pista": "La base de datos puede almacenar y devolver el precio."
             },
             {
-              "tipo": "ordenar",
-              "consigna": "Ordená una búsqueda de un producto.",
-              "lineas": [
-                "producto es \"espada\"",
-                "precio es 500",
-                "mostrar producto, precio"
+              "tipo": "elegir",
+              "pregunta": "¿Qué hace una base de datos?",
+              "opciones": [
+                "Información organizada que se puede guardar y consultar",
+                "Una pantalla",
+                "Un lenguaje"
               ],
+              "correcta": 0,
               "pista": "Primero se hace el pedido y después se consulta la información."
             }
           ]
@@ -473,13 +467,12 @@
               "pista": "Una API define cómo pedir y recibir cosas entre programas."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Una app pide el clima a un servicio mediante una API. ¿Qué espera recibir?",
-              "codigo": "respuesta es \"soleado\"\nmostrar respuesta",
+              "tipo": "elegir",
+              "pregunta": "¿Qué permite una API?",
               "opciones": [
-                "soleado",
-                "API",
-                "navegador"
+                "Una forma definida para que programas se comuniquen",
+                "Una base de datos",
+                "Un monitor"
               ],
               "correcta": 0,
               "pista": "La API permite pedir datos y recibir una respuesta del servicio."
@@ -528,13 +521,12 @@
               "pista": "Los mensajes inesperados que piden credenciales deben verificarse antes de actuar."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "Una app recibe datos privados. ¿Qué debería importar?",
-              "codigo": "dato_privado es \"clave\"\nmostrar dato_privado",
+              "tipo": "elegir",
+              "pregunta": "¿Qué busca la seguridad digital?",
               "opciones": [
-                "clave",
-                "contraseña pública",
-                "monitor"
+                "Prácticas para proteger cuentas, dispositivos y datos",
+                "Un lenguaje",
+                "Un navegador"
               ],
               "correcta": 0,
               "pista": "La seguridad busca reducir accesos indebidos y proteger información."
@@ -550,24 +542,23 @@
               "texto": "Ahora juntá las piezas: una persona usa el frontend, el frontend puede hablar con un backend, el backend puede consultar datos y devolver una respuesta."
             },
             {
-              "tipo": "ordenar",
-              "consigna": "Ordená qué puede pasar cuando mirás tu inventario en un juego online.",
-              "lineas": [
-                "accion es \"Inventario\"",
-                "pedido es accion",
-                "respuesta es pedido",
-                "mostrar respuesta"
+              "tipo": "elegir",
+              "pregunta": "¿Qué idea ayuda a entender una aplicación por dentro?",
+              "opciones": [
+                "Separar y conectar responsabilidades entre interfaz, lógica y datos",
+                "Usar solo el frontend",
+                "Eliminar los datos"
               ],
+              "correcta": 0,
               "pista": "La interfaz inicia el pedido; detrás se consultan los datos y después vuelve la respuesta."
             },
             {
-              "tipo": "predecir",
-              "pregunta": "¿Qué pieza guarda mejor la idea de cada parte?",
-              "codigo": "respuesta es \"inventario\"\nmostrar respuesta",
+              "tipo": "elegir",
+              "pregunta": "¿Qué idea ayuda a entender una aplicación por dentro?",
               "opciones": [
-                "inventario",
-                "frontend",
-                "base de datos"
+                "Separar y conectar responsabilidades entre interfaz, lógica y datos",
+                "Usar solo el frontend",
+                "Eliminar los datos"
               ],
               "correcta": 0,
               "pista": "La gracia de una arquitectura es separar responsabilidades."
