@@ -228,7 +228,116 @@
     {
       "id": "python-fundamentos",
       "profundidad": "principal",
-      "disponibilidad_comercial": "por_definir"
+      "disponibilidad_comercial": "por_definir",
+      "unidades": [
+        {
+          "id": "python-puente",
+          "titulo": "De TortuScript a Python",
+          "competencias": [
+            "reconocer_entrada_salida",
+            "usar_variables"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "fuente_curricular": "python-real:py-print,py-input"
+        },
+        {
+          "id": "python-control",
+          "titulo": "Decisiones y repetición",
+          "competencias": [
+            "construir_condicionales",
+            "usar_repeticion"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "fuente_curricular": "python-real:py-if,py-for"
+        },
+        {
+          "id": "python-funciones",
+          "titulo": "Funciones",
+          "competencias": [
+            "definir_funciones"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "fuente_curricular": "python-real:py-def"
+        },
+        {
+          "id": "python-programa",
+          "titulo": "Primer programa",
+          "competencias": [
+            "depurar_programas",
+            "resolver_problemas"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "alta",
+          "fuente_curricular": "python-real:py-final"
+        },
+        {
+          "id": "python-datos",
+          "titulo": "Datos y tipos",
+          "competencias": [
+            "comprender_tipos_datos"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "fuente_curricular": "python-real:py-datos"
+        },
+        {
+          "id": "python-listas",
+          "titulo": "Listas",
+          "competencias": [
+            "usar_estructuras_de_datos"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "fuente_curricular": "python-real:py-listas"
+        },
+        {
+          "id": "python-problemas",
+          "titulo": "Resolver problemas",
+          "competencias": [
+            "resolver_problemas",
+            "depurar_programas"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "alta",
+          "fuente_curricular": "python-real:py-problemas"
+        }
+      ]
     },
     {
       "id": "web-esencial",
@@ -315,7 +424,9 @@
     "comprender_bases_datos",
     "comprender_api",
     "reconocer_riesgos_digitales",
-    "explicar_flujo_aplicacion"
+    "explicar_flujo_aplicacion",
+    "comprender_tipos_datos",
+    "resolver_problemas"
   ],
   "reglas_modelo": [
     "La edad, el nivel y la dificultad son dimensiones independientes.",
@@ -323,6 +434,7 @@
     "Los prerrequisitos pueden referir a unidades o competencias.",
     "Las fuentes curriculares externas se registran como trazabilidad y no como dependencias de ejecución.",
     "El catálogo debe poder representar actividades que el motor actual todavía no soporte.",
-    "Las franjas de edad son hipótesis operativas y no límites psicológicos rígidos."
+    "Las franjas de edad son hipótesis operativas y no límites psicológicos rígidos.",
+    "Python V1 profundiza sobre el puente TortuScript→Python sin reemplazar el contenido histórico ni exigir una migración destructiva del progreso."
   ]
 }
