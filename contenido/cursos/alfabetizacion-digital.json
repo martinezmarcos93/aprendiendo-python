@@ -16,8 +16,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Un programa es una lista de instrucciones que una computadora puede seguir para hacer una tarea. Un juego, una calculadora y una app son programas.",
-              "codigo": "programa es \"calculadora\"\nmostrar programa"
+              "texto": "Un programa es una lista de instrucciones que una computadora puede seguir para hacer una tarea. Un juego, una calculadora y una app son programas."
             },
             {
               "tipo": "elegir",
@@ -46,9 +45,9 @@
               "tipo": "ordenar",
               "consigna": "Ordená lo que hace una calculadora al recibir 5 + 3.",
               "lineas": [
-                "recibir 5 y 3",
-                "calcular 5 + 3",
-                "mostrar 8"
+                "numero es 5",
+                "resultado es numero + 3",
+                "mostrar resultado"
               ],
               "pista": "Primero llegan los datos, después se calcula y al final se muestra el resultado."
             }
@@ -60,8 +59,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Un lenguaje de programación permite escribir instrucciones de una forma que una computadora puede procesar. Python, JavaScript y Kotlin son lenguajes.",
-              "codigo": "lenguaje es \"Python\"\nmostrar lenguaje"
+              "texto": "Un lenguaje de programación permite escribir instrucciones de una forma que una computadora puede procesar. Python, JavaScript y Kotlin son lenguajes."
             },
             {
               "tipo": "elegir",
@@ -105,8 +103,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "El código es el texto que contiene las instrucciones de un programa. Leer código es parecido a leer una receta: importa qué dice y en qué orden.",
-              "codigo": "codigo es \"instrucciones\"\nmostrar codigo"
+              "texto": "El código es el texto que contiene las instrucciones de un programa. Leer código es parecido a leer una receta: importa qué dice y en qué orden."
             },
             {
               "tipo": "elegir",
@@ -150,8 +147,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "El navegador es el programa que usás para visitar sitios web. Chrome, Firefox y Edge son navegadores. El navegador pide y muestra recursos de una web.",
-              "codigo": "navegador es \"Firefox\"\nmostrar navegador"
+              "texto": "El navegador es el programa que usás para visitar sitios web. Chrome, Firefox y Edge son navegadores. El navegador pide y muestra recursos de una web."
             },
             {
               "tipo": "elegir",
@@ -180,9 +176,9 @@
               "tipo": "ordenar",
               "consigna": "Ordená una visita simple a una página web.",
               "lineas": [
-                "escribir una dirección",
-                "pedir los recursos",
-                "mostrar la página"
+                "direccion es \"sitio\"",
+                "pedido es direccion",
+                "mostrar pedido"
               ],
               "pista": "Primero indicás qué querés visitar; después el navegador pide lo necesario."
             }
@@ -194,8 +190,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Una red conecta dispositivos para que puedan comunicarse. Internet es una enorme red de redes. Tu computadora puede usar una red para comunicarse con otros equipos.",
-              "codigo": "internet es \"red de redes\"\nmostrar internet"
+              "texto": "Una red conecta dispositivos para que puedan comunicarse. Internet es una enorme red de redes. Tu computadora puede usar una red para comunicarse con otros equipos."
             },
             {
               "tipo": "elegir",
@@ -239,8 +234,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Un servidor es un programa o computadora que ofrece un servicio a otros programas o dispositivos. Una web puede pedirle datos a un servidor.",
-              "codigo": "servidor es \"responde pedidos\"\nmostrar servidor"
+              "texto": "Un servidor es un programa o computadora que ofrece un servicio a otros programas o dispositivos. Una web puede pedirle datos a un servidor."
             },
             {
               "tipo": "elegir",
@@ -269,10 +263,9 @@
               "tipo": "ordenar",
               "consigna": "Ordená una consulta simple a un servidor.",
               "lineas": [
-                "la app prepara un pedido",
-                "el servidor recibe el pedido",
-                "el servidor responde",
-                "la app muestra el resultado"
+                "pedido es \"personajes\"",
+                "respuesta es pedido",
+                "mostrar respuesta"
               ],
               "pista": "La respuesta del servidor llega después del pedido."
             }
@@ -284,8 +277,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Frontend es la parte de una aplicación con la que interactuás directamente. En una web incluye la interfaz que ves en el navegador.",
-              "codigo": "frontend es \"boton\"\nmostrar frontend"
+              "texto": "Frontend es la parte de una aplicación con la que interactuás directamente. En una web incluye la interfaz que ves en el navegador."
             },
             {
               "tipo": "elegir",
@@ -329,8 +321,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Backend es la parte que trabaja detrás de la interfaz. Puede procesar reglas, consultar datos y responder pedidos. No tiene que ser visible para el usuario.",
-              "codigo": "backend es \"procesa datos\"\nmostrar backend"
+              "texto": "Backend es la parte que trabaja detrás de la interfaz. Puede procesar reglas, consultar datos y responder pedidos. No tiene que ser visible para el usuario."
             },
             {
               "tipo": "elegir",
@@ -381,8 +372,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Un dato es una pieza de información que un programa puede guardar, procesar o mostrar: un nombre, una edad, un precio o una imagen.",
-              "codigo": "dato es \"precio\"\nmostrar dato"
+              "texto": "Un dato es una pieza de información que un programa puede guardar, procesar o mostrar: un nombre, una edad, un precio o una imagen."
             },
             {
               "tipo": "elegir",
@@ -426,8 +416,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Una base de datos organiza información para poder guardarla, buscarla y relacionarla. Una tienda puede tener productos, precios y stock en una base de datos.",
-              "codigo": "base_datos es \"productos\"\nmostrar base_datos"
+              "texto": "Una base de datos organiza información para poder guardarla, buscarla y relacionarla. Una tienda puede tener productos, precios y stock en una base de datos."
             },
             {
               "tipo": "elegir",
@@ -456,10 +445,9 @@
               "tipo": "ordenar",
               "consigna": "Ordená una búsqueda de un producto.",
               "lineas": [
-                "la app pide un producto",
-                "se consulta la base de datos",
-                "la base devuelve el precio",
-                "la app muestra el precio"
+                "producto es \"espada\"",
+                "precio es 500",
+                "mostrar producto, precio"
               ],
               "pista": "Primero se hace el pedido y después se consulta la información."
             }
@@ -471,8 +459,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Una API es una forma definida para que un programa pida algo a otro programa o servicio. Es como un mostrador con pedidos que tienen reglas conocidas.",
-              "codigo": "api es \"pedido\"\nmostrar api"
+              "texto": "Una API es una forma definida para que un programa pida algo a otro programa o servicio. Es como un mostrador con pedidos que tienen reglas conocidas."
             },
             {
               "tipo": "elegir",
@@ -516,8 +503,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "La seguridad digital busca proteger dispositivos, cuentas y datos. Contraseñas únicas, actualizaciones y cuidado con enlaces sospechosos son prácticas básicas.",
-              "codigo": "seguridad es \"proteger\"\nmostrar seguridad"
+              "texto": "La seguridad digital busca proteger dispositivos, cuentas y datos. Contraseñas únicas, actualizaciones y cuidado con enlaces sospechosos son prácticas básicas."
             },
             {
               "tipo": "elegir",
@@ -561,18 +547,16 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Ahora juntá las piezas: una persona usa el frontend, el frontend puede hablar con un backend, el backend puede consultar datos y devolver una respuesta.",
-              "codigo": "pieza es \"frontend\"\nmostrar pieza"
+              "texto": "Ahora juntá las piezas: una persona usa el frontend, el frontend puede hablar con un backend, el backend puede consultar datos y devolver una respuesta."
             },
             {
               "tipo": "ordenar",
               "consigna": "Ordená qué puede pasar cuando mirás tu inventario en un juego online.",
               "lineas": [
-                "tocás Inventario en el frontend",
-                "el frontend pide los datos",
-                "el backend consulta los datos",
-                "el servidor responde",
-                "el frontend muestra el inventario"
+                "accion es \"Inventario\"",
+                "pedido es accion",
+                "respuesta es pedido",
+                "mostrar respuesta"
               ],
               "pista": "La interfaz inicia el pedido; detrás se consultan los datos y después vuelve la respuesta."
             },
