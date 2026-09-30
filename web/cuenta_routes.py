@@ -14,6 +14,7 @@ from tortuscript.migracion_progreso import MigracionProgresoError, MigracionProg
 from tortuscript.perfil_educativo import ContextoEducativoError, PerfilEducativoService
 from tortuscript.progreso_childprofile import ProgresoChildProfile
 from tortuscript.progreso_contrato import importar_snapshot
+from tortuscript.runtime_educativo import RuntimeEducativo
 
 bp = Blueprint("cuenta", __name__, url_prefix="/cuenta")
 
@@ -270,3 +271,14 @@ def importar_progreso_local():
         updated_at=snapshot.updated_at,
         progreso=snapshot.data,
     )
+
+
+@bp.get("/runtime/progreso")
+def runtime_progreso():
+    """Primer punto de entrada del runtime educativo autenticado, aún separado del runtime local."""
+    raw = request.cookies.get("tortu_session")
+    try:
+        runtime = RuntimeEducativo(_educativo())
+        return jsonify(ok=True, **runtime.snapshot_publico(raw))
+    except ContextoEducativoError as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 401
