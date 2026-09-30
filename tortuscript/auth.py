@@ -185,7 +185,11 @@ class AuthRepository:
             ).fetchone()
         if not row or row["revoked_at"]:
             return None
-        if datetime.fromisoformat(row["expires_at"]) <= _now():
+        try:
+            expires_at = datetime.fromisoformat(row["expires_at"])
+        except (TypeError, ValueError):
+            return None
+        if expires_at <= _now():
             return None
         return row
 
@@ -222,4 +226,14 @@ class AuthRepository:
             db.execute(
                 "UPDATE sessions SET revoked_at=? WHERE id_hash=?",
                 (_iso(_now()), _digest(session)),
+            )
+
+    def revoke_all(self, account_id):
+        """Revoca todas las sesiones activas de una cuenta."""
+        if not account_id:
+            return
+        with self._db() as db:
+            db.execute(
+                "UPDATE sessions SET revoked_at=? WHERE account_id=? AND revoked_at IS NULL",
+                (_iso(_now()), account_id),
             )
