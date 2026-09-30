@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - refactor/auditoria-2026-09-29
+      - main
+      - audit/ux-v1-2026-09-30
 
 permissions:
   contents: read
