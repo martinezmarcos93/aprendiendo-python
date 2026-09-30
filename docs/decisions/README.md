@@ -34,6 +34,7 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 | [ADR-020](ADR-020-nivel-web-esencial.md) | HTML/CSS/JS como alfabetización web | Aceptada |
 | [ADR-021](ADR-021-nivel-sql.md) | SQL como segundo bloque de datos | Propuesta |
 | [ADR-022](ADR-022-preparacion-saas-sin-implementacion.md) | Preparación comercial sin SaaS en V1 | Propuesta |
+| [ADR-023](ADR-023-recorridos-iniciales.md) | Recorridos iniciales después de Nivel 0 | Aceptada |
 
 ## Documentos de producto
 
