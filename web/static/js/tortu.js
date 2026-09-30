@@ -283,19 +283,19 @@ const Tortu = (() => {
     const campo = document.getElementById("pf-campo");
     const error = document.getElementById("pf-error");
     const datos = await api("/api/perfiles");
-    const cuenta = datos.modo === "cuenta";
+    if (datos.modo !== "cuenta") throw new Error("El selector de perfiles requiere una cuenta.");
     lista.textContent = "";
     error.textContent = "";
     campo.value = "";
     for (const perfil of datos.perfiles) {
-      const id = cuenta ? perfil.id : perfil;
-      const nombre = cuenta ? perfil.nombre : perfil;
-      const activo = cuenta ? id === datos.actual : nombre === datos.actual;
+      const id = perfil.id;
+      const nombre = perfil.nombre;
+      const activo = id === datos.actual;
       const b = document.createElement("button");
       b.type = "button";
       b.className = "boton chico" + (activo ? " violeta" : "");
       b.textContent = nombre;
-      b.addEventListener("click", () => cambiar(cuenta ? perfil : nombre));
+      b.addEventListener("click", () => cambiar(perfil));
       lista.appendChild(b);
     }
     modal.hidden = false;
@@ -303,11 +303,7 @@ const Tortu = (() => {
 
     async function cambiar(perfil) {
       try {
-        if (cuenta) {
-          await cuentaPost("/cuenta/perfil", { perfil_id: perfil.id });
-        } else {
-          await api("/api/perfil", { nombre: perfil });
-        }
+        await cuentaPost("/cuenta/perfil", { perfil_id: perfil.id });
         location.reload();
       } catch (e) {
         error.textContent = (e.datos && e.datos.mensaje) || "No se pudo cambiar de perfil.";
@@ -326,37 +322,12 @@ const Tortu = (() => {
       } catch (e) { error.textContent = "No se pudo preparar el archivo."; }
     };
 
-    const archivo = document.getElementById("pf-archivo");
-    document.getElementById("pf-importar").onclick = () => { archivo.value = ""; archivo.click(); };
-    archivo.onchange = async () => {
-      const elegido = archivo.files[0];
-      if (!elegido) return;
-      if (cuenta) {
-        error.textContent = "En una cuenta familiar, la migración de un perfil local se hace desde la sección de cuenta.";
-        archivo.value = "";
-        return;
-      }
-      if (elegido.size > 1000000) { error.textContent = "Ese archivo es demasiado grande para ser un progreso."; return; }
-      let sobre;
-      try { sobre = JSON.parse(await elegido.text()); } catch (e) {
-        error.textContent = "Ese archivo no es un progreso de TortuScript."; return;
-      }
-      try {
-        const r = await api("/api/perfil/importar", { sobre });
-        if (r.ok) location.reload();
-      } catch (e) { error.textContent = (e.datos && e.datos.mensaje) || "No se pudo traer el progreso."; }
-    };
-
     document.getElementById("pf-ok").onclick = async () => {
       const nombre = campo.value.trim();
       if (!nombre) return;
       try {
-        if (cuenta) {
-          const creado = await cuentaPost("/cuenta/perfiles", { nombre });
-          await cuentaPost("/cuenta/perfil", { perfil_id: creado.perfil.id });
-        } else {
-          await api("/api/perfil", { nombre });
-        }
+        const creado = await cuentaPost("/cuenta/perfiles", { nombre });
+        await cuentaPost("/cuenta/perfil", { perfil_id: creado.perfil.id });
         location.reload();
       } catch (e) {
         error.textContent = (e.datos && e.datos.mensaje) || "No se pudo crear o seleccionar el perfil.";
