@@ -53,5 +53,29 @@ class AuthTests(unittest.TestCase):
         self.assertEqual(len(guardado), 64)
 
 
+
+    def test_verificacion_de_correo_es_de_un_solo_uso(self):
+        cuenta = self.cuentas.crear_account("adulto@example.com")
+        token, _ = self.auth.create_verification_token(cuenta.id)
+        self.auth.verify_email_token(token)
+        with self.assertRaises(AuthError):
+            self.auth.verify_email_token(token)
+        fila = self.cuentas.obtener_account(cuenta.id)
+        self.assertEqual(fila.email, "adulto@example.com")
+
+    def test_recuperacion_cambia_password_y_revoca_sesiones(self):
+        cuenta = self.cuentas.crear_account("adulto@example.com")
+        self.auth.set_password(cuenta.id, "una-clave-larga-123")
+        self.auth.marcar_verificada(cuenta.id)
+        session, _, _ = self.auth.create_session(cuenta.id)
+        token, _ = self.auth.create_recovery_token(cuenta.email)
+        self.auth.reset_password(token, "otra-clave-larga-456")
+        with self.assertRaises(AuthError):
+            self.auth.verify_password(cuenta.email, "una-clave-larga-123")
+        self.assertEqual(self.auth.verify_password(cuenta.email, "otra-clave-larga-456")["id"], cuenta.id)
+        self.assertIsNone(self.auth.get_session(session))
+        with self.assertRaises(AuthError):
+            self.auth.reset_password(token, "tercera-clave-larga-789")
+
 if __name__ == "__main__":
     unittest.main()
