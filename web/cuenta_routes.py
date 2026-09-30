@@ -86,7 +86,7 @@ def login():
         raw_session, csrf, expires = auth.create_session(cuenta["id"])
     except AuthError:
         return jsonify(ok=False, mensaje="Correo o contraseña incorrectos o cuenta sin verificar."), 401
-    respuesta = make_response(jsonify(ok=True, cuenta={"id": cuenta["id"], "email": cuenta["email"]},
+    respuesta = make_response(jsonify(ok=True, cuenta={"id": cuenta["id"], "email": cuenta["email"], "role": cuenta["role"]},
                                       csrf=csrf, expira=expires.isoformat()))
     respuesta.set_cookie("tortu_session", raw_session, **_cookie_config())
     return respuesta
@@ -102,7 +102,7 @@ def me():
     perfiles = cuentas.listar_child_profiles(row["account_id"])
     return jsonify(
         autenticado=True,
-        cuenta={"id": cuenta.id, "email": cuenta.email},
+        cuenta={"id": cuenta.id, "email": cuenta.email, "role": cuenta.role},
         perfiles=[{"id": p.id, "nombre": p.display_name} for p in perfiles],
         perfil_activo=row["active_profile_id"] if "active_profile_id" in row.keys() else None,
     )
