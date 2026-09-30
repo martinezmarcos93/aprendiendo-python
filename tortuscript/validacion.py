@@ -275,6 +275,16 @@ def _validar_paso(paso, donde, hallazgos):
     elif tipo == "escribir":
         if not _requeridos(paso, ["consigna", "solucion"], donde, hallazgos):
             return set()
+        if paso.get("web"):
+            from .web_evaluacion import validar_codigo
+            reglas = paso.get("web") or {}
+            lenguaje = paso.get("lenguaje") or reglas.get("lenguaje")
+            ok, mensaje = validar_codigo(paso["solucion"], lenguaje, reglas)
+            if not ok:
+                hallazgos.append(Hallazgo(ERROR, donde, f"la solución Web no es válida: {mensaje}"))
+            if not paso.get("palabras_pista"):
+                hallazgos.append(Hallazgo(AVISO, donde, "ejercicio Web sin «palabras_pista»"))
+            return set()
         if paso.get("juego"):
             err, eventos, usadas = _correr_juego(paso["solucion"], entradas)
             if err:
