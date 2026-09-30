@@ -103,6 +103,14 @@ def login():
     respuesta = make_response(jsonify(ok=True, cuenta={"id": cuenta["id"], "email": cuenta["email"], "role": cuenta["role"]},
                                       csrf=csrf, expira=expires.isoformat()))
     respuesta.set_cookie("tortu_session", raw_session, **_cookie_config())
+    respuesta.set_cookie(
+        "tortu_csrf", csrf,
+        httponly=False,
+        secure=bool(current_app.config.get("ACCOUNT_COOKIE_SECURE", False)),
+        samesite=current_app.config.get("ACCOUNT_COOKIE_SAMESITE", "Lax"),
+        path="/",
+        max_age=12 * 60 * 60,
+    )
     return respuesta
 
 
@@ -143,6 +151,7 @@ def logout():
         auth.revoke(raw)
     respuesta = make_response(jsonify(ok=True))
     respuesta.delete_cookie("tortu_session", path="/")
+    respuesta.delete_cookie("tortu_csrf", path="/")
     return respuesta
 
 
