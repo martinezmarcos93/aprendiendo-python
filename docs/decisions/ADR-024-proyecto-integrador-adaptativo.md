@@ -1,6 +1,6 @@
 # ADR-024 — Proyecto integrador adaptativo y exportable
 
-- Estado: Propuesta
+- Estado: Aceptada
 - Fecha: 2026-09-29
 
 ## Contexto
