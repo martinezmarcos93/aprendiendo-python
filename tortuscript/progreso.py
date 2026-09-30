@@ -447,7 +447,7 @@ def registrar_sesion_hoy(progreso, indice):
 # ─────────────────────────────────────────
 # REGISTRO DE EJERCICIO
 # ─────────────────────────────────────────
-def registrar_ejercicio(progreso, indice, estrellas, xp_ganado):
+def registrar_ejercicio(progreso, indice, estrellas, xp_ganado, persistir=True):
     """Registra un ejercicio RESUELTO. Solo suma XP si mejora el puntaje anterior."""
     key = str(indice)
     anterior = progreso["ejercicios"].get(key, {})
@@ -461,14 +461,15 @@ def registrar_ejercicio(progreso, indice, estrellas, xp_ganado):
         actualizar_racha(progreso)
         registrar_sesion_hoy(progreso, indice)
 
-    guardar_progreso(progreso)
+    if persistir:
+        guardar_progreso(progreso)
     return hubo_mejora
 
 
 # ─────────────────────────────────────────
 # PRÁCTICA DEL DÍA
 # ─────────────────────────────────────────
-def registrar_practica(progreso, leccion_id, paso, acierto, hoy=None):
+def registrar_practica(progreso, leccion_id, paso, acierto, hoy=None, persistir=True):
     """Anota un paso practicado: reprograma su tarjeta, suma un poco de XP (con tope diario) y cuenta
     como actividad del día. `acierto` = respondió bien al primer intento. Guarda. Devuelve el XP ganado."""
     hoy = hoy or date.today()
@@ -483,14 +484,15 @@ def registrar_practica(progreso, leccion_id, paso, acierto, hoy=None):
             del por_dia[viejo]
         sumar_xp(progreso, ganado, hoy)
     actualizar_racha(progreso, hoy)
-    guardar_progreso(progreso)
+    if persistir:
+        guardar_progreso(progreso)
     return ganado
 
 
 # ─────────────────────────────────────────
 # LECCIONES
 # ─────────────────────────────────────────
-def registrar_paso_leccion(progreso, leccion_id, indice, xp, perfecto, total_pasos, estrellas=None):
+def registrar_paso_leccion(progreso, leccion_id, indice, xp, perfecto, total_pasos, estrellas=None, persistir=True):
     """Anota un paso terminado de una lección y guarda.
 
     Se recuerda el MEJOR resultado de cada paso: repetir una lección nunca da XP doble, solo
@@ -514,7 +516,8 @@ def registrar_paso_leccion(progreso, leccion_id, indice, xp, perfecto, total_pas
     lec["perfecta"] = lec["completada"] and all(
         lec["pasos"].get(str(i), {}).get("perfecto") for i in range(total_pasos))
     actualizar_racha(progreso)
-    guardar_progreso(progreso)
+    if persistir:
+        guardar_progreso(progreso)
     return {"xp_ganado": ganado, "completa": lec["completada"], "perfecta": lec["perfecta"],
             "recien_completa": lec["completada"] and not estaba_completa}
 
