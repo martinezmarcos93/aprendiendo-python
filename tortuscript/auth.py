@@ -9,6 +9,8 @@ from pathlib import Path
 from werkzeug.security import check_password_hash, generate_password_hash
 
 SESSION_HOURS = 12
+VERIFICATION_HOURS = 24
+RECOVERY_HOURS = 1
 
 
 def _now():
@@ -56,11 +58,80 @@ class AuthRepository:
                     active_profile_id TEXT REFERENCES child_profiles(id) ON DELETE SET NULL
                 );
                 CREATE INDEX IF NOT EXISTS idx_sessions_account ON sessions(account_id);
+
+                CREATE TABLE IF NOT EXISTS account_tokens (
+                    token_hash TEXT PRIMARY KEY,
+                    account_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+                    kind TEXT NOT NULL CHECK (kind IN ('verification', 'recovery')),
+                    created_at TEXT NOT NULL,
+                    expires_at TEXT NOT NULL,
+                    consumed_at TEXT
+                );
+                CREATE INDEX IF NOT EXISTS idx_account_tokens_account_kind
+                    ON account_tokens(account_id, kind);
             """)
             session_cols = {row["name"] for row in db.execute("PRAGMA table_info(sessions)")}
             if "active_profile_id" not in session_cols:
                 db.execute("ALTER TABLE sessions ADD COLUMN active_profile_id TEXT REFERENCES child_profiles(id) ON DELETE SET NULL")
 
+
+    def create_verification_token(self, account_id):
+        return self._create_account_token(account_id, "verification", VERIFICATION_HOURS)
+
+    def verify_email_token(self, raw_token):
+        account_id = self._consume_account_token(raw_token, "verification")
+        self.marcar_verificada(account_id)
+        return account_id
+
+    def create_recovery_token(self, email):
+        email = (email or "").strip().lower()
+        with self._db() as db:
+            row = db.execute("SELECT id FROM accounts WHERE email=?", (email,)).fetchone()
+        if not row:
+            return None
+        return self._create_account_token(row["id"], "recovery", RECOVERY_HOURS)
+
+    def reset_password(self, raw_token, new_password):
+        account_id = self._consume_account_token(raw_token, "recovery")
+        self.set_password(account_id, new_password)
+        with self._db() as db:
+            db.execute("UPDATE sessions SET revoked_at=? WHERE account_id=? AND revoked_at IS NULL",
+                       (_iso(_now()), account_id))
+        return account_id
+
+    def _create_account_token(self, account_id, kind, hours):
+        raw = secrets.token_urlsafe(32)
+        now = _now()
+        expires = now + timedelta(hours=hours)
+        with self._db() as db:
+            if not db.execute("SELECT 1 FROM accounts WHERE id=?", (account_id,)).fetchone():
+                raise AuthError("La cuenta no existe.")
+            db.execute("UPDATE account_tokens SET consumed_at=? WHERE account_id=? AND kind=? AND consumed_at IS NULL",
+                       (_iso(now), account_id, kind))
+            db.execute(
+                "INSERT INTO account_tokens(token_hash,account_id,kind,created_at,expires_at) VALUES (?,?,?,?,?)",
+                (_digest(raw), account_id, kind, _iso(now), _iso(expires)),
+            )
+        return raw, expires
+
+    def _consume_account_token(self, raw_token, kind):
+        if not raw_token:
+            raise AuthError("El enlace no es válido.")
+        now = _now()
+        with self._db() as db:
+            row = db.execute(
+                "SELECT account_id,expires_at,consumed_at FROM account_tokens WHERE token_hash=? AND kind=?",
+                (_digest(raw_token), kind),
+            ).fetchone()
+            if not row or row["consumed_at"] or datetime.fromisoformat(row["expires_at"]) <= now:
+                raise AuthError("El enlace no es válido o ya expiró.")
+            db.execute(
+                "UPDATE account_tokens SET consumed_at=? WHERE token_hash=? AND consumed_at IS NULL",
+                (_iso(now), _digest(raw_token)),
+            )
+            if db.total_changes != 1:
+                raise AuthError("El enlace no es válido o ya fue utilizado.")
+            return row["account_id"]
 
     def marcar_verificada(self, account_id):
         with self._db() as db:
