@@ -15,6 +15,9 @@ from tortuscript.perfil_educativo import ContextoEducativoError, PerfilEducativo
 from tortuscript.progreso_childprofile import ProgresoChildProfile
 from tortuscript.progreso_contrato import importar_snapshot
 from tortuscript.runtime_educativo import RuntimeEducativo
+from tortuscript.rate_limit import RateLimiter
+
+_RATE_LIMITER = RateLimiter()
 
 bp = Blueprint("cuenta", __name__, url_prefix="/cuenta")
 
@@ -35,6 +38,14 @@ def _educativo():
     acceso = AccesoProducto(cuentas)
     return PerfilEducativoService(cuentas, auth, store, acceso)
 
+
+def _limit_or_429(key, limit, window):
+    allowed, retry_after = _RATE_LIMITER.allow(key, limit, window)
+    if allowed:
+        return None
+    respuesta = jsonify(ok=False, mensaje="Demasiados intentos. Probá nuevamente más tarde.")
+    respuesta.headers["Retry-After"] = str(retry_after)
+    return respuesta, 429
 
 def _emitir_email(tipo, email, token, expires):
     sender = current_app.config.get("ACCOUNT_EMAIL_SENDER")
@@ -110,6 +121,9 @@ def solicitar_recuperacion():
     datos = request.get_json(silent=True) or {}
     email = datos.get("email")
     if isinstance(email, str):
+        limit = _limit_or_429(f"recovery:{request.remote_addr}", 5, 3600)
+        if limit:
+            return limit
         _, auth = _repos()
         token_info = auth.create_recovery_token(email)
         if token_info:
@@ -142,6 +156,9 @@ def login():
     password = datos.get("password")
     if not isinstance(email, str) or not isinstance(password, str):
         return jsonify(ok=False, mensaje="Correo o contraseña incorrectos."), 401
+    limit = _limit_or_429(f"login:{request.remote_addr}:{(email or "").strip().lower()}", 10, 900)
+    if limit:
+        return limit
     _, auth = _repos()
     try:
         cuenta = auth.verify_password(email, password)
