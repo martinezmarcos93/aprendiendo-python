@@ -407,8 +407,8 @@ def create_app(token=None):
                     lp = p.get("lecciones", {}).get(lec["id"], {})
                     nivel0.append({
                         "leccion": lec["id"],
-                        "numero": lec["titulo"].partition(". ")[0],
-                        "nombre": lec["titulo"].partition(". ")[2] or lec["titulo"],
+                        "numero": lec["numero"],
+                        "nombre": lec["nombre"],
                         "completado": lec["estado"] in ("hecha", "perfecta"),
                         "perfecto": lec["estado"] == "perfecta",
                         "abierto": lec["estado"] != "bloqueada",
