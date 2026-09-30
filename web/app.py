@@ -137,41 +137,34 @@ def create_app(token=None):
         return _respuesta_de_error(500, codigo)
 
     # ─────────────── almacenamiento educativo ───────────────
-    def _runtime_autenticado():
-        """Devuelve el runtime comercial si hay sesión adulta + perfil educativo activo."""
+    def _runtime_educativo():
+        """Runtime comercial obligatorio: toda experiencia educativa vive en un ChildProfile."""
         raw_session = request.cookies.get("tortu_session")
         if not raw_session:
-            return None, None
+            abort(401)
         runtime = RuntimeEducativo(_educativo())
         try:
             runtime.contexto(raw_session)
         except ContextoEducativoError:
-            return None, raw_session
+            abort(401)
         return runtime, raw_session
 
     def _perfil_contexto():
-        """Clave estable del contexto educativo actual."""
-        runtime, raw_session = _runtime_autenticado()
-        if runtime is not None:
-            return runtime.contexto(raw_session).perfil.id
-        return progreso.PERFIL_ACTUAL
+        runtime, raw_session = _runtime_educativo()
+        return runtime.contexto(raw_session).perfil.id
 
     def _nombre_perfil_contexto(p=None):
         p = p or _cargar_progreso()
         return p.get("config", {}).get("nombre") or _perfil_contexto()
 
     def _cargar_progreso():
-        runtime, raw_session = _runtime_autenticado()
-        if runtime is not None:
-            return runtime.cargar_datos(raw_session)
-        return progreso.cargar_progreso()
+        runtime, raw_session = _runtime_educativo()
+        return runtime.cargar_datos(raw_session)
 
     def _guardar_progreso(p):
-        runtime, raw_session = _runtime_autenticado()
-        if runtime is not None:
-            runtime.guardar_datos(raw_session, p)
-            return True
-        return progreso.guardar_progreso(p)
+        runtime, raw_session = _runtime_educativo()
+        runtime.guardar_datos(raw_session, p)
+        return True
 
     def _tomar_avisos(p):
         avisos = progreso.tomar_avisos(p, guardar=False)
@@ -180,38 +173,27 @@ def create_app(token=None):
         return avisos
 
     def _registrar_ejercicio(p, indice, estrellas, xp_ganado):
-        runtime, raw_session = _runtime_autenticado()
-        if runtime is not None:
-            resultado = runtime.registrar_ejercicio(raw_session, indice, estrellas, xp_ganado)
-            actualizado = runtime.cargar_datos(raw_session)
-            p.clear()
-            p.update(actualizado)
-            return resultado
-        return progreso.registrar_ejercicio(p, indice, estrellas, xp_ganado)
+        runtime, raw_session = _runtime_educativo()
+        resultado = runtime.registrar_ejercicio(raw_session, indice, estrellas, xp_ganado)
+        p.clear()
+        p.update(runtime.cargar_datos(raw_session))
+        return resultado
 
     def _registrar_paso_leccion(p, leccion_id, indice, xp, perfecto, total_pasos, estrellas=None):
-        runtime, raw_session = _runtime_autenticado()
-        if runtime is not None:
-            resultado = runtime.registrar_paso_leccion(
-                raw_session, leccion_id, indice, xp, perfecto, total_pasos, estrellas
-            )
-            actualizado = runtime.cargar_datos(raw_session)
-            p.clear()
-            p.update(actualizado)
-            return resultado
-        return progreso.registrar_paso_leccion(
-            p, leccion_id, indice, xp, perfecto, total_pasos, estrellas
+        runtime, raw_session = _runtime_educativo()
+        resultado = runtime.registrar_paso_leccion(
+            raw_session, leccion_id, indice, xp, perfecto, total_pasos, estrellas
         )
+        p.clear()
+        p.update(runtime.cargar_datos(raw_session))
+        return resultado
 
     def _registrar_practica(p, leccion_id, paso, acierto):
-        runtime, raw_session = _runtime_autenticado()
-        if runtime is not None:
-            resultado = runtime.registrar_practica(raw_session, leccion_id, paso, acierto)
-            actualizado = runtime.cargar_datos(raw_session)
-            p.clear()
-            p.update(actualizado)
-            return resultado
-        return progreso.registrar_practica(p, leccion_id, paso, acierto)
+        runtime, raw_session = _runtime_educativo()
+        resultado = runtime.registrar_practica(raw_session, leccion_id, paso, acierto)
+        p.clear()
+        p.update(runtime.cargar_datos(raw_session))
+        return resultado
 
     # ─────────────── seguridad ───────────────
     @app.after_request
@@ -223,6 +205,23 @@ def create_app(token=None):
         return respuesta
 
     @app.before_request
+    @app.before_request
+    def _requiere_contexto_educativo():
+        if request.endpoint in (None, "static") or request.path.startswith("/cuenta/"):
+            return None
+        if not request.cookies.get("tortu_session"):
+            if request.path.startswith("/api/"):
+                return jsonify(ok=False, mensaje="Iniciá sesión y seleccioná un perfil educativo."), 401
+            return redirect(url_for("cuenta.login"))
+        runtime = RuntimeEducativo(_educativo())
+        try:
+            runtime.contexto(request.cookies["tortu_session"])
+        except ContextoEducativoError:
+            if request.path.startswith("/api/"):
+                return jsonify(ok=False, mensaje="La sesión educativa ya no es válida."), 401
+            return redirect(url_for("cuenta.login"))
+        return None
+
     def _proteger():
         if request.host.split(":")[0] not in HOSTS_PERMITIDOS:
             abort(403)
@@ -324,14 +323,8 @@ def create_app(token=None):
         return EJERCICIOS[n]
 
     def _otros_en_liga(dia):
-        """Rivales de la liga; el modo autenticado no lee perfiles locales ajenos."""
-        runtime, _ = _runtime_autenticado()
-        if runtime is not None:
-            return {}
-        return {
-            n: xp for n, dias in progreso.leer_otros_perfiles().items()
-            if (xp := liga.xp_de_la_semana(dias, dia)) > 0
-        }
+        """Rivales remotos de la cuenta. Aún no existe ranking remoto V1: nunca usa datos locales ajenos."""
+        return {}
 
     def _avisos_tras(p):
         """Revisa los logros con el progreso ya actualizado y devuelve (y guarda) los avisos pendientes."""
@@ -803,7 +796,7 @@ def create_app(token=None):
                 p = _cargar_progreso()
                 nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
                 indice = contenido.indices_ejercicio(leccion_id).get(i)
-                runtime, raw_session = _runtime_autenticado()
+                runtime, raw_session = _runtime_educativo()
                 if runtime is not None:
                     if indice is not None:
                         mejora = runtime.registrar_ejercicio(raw_session, indice, estrellas, xp)
@@ -849,7 +842,7 @@ def create_app(token=None):
                 p = _cargar_progreso()
                 nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
                 indice = contenido.indices_ejercicio(leccion_id).get(i)
-                runtime, raw_session = _runtime_autenticado()
+                runtime, raw_session = _runtime_educativo()
                 if runtime is not None:
                     if indice is not None:
                         mejora = runtime.registrar_ejercicio(raw_session, indice, estrellas, xp)
@@ -1095,14 +1088,8 @@ def create_app(token=None):
     def api_onboarding():
         datos = request.get_json(silent=True) or {}
         crudo = str(datos.get("nombre") or "").strip()
-        if crudo:
-            perfil = progreso.sanitizar_perfil(crudo)
-            if not perfil:
-                return jsonify(ok=False, mensaje="Usá letras o números para el nombre."), 400
-            runtime, raw_session = _runtime_autenticado()
-            if runtime is None and perfil != progreso.PERFIL_ACTUAL:
-                progreso.set_perfil(perfil)
-                progreso.recordar_perfil(perfil)
+        if crudo and not progreso.sanitizar_perfil(crudo):
+            return jsonify(ok=False, mensaje="Usá letras o números para el nombre."), 400
         entrada = datos.get("entrada")                   # diagnóstico (ADR-004): solo el punto que le toca
         if entrada and entrada not in diagnostico.entradas_permitidas(datos.get("experiencia")):
             return jsonify(ok=False, mensaje="Alguna respuesta no es válida."), 400
@@ -1142,29 +1129,17 @@ def create_app(token=None):
 
     @app.get("/api/perfiles")
     def api_perfiles():
-        runtime, raw_session = _runtime_autenticado()
-        if runtime is not None:
-            contexto = runtime.contexto(raw_session)
-            perfiles = [
-                {"id": p.id, "nombre": p.display_name}
-                for p in contexto.cuentas.listar_child_profiles(contexto.account.id)
-            ]
-            return jsonify(modo="cuenta", actual=contexto.perfil.id, perfiles=perfiles)
-        return jsonify(modo="local", actual=progreso.PERFIL_ACTUAL, perfiles=progreso.obtener_perfiles())
+        runtime, raw_session = _runtime_educativo()
+        contexto = runtime.contexto(raw_session)
+        perfiles = [
+            {"id": p.id, "nombre": p.display_name}
+            for p in contexto.cuentas.listar_child_profiles(contexto.account.id)
+        ]
+        return jsonify(modo="cuenta", actual=contexto.perfil.id, perfiles=perfiles)
 
     @app.post("/api/perfil")
     def api_perfil():
-        runtime, raw_session = _runtime_autenticado()
-        if runtime is not None:
-            return jsonify(ok=False, mensaje="En una cuenta familiar, seleccioná el perfil desde /cuenta/perfil."), 409
-        nombre = progreso.sanitizar_perfil((request.get_json(silent=True) or {}).get("nombre", ""))
-        if not nombre:
-            return jsonify(ok=False, mensaje="Usá letras o números para el nombre."), 400
-        progreso.set_perfil(nombre)
-        progreso.recordar_perfil(nombre)
-        if not progreso.get_archivo_progreso(nombre).exists():
-            progreso.guardar_progreso(progreso.cargar_progreso(nombre))   # que aparezca en la lista
-        return jsonify(ok=True, actual=nombre, estado=_estado())
+        return jsonify(ok=False, mensaje="Seleccioná el perfil desde /cuenta/perfil."), 409
 
     @app.get("/api/perfil/exportar")
     def api_exportar_perfil():
@@ -1175,26 +1150,11 @@ def create_app(token=None):
 
     @app.post("/api/perfil/importar")
     def api_importar_perfil():
-        """Importa un progreso local solo en el modo de compatibilidad sin cuenta."""
-        runtime, _ = _runtime_autenticado()
-        if runtime is not None:
-            return jsonify(
-                ok=False,
-                mensaje="La importación de progreso en cuentas se realiza desde /cuenta/progreso/importar-local.",
-            ), 409
-        if (request.content_length or 0) > respaldo.MAX_BYTES:
-            return jsonify(ok=False, mensaje="El archivo es demasiado grande para ser un progreso."), 400
-        try:
-            datos, sugerido = respaldo.validar((request.get_json(silent=True) or {}).get("sobre"))
-        except respaldo.ErrorImportacion as e:
-            return jsonify(ok=False, mensaje=str(e)), 400
-        nombre = respaldo.nombre_libre(sugerido, progreso.obtener_perfiles())
-        datos["_perfil"] = nombre
-        if not progreso.guardar_progreso(datos):
-            return jsonify(ok=False, mensaje="No se pudo guardar el progreso en esta compu."), 500
-        progreso.set_perfil(nombre)
-        progreso.recordar_perfil(nombre)
-        return jsonify(ok=True, actual=nombre, estado=_estado())
+        """La importación histórica local quedó fuera del producto V1."""
+        return jsonify(
+            ok=False,
+            mensaje="La importación de progreso local no está disponible en cuentas. Usá el flujo de migración de /cuenta/progreso/importar-local.",
+        ), 410
 
     @app.post("/api/diagnostico")
     def api_diagnostico():
@@ -1230,5 +1190,4 @@ def create_app(token=None):
     def api_estado():
         return jsonify(_estado())
 
-    progreso.set_perfil(progreso.perfil_recordado())
     return app
