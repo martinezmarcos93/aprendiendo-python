@@ -141,7 +141,7 @@ def _validar_paso(paso, donde, hallazgos):
     tipo = paso.get("tipo")
     entradas = paso.get("entradas_prueba")
     usadas = set()
-    if paso.get("lenguaje") in {"html", "css", "javascript"}:
+    if paso.get("lenguaje") in {"html", "css", "javascript", "web-conceptual"}:
         from .web_evaluacion import validar_codigo
         reglas = paso.get("web") or {}
         codigo = paso.get("codigo") or paso.get("solucion") or ""
