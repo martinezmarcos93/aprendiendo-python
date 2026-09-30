@@ -149,6 +149,17 @@ def create_app(token=None):
             return None, raw_session
         return runtime, raw_session
 
+    def _perfil_contexto():
+        """Clave estable del contexto educativo actual."""
+        runtime, raw_session = _runtime_autenticado()
+        if runtime is not None:
+            return runtime.contexto(raw_session).perfil.id
+        return progreso.PERFIL_ACTUAL
+
+    def _nombre_perfil_contexto(p=None):
+        p = p or _cargar_progreso()
+        return p.get("config", {}).get("nombre") or _perfil_contexto()
+
     def _cargar_progreso():
         runtime, raw_session = _runtime_autenticado()
         if runtime is not None:
@@ -264,7 +275,7 @@ def create_app(token=None):
     def _globales():
         # Lo que quedó pendiente (p. ej. subir de liga al cambiar la semana) se cuenta en la próxima página
         avisos = _tomar_avisos(_cargar_progreso())
-        return {"token": app.config["TOKEN"], "estado": _estado(), "perfil": progreso.PERFIL_ACTUAL,
+        return {"token": app.config["TOKEN"], "estado": _estado(), "perfil": _nombre_perfil_contexto(),
                 "avisos_pendientes": avisos, "ajustes": progreso.ajustes_de(_cargar_progreso())}
 
     # ─────────────── helpers ───────────────
@@ -288,7 +299,7 @@ def create_app(token=None):
             "lecciones_total": len(planas),
             "xp_hoy": hoy_xp, "meta_xp": meta, "meta_min": p["config"]["meta_min"],
             "meta_pct": min(100, round(100 * hoy_xp / meta)) if meta else 0,
-            "nombre": p["config"].get("nombre") or progreso.PERFIL_ACTUAL,
+            "nombre": p["config"].get("nombre") or _perfil_contexto(),
             "xp": xp, "nivel": nivel, "titulo": progreso.titulo_nivel(nivel),
             "color_tortuga": progreso.color_tortuga(nivel),
             "xp_actual": xp_actual, "xp_max": xp_max,
@@ -328,7 +339,7 @@ def create_app(token=None):
 
     def _pagina_ejercicio(indice, repaso=None):
         ej = _ejercicio_o_404(indice)
-        pistas_vistas[(progreso.PERFIL_ACTUAL, ej["leccion_id"], ej["paso"])] = 0
+        pistas_vistas[(_perfil_contexto(), ej["leccion_id"], ej["paso"])] = 0
         hallada = motor.buscar_leccion(_curso(), ej.get("leccion_id"))
         leccion_larga = hallada[1]["id"] if hallada and len(hallada[1]["pasos"]) > 1 else None
         return render_template("ejercicio.html", ej=ej, n=indice + 1, total=len(EJERCICIOS), repaso=repaso,
@@ -474,8 +485,8 @@ def create_app(token=None):
         if not _leccion_desbloqueada(leccion_id, p):
             return redirect(url_for("aprender"))
         for i in range(len(lec["pasos"])):
-            intentos.pop((progreso.PERFIL_ACTUAL, leccion_id, i), None)
-            pistas_vistas.pop((progreso.PERFIL_ACTUAL, leccion_id, i), None)
+            intentos.pop((_perfil_contexto(), leccion_id, i), None)
+            pistas_vistas.pop((_perfil_contexto(), leccion_id, i), None)
         datos = {"id": leccion_id, "titulo": lec["titulo"], "seccion": seccion["titulo"], "curso": curso["titulo"],
                  "nivel": seccion["nivel"], "pasos": [_publico(paso, leccion_id, i) for i, paso in enumerate(lec["pasos"])],
                  "ya_completada": _completada(lec, p)}
@@ -555,11 +566,11 @@ def create_app(token=None):
         elegidas = espaciado.elegir(p, _cursos(), date.today())
         if not elegidas:
             return render_template("practica_vacia.html")
-        practicas[progreso.PERFIL_ACTUAL] = {"dia": str(date.today()), "pasos": elegidas}
+        practicas[_perfil_contexto()] = {"dia": str(date.today()), "pasos": elegidas}
         pasos = []
         for leccion_id, i in elegidas:
             _, _, lec = _leccion_o_404(leccion_id)
-            intentos.pop((progreso.PERFIL_ACTUAL, "practica", leccion_id, i), None)
+            intentos.pop((_perfil_contexto(), "practica", leccion_id, i), None)
             publico = _publico(lec["pasos"][i], leccion_id, i)
             publico["leccion"] = leccion_id
             pasos.append(publico)
@@ -609,7 +620,7 @@ def create_app(token=None):
         de camino, no desaparece de la lista ni se corren los lugares."""
         if modo not in MODOS:
             abort(404)
-        clave = (progreso.PERFIL_ACTUAL, modo, semilla)
+        clave = (_perfil_contexto(), modo, semilla)
         if nueva or clave not in colas:
             colas[clave] = cola_repaso(_cargar_progreso(), modo, len(EJERCICIOS), semilla)
         return colas[clave]
@@ -742,7 +753,7 @@ def create_app(token=None):
         lec, paso = _paso_o_404(leccion_id, i)
         if paso["tipo"] == "escribir":
             abort(400)                           # se evalúa ejecutando: .../evaluar
-        clave = (progreso.PERFIL_ACTUAL, leccion_id, i)
+        clave = (_perfil_contexto(), leccion_id, i)
         estado_paso = intentos.setdefault(clave, {"errores": 0, "revelado": False})
         r = motor.comprobar(paso, (request.get_json(silent=True) or {}).get("respuesta"), _ejecutar_para_motor(paso))
         if not r["ok"]:
@@ -764,7 +775,7 @@ def create_app(token=None):
         lec, paso = _paso_o_404(leccion_id, i)
         if paso["tipo"] in ("escribir", "explicacion"):
             abort(400)
-        clave = (progreso.PERFIL_ACTUAL, leccion_id, i)
+        clave = (_perfil_contexto(), leccion_id, i)
         estado_paso = intentos.setdefault(clave, {"errores": 0, "revelado": False})
         if not motor.puede_ver_respuesta(estado_paso["errores"]):
             abort(403)                           # primero hay que intentarlo (2 errores)
@@ -783,7 +794,7 @@ def create_app(token=None):
             )}
             if r["evaluacion"]["estado"] == evaluacion.CORRECTO:
                 _, _, lec = _leccion_o_404(leccion_id)
-                vistas = pistas_vistas.get((progreso.PERFIL_ACTUAL, leccion_id, i), 0)
+                vistas = pistas_vistas.get((_perfil_contexto(), leccion_id, i), 0)
                 estrellas, xp = evaluacion.estrellas_por_pistas(vistas)
                 p = _cargar_progreso()
                 nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
@@ -829,7 +840,7 @@ def create_app(token=None):
             )}
             if r["evaluacion"]["estado"] == evaluacion.CORRECTO:
                 _, _, lec = _leccion_o_404(leccion_id)
-                vistas = pistas_vistas.get((progreso.PERFIL_ACTUAL, leccion_id, i), 0)
+                vistas = pistas_vistas.get((_perfil_contexto(), leccion_id, i), 0)
                 estrellas, xp = evaluacion.estrellas_por_pistas(vistas)
                 p = _cargar_progreso()
                 nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
@@ -877,7 +888,7 @@ def create_app(token=None):
             ev.pop("objetivo")                   # el dibujo objetivo ya está en la página
         if ev and ev["estado"] == evaluacion.CORRECTO:
             _, _, lec = _leccion_o_404(leccion_id)
-            vistas = pistas_vistas.get((progreso.PERFIL_ACTUAL, leccion_id, i), 0)
+            vistas = pistas_vistas.get((_perfil_contexto(), leccion_id, i), 0)
             estrellas, xp = evaluacion.estrellas_por_pistas(vistas)
             p = _cargar_progreso()
             nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
@@ -897,7 +908,7 @@ def create_app(token=None):
         return r
 
     def _dar_pista(leccion_id, i, paso):
-        clave = (progreso.PERFIL_ACTUAL, leccion_id, i)
+        clave = (_perfil_contexto(), leccion_id, i)
         nivel = min(pistas_vistas.get(clave, 0) + 1, 3)
         pistas_vistas[clave] = nivel
         sol = paso["solucion"].strip()
@@ -956,7 +967,7 @@ def create_app(token=None):
             leccion_id, i = str(datos.get("leccion", "")), int(datos.get("paso"))
         except (TypeError, ValueError):
             abort(400)
-        sesion = practicas.get(progreso.PERFIL_ACTUAL)
+        sesion = practicas.get(_perfil_contexto())
         if not sesion or (leccion_id, i) not in sesion["pasos"]:
             abort(403)
         _, _, lec = _leccion_o_404(leccion_id)
@@ -966,7 +977,7 @@ def create_app(token=None):
     def api_practica_comprobar():
         datos = request.get_json(silent=True) or {}
         leccion_id, i, paso = _tarjeta_de_la_sesion(datos)
-        clave = (progreso.PERFIL_ACTUAL, "practica", leccion_id, i)
+        clave = (_perfil_contexto(), "practica", leccion_id, i)
         estado_paso = intentos.setdefault(clave, {"errores": 0, "revelado": False})
         r = motor.comprobar(paso, datos.get("respuesta"), _ejecutar_para_motor(paso))
         if not r["ok"]:
@@ -987,7 +998,7 @@ def create_app(token=None):
     def api_practica_respuesta():
         datos = request.get_json(silent=True) or {}
         leccion_id, i, paso = _tarjeta_de_la_sesion(datos)
-        clave = (progreso.PERFIL_ACTUAL, "practica", leccion_id, i)
+        clave = (_perfil_contexto(), "practica", leccion_id, i)
         estado_paso = intentos.setdefault(clave, {"errores": 0, "revelado": False})
         if not motor.puede_ver_respuesta(estado_paso["errores"]):
             abort(403)
@@ -1084,7 +1095,8 @@ def create_app(token=None):
             perfil = progreso.sanitizar_perfil(crudo)
             if not perfil:
                 return jsonify(ok=False, mensaje="Usá letras o números para el nombre."), 400
-            if perfil != progreso.PERFIL_ACTUAL:
+            runtime, raw_session = _runtime_autenticado()
+            if runtime is None and perfil != progreso.PERFIL_ACTUAL:
                 progreso.set_perfil(perfil)
                 progreso.recordar_perfil(perfil)
         entrada = datos.get("entrada")                   # diagnóstico (ADR-004): solo el punto que le toca
@@ -1126,10 +1138,21 @@ def create_app(token=None):
 
     @app.get("/api/perfiles")
     def api_perfiles():
+        runtime, raw_session = _runtime_autenticado()
+        if runtime is not None:
+            contexto = runtime.contexto(raw_session)
+            perfiles = [
+                {"id": p.id, "nombre": p.display_name}
+                for p in contexto.cuentas.listar_perfiles(contexto.account.id)
+            ]
+            return jsonify(actual=contexto.perfil.id, perfiles=perfiles)
         return jsonify(actual=progreso.PERFIL_ACTUAL, perfiles=progreso.obtener_perfiles())
 
     @app.post("/api/perfil")
     def api_perfil():
+        runtime, raw_session = _runtime_autenticado()
+        if runtime is not None:
+            return jsonify(ok=False, mensaje="En una cuenta familiar, seleccioná el perfil desde /cuenta/perfil."), 409
         nombre = progreso.sanitizar_perfil((request.get_json(silent=True) or {}).get("nombre", ""))
         if not nombre:
             return jsonify(ok=False, mensaje="Usá letras o números para el nombre."), 400
