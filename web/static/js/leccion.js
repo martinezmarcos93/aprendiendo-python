@@ -470,7 +470,8 @@
   }
 
   function escribir(paso) {
-    if (paso.web) return escribirWeb(paso);\n    const dibuja = Boolean(paso.tortuga);
+    if (paso.web) return escribirWeb(paso);
+    const dibuja = Boolean(paso.tortuga);
     const esJuego = Boolean(paso.juego);                  // TortuGame: se evalúa comparando el registro del juego
     const python = paso.lenguaje === "python";
     cont.appendChild(el("h2", "", "⌨️ Escribí"));
