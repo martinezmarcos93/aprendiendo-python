@@ -6,7 +6,7 @@ from tortuscript.web_evaluacion import evaluar, validar_codigo
 
 class WebV1Tests(unittest.TestCase):
     def test_curso_web_tiene_doce_lecciones(self):
-        curso = contenido.cargar_cursos()
+        curso = contenido.todos_los_cursos()
         web = next(c for c in curso if c["id"] == "web-esencial")
         lecciones = [l for s in web["secciones"] for l in s["lecciones"]]
         self.assertEqual(len(lecciones), 12)
