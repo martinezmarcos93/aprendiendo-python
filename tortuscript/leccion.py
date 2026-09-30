@@ -142,28 +142,58 @@ def estado_camino(curso, progreso, indices_por_leccion, curso_abierto=True, titu
 
 
 def estado_cursos(cursos, progreso, indices_por_leccion):
-    """El camino completo: una entrada por curso con sus secciones y lecciones.
-    Un curso está abierto si no pide nada o si ya se completó la lección que pide."""
+    """El camino completo, con requisitos de curso o de lección.
+    Los cursos se muestran siempre; abierto solo controla si sus lecciones pueden abrirse."""
     salida = []
     titulos = {lec["id"]: lec["titulo"].partition(". ")[2] or lec["titulo"]
                for curso in cursos for seccion in curso["secciones"] for lec in seccion["lecciones"]}
+    por_id = {curso["id"]: curso for curso in cursos}
+
+    def curso_completo(curso_id):
+        curso = por_id.get(curso_id)
+        if not curso:
+            return False
+        lecciones_curso = [l for s in curso["secciones"] for l in s["lecciones"]]
+        return bool(lecciones_curso) and all(
+            esta_superada(progreso, l["id"], indices_por_leccion.get(l["id"], []))
+            for l in lecciones_curso
+        )
+
     for curso in cursos:
-        requiere = (curso.get("requiere") or {}).get("leccion")
-        titulo_requerido = None
+        requisito = curso.get("requiere") or {}
         abierto = True
-        if requiere:
-            hallada = buscar_en_cursos(cursos, requiere)
-            titulo_requerido = hallada[2]["titulo"].partition(". ")[2] or hallada[2]["titulo"] if hallada else requiere
-            abierto = esta_superada(progreso, requiere, indices_por_leccion.get(requiere, []))
+        requisito_texto = None
+
+        if requisito.get("leccion"):
+            leccion_id = requisito["leccion"]
+            hallada = buscar_en_cursos(cursos, leccion_id)
+            requisito_texto = (
+                hallada[2]["titulo"].partition(". ")[2] or hallada[2]["titulo"]
+                if hallada else leccion_id
+            )
+            abierto = esta_superada(progreso, leccion_id, indices_por_leccion.get(leccion_id, []))
+        elif requisito.get("curso"):
+            curso_id = requisito["curso"]
+            curso_requerido = por_id.get(curso_id)
+            requisito_texto = curso_requerido["titulo"] if curso_requerido else curso_id
+            abierto = curso_completo(curso_id)
+        elif requisito.get("uno_de_cursos"):
+            ids = requisito["uno_de_cursos"]
+            nombres = [por_id[c]["titulo"] for c in ids if c in por_id]
+            requisito_texto = " o ".join(nombres)
+            abierto = any(curso_completo(c) for c in ids)
+
         secciones = estado_camino(curso, progreso, indices_por_leccion, abierto, titulos)
         lecciones = [l for s in secciones for l in s["lecciones"]]
         hechas = sum(1 for l in lecciones if l["estado"] in ("hecha", "perfecta"))
         salida.append({
             "id": curso["id"], "titulo": curso["titulo"], "icono": curso.get("icono", "📘"),
             "descripcion": curso.get("descripcion", ""), "abierto": abierto,
-            "requiere": None if abierto else titulo_requerido,
-            "hechas": hechas, "total": len(lecciones), "completo": bool(lecciones) and hechas == len(lecciones),
+            "requiere": None if abierto else requisito_texto,
+            "hechas": hechas, "total": len(lecciones),
+            "completo": bool(lecciones) and hechas == len(lecciones),
             "perfectas": sum(1 for l in lecciones if l["estado"] == "perfecta"),
+            "proximamente": bool(curso.get("proximamente")),
             "secciones": secciones,
         })
     return salida
