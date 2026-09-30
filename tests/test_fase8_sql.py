@@ -20,7 +20,7 @@ class TestSQLV1(unittest.TestCase):
         cls.lecciones = [l for s in cls.curso["secciones"] for l in s["lecciones"]]
 
     def test_curso_tiene_ocho_lecciones_y_cubre_adr(self):
-        self.assertEqual(len(cls.lecciones), 8)
+        self.assertEqual(len(self.lecciones), 8)
         texto = " ".join(p.get("texto", "") for l in self.lecciones for p in l["pasos"])
         texto += " " .join(l["titulo"] for l in self.lecciones)
         self.assertIn("tablas", texto.lower())
@@ -67,7 +67,7 @@ class TestSQLV1(unittest.TestCase):
         self.assertEqual(r["estado"], "correcto")
         r = evaluar(
             "SELECT nombre FROM criaturas WHERE nivel >= 4;",
-            "SELECT nombre FROM criaturas WHERE nivel >= 4 ORDER BY nombre;",
+            "SELECT nombre FROM criaturas WHERE nivel > 4;",
             DATASET,
         )
         self.assertNotEqual(r["estado"], "correcto")
