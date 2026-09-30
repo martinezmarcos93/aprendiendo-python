@@ -162,8 +162,8 @@
       "dificultad": "alta",
       "objetivo": "La aplicación debe representar objetos, consultar datos y permitir cambios controlados en el inventario.",
       "archivos_iniciales": {
-        "app.py": "import sqlite3\\n\\nDB = sqlite3.connect(':memory:')\\n\\n# Completá la aplicación.\\n",
-        "README.md": "# Inventario de aventura\\n\\nCompletá el proyecto y comprobá que las operaciones del inventario funcionan.\\n"
+        "app.py": "import sqlite3\n\nDB = sqlite3.connect(':memory:')\nDB.execute('CREATE TABLE objetos (id INTEGER PRIMARY KEY, nombre TEXT NOT NULL, cantidad INTEGER NOT NULL)')\n\n\ndef mostrar_inventario():\n    filas = DB.execute('SELECT id, nombre, cantidad FROM objetos ORDER BY id').fetchall()\n    for fila in filas:\n        print(fila)\n\n\nif __name__ == '__main__':\n    mostrar_inventario()\n",
+        "README.md": "# Inventario de aventura\n\nAbrí esta carpeta en VS Code y ejecutá `python app.py`.\nLa base SQLite se crea localmente al iniciar el programa.\n"
       },
       "etapas": [
         {
@@ -176,6 +176,10 @@
               "contiene": [
                 "SELECT"
               ]
+            },
+            {
+              "archivo": "app.py",
+              "python_valido": true
             }
           ]
         },
@@ -221,17 +225,22 @@
         {
           "id": "funciona",
           "titulo": "5. Comprobación funcional",
-          "objetivo": "Las cuatro operaciones están presentes y la conexión SQLite está declarada.",
+          "objetivo": "La aplicación tiene una base SQLite local y las cuatro operaciones del inventario.",
           "criterios": [
             {
               "archivo": "app.py",
               "contiene": [
                 "sqlite3",
+                "CREATE TABLE",
                 "SELECT",
                 "INSERT",
                 "UPDATE",
                 "DELETE"
               ]
+            },
+            {
+              "archivo": "app.py",
+              "python_valido": true
             }
           ]
         }
