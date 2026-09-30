@@ -19,6 +19,8 @@ class AccesoProducto:
             return False
         if not isinstance(product, str) or not product.strip():
             return False
+        if self.repository.es_admin_por_perfil(profile_id):
+            return True
         return self.repository.tiene_entitlement_por_perfil(profile_id, product.strip())
 
     def exigir_acceso(self, profile_id: str, product: str) -> None:
