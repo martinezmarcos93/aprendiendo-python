@@ -3,7 +3,7 @@
   "titulo": "El mundo digital por dentro",
   "icono": "🌐",
   "descripcion": "Entendé qué pasa cuando usás una app, una web o un juego: programas, redes, datos y seguridad.",
-  "version": 2,
+  "version": 3,
   "secciones": [
     {
       "id": "mundo-digital",
@@ -573,6 +573,103 @@
               ],
               "correcta": 0,
               "pista": "Este nivel construye el mapa mental que vas a usar antes de profundizar en programación."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "herramientas-proyecto",
+      "nivel": 3,
+      "titulo": "Herramientas para construir proyectos",
+      "lecciones": [
+        {
+          "id": "nivel0-json",
+          "titulo": "14. JSON: datos con estructura",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "JSON es un formato de texto para representar datos estructurados. Usa objetos, listas, claves y valores, y aparece mucho en aplicaciones y APIs."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Para qué puede servir un archivo JSON?",
+              "opciones": [
+                "Guardar datos estructurados que un programa puede leer",
+                "Reemplazar físicamente el teclado"
+              ],
+              "correcta": 0,
+              "pista": "JSON describe datos; no es una pieza de hardware."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué representa mejor una clave en un objeto JSON?",
+              "opciones": [
+                "El nombre que identifica un dato",
+                "Un programa que ejecuta instrucciones"
+              ],
+              "correcta": 0,
+              "pista": "En JSON una clave ayuda a saber qué significa un valor."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-git",
+          "titulo": "15. Git: guardar la historia del código",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Git es un sistema de control de versiones. Permite registrar cambios del proyecto y volver a estados anteriores. Un commit es un registro de cambios."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Para qué sirve Git?",
+              "opciones": [
+                "Registrar y organizar cambios de un proyecto",
+                "Navegar por sitios web"
+              ],
+              "correcta": 0,
+              "pista": "Git trabaja con la historia del código."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué es un commit?",
+              "opciones": [
+                "Un registro de cambios guardado en la historia del proyecto",
+                "Una base de datos de usuarios"
+              ],
+              "correcta": 0,
+              "pista": "Un commit deja una fotografía lógica de cambios del proyecto."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-github",
+          "titulo": "16. GitHub: compartir repositorios",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "GitHub es una plataforma para alojar y colaborar con repositorios Git. Un repositorio contiene la historia y los archivos de un proyecto."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué es un repositorio en este contexto?",
+              "opciones": [
+                "Un proyecto con sus archivos e historia de versiones",
+                "Un navegador instalado en la computadora"
+              ],
+              "correcta": 0,
+              "pista": "El repositorio reúne archivos y la historia que Git registra."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué relación tienen Git y GitHub?",
+              "opciones": [
+                "Git registra versiones; GitHub puede alojar y compartir repositorios Git",
+                "Son dos lenguajes de programación"
+              ],
+              "correcta": 0,
+              "pista": "Git es la herramienta de control de versiones; GitHub es una plataforma que trabaja con repositorios."
             }
           ]
         }
