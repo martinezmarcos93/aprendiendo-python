@@ -43,6 +43,15 @@ class TestPythonV1(unittest.TestCase):
                 if paso["tipo"] == "escribir":
                     self.assertEqual(paso.get("lenguaje"), "python", leccion["id"])
 
+    def test_runtime_reconoce_python_real_nuevo(self):
+        from tortuscript.translator import detectar_tipo
+        from tortuscript.validacion import _correr
+        codigo = 'edad = 12\nnombre = "Luna"\nes_mayor = edad >= 18\nprint(es_mayor)'
+        self.assertEqual(detectar_tipo(codigo), "python")
+        salida, error, _ = _correr(codigo)
+        self.assertEqual(error, "", error)
+        self.assertEqual(salida.strip(), "False")
+
     def test_nuevos_retos_tienen_soluciones_completas(self):
         for lesson_id in ("py-datos", "py-listas", "py-problemas"):
             leccion = next(l for l in self.lecciones if l["id"] == lesson_id)
