@@ -24,11 +24,13 @@ class RuntimeEducativo:
         return self.service.cargar_progreso(raw_session)
 
     def cargar_datos(self, raw_session: str | None) -> dict:
+        from copy import deepcopy
+        from tortuscript import progreso as legado
+
         snapshot = self.cargar(raw_session)
         if snapshot is None:
-            from tortuscript import progreso as legado
-            return legado._migrar(legado.PROGRESO_INICIAL.copy())
-        return snapshot.data
+            return legado._migrar(deepcopy(legado.PROGRESO_INICIAL))
+        return deepcopy(snapshot.data)
 
     def guardar(self, raw_session: str | None, snapshot: ProgresoSnapshot) -> None:
         self.service.guardar_progreso(raw_session, snapshot)
