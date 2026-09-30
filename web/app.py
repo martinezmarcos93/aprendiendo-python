@@ -618,6 +618,10 @@ def create_app(token=None):
     def proyectos():
         return render_template("proyectos.html", proyectos=mis_proyectos.listar(progreso.cargar_progreso()),
                                maximo=mis_proyectos.MAX_PROYECTOS)
+    @app.get("/proyectos-integradores/vscode")
+    def guia_vscode():
+        return render_template("guia_vscode.html")
+
     @app.get("/proyectos-integradores")
     def proyectos_integradores_pagina():
         return render_template("proyectos_integradores.html",
