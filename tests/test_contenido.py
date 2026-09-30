@@ -52,6 +52,13 @@ class TestCursosReales(unittest.TestCase):
             self.assertEqual(lec["pasos"][0]["tipo"], "explicacion")
             self.assertTrue(all(p.get("pista") for p in lec["pasos"] if p["tipo"] in ("elegir", "predecir", "ordenar", "completar")))
 
+    def test_nivel_0_no_repite_preguntas_dentro_de_una_leccion(self):
+        curso = contenido.cargar_curso("alfabetizacion-digital")
+        for _, lec in contenido.lecciones(curso):
+            preguntas = [p["pregunta"] for p in lec["pasos"] if p["tipo"] == "elegir"]
+            self.assertEqual(len(preguntas), len(set(preguntas)), f"pregunta repetida en {lec['id']}")
+
+
     def test_el_curso_principal_conserva_sus_30_ejercicios_en_orden(self):
         # El índice de cada 'escribir' es la clave del progreso guardado: no puede cambiar de lugar.
         ej = contenido.ejercicios()
