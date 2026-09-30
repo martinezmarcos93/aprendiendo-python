@@ -43,3 +43,45 @@ class RuntimeEducativo:
                 "data": snapshot.data,
             },
         }
+    def ejecutar(self, raw_session: str | None, operacion) -> object:
+        """Carga, ejecuta una operación educativa sobre el progreso autenticado y persiste."""
+        contexto = self.contexto(raw_session)
+        snapshot = self.cargar(raw_session)
+        from copy import deepcopy
+        from tortuscript import progreso as legado
+        data = deepcopy(snapshot.data if snapshot is not None else legado.PROGRESO_INICIAL)
+        data["_perfil"] = contexto.perfil.id
+        resultado = operacion(data)
+        payload = {k: deepcopy(v) for k, v in data.items() if not k.startswith("_")}
+        self.guardar(raw_session, ProgresoSnapshot(
+            profile_id=contexto.perfil.id,
+            schema_version=1,
+            updated_at=__import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
+            data=payload,
+        ))
+        return resultado
+
+    def registrar_ejercicio(self, raw_session: str | None, indice: int, estrellas: int, xp_ganado: int) -> bool:
+        from tortuscript import progreso as legado
+        return self.ejecutar(raw_session, lambda p: legado.registrar_ejercicio(p, indice, estrellas, xp_ganado))
+
+    def registrar_paso_leccion(self, raw_session: str | None, leccion_id: str, indice: int, xp: int,
+                               perfecto: bool, total_pasos: int, estrellas=None) -> dict:
+        from tortuscript import progreso as legado
+        return self.ejecutar(raw_session, lambda p: legado.registrar_paso_leccion(
+            p, leccion_id, indice, xp, perfecto, total_pasos, estrellas))
+
+    def registrar_practica(self, raw_session: str | None, leccion_id: str, paso: int, acierto: bool) -> int:
+        from tortuscript import progreso as legado
+        return self.ejecutar(raw_session, lambda p: legado.registrar_practica(p, leccion_id, paso, acierto))
+
+    def guardar_proyecto(self, raw_session: str | None, nombre: str, tipo: str, codigo: str, proyecto_id=None) -> str:
+        from tortuscript import proyectos
+        return self.ejecutar(raw_session, lambda p: proyectos.guardar(
+            p, nombre, tipo, codigo, proyecto_id=proyecto_id))
+
+    def listar_proyectos(self, raw_session: str | None) -> list[dict]:
+        from tortuscript import proyectos
+        snapshot = self.cargar(raw_session)
+        return [] if snapshot is None else proyectos.listar(snapshot.data)
+
