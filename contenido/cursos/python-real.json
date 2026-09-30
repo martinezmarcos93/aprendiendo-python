@@ -5,7 +5,7 @@
   "descripcion": "Puente y fundamentos de Python: conceptos equivalentes a TortuScript, Python real, datos, listas y resolución de problemas.",
   "version": 2,
   "requiere": {
-    "leccion": "desafio-final"
+    "curso": "alfabetizacion-digital"
   },
   "secciones": [
     {
