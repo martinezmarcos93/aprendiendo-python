@@ -124,8 +124,6 @@ def saltear_hasta(progreso, lecciones_en_orden, entrada, hoy=None):
     for leccion_id in lecciones_en_orden[:lecciones_en_orden.index(entrada)]:
         if not hechas.get(leccion_id, {}).get("completada"):
             salteadas.setdefault(leccion_id, str(hoy or date.today()))
-    if persistir:
-        guardar_progreso(progreso)
     return True
 
 
@@ -144,8 +142,6 @@ def guardar_config(progreso, experiencia=None, meta_min=None, nombre=None, onboa
         cfg["nombre"] = nombre[:30]
     if onboarding is not None:
         cfg["onboarding"] = bool(onboarding)
-    if persistir:
-        guardar_progreso(progreso)
     return True
 
 
@@ -274,8 +270,6 @@ def registrar_ejercicio(progreso, indice, estrellas, xp_ganado):
         actualizar_racha(progreso)
         registrar_sesion_hoy(progreso, indice)
 
-    if persistir:
-        guardar_progreso(progreso)
     return hubo_mejora
 
 
@@ -297,8 +291,6 @@ def registrar_practica(progreso, leccion_id, paso, acierto, hoy=None):
             del por_dia[viejo]
         sumar_xp(progreso, ganado, hoy)
     actualizar_racha(progreso, hoy)
-    if persistir:
-        guardar_progreso(progreso)
     return ganado
 
 
@@ -329,8 +321,6 @@ def registrar_paso_leccion(progreso, leccion_id, indice, xp, perfecto, total_pas
     lec["perfecta"] = lec["completada"] and all(
         lec["pasos"].get(str(i), {}).get("perfecto") for i in range(total_pasos))
     actualizar_racha(progreso)
-    if persistir:
-        guardar_progreso(progreso)
     return {"xp_ganado": ganado, "completa": lec["completada"], "perfecta": lec["perfecta"],
             "recien_completa": lec["completada"] and not estaba_completa}
 
