@@ -599,7 +599,38 @@
     {
       "id": "proyecto-integrador",
       "profundidad": "integradora",
-      "disponibilidad_comercial": "por_definir"
+      "disponibilidad_comercial": "por_definir",
+      "unidades": [
+        {
+          "id": "integrador-ficha-criatura",
+          "titulo": "Ficha interactiva de una criatura",
+          "competencias": [
+            "integrar_interfaz_logica"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "integrador",
+          "dificultad": "media",
+          "proyecto": "ficha-criatura"
+        },
+        {
+          "id": "integrador-inventario-fantasia",
+          "titulo": "Inventario de aventura",
+          "competencias": [
+            "integrar_logica_datos"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "integrador",
+          "dificultad": "alta",
+          "proyecto": "inventario-fantasia"
+        }
+      ]
     },
     {
       "id": "nivel-avanzado",
@@ -676,7 +707,9 @@
     "resolver_problemas",
     "comprender_json",
     "comprender_git",
-    "comprender_github"
+    "comprender_github",
+    "integrar_interfaz_logica",
+    "integrar_logica_datos"
   ],
   "reglas_modelo": [
     "La edad, el nivel y la dificultad son dimensiones independientes.",
