@@ -79,7 +79,7 @@ class AuthRepository:
         email = (email or "").strip().lower()
         with self._db() as db:
             row = db.execute(
-                "SELECT id,email,password_hash,verified_at FROM accounts WHERE email=?",
+                "SELECT id,email,password_hash,verified_at,role FROM accounts WHERE email=?",
                 (email,),
             ).fetchone()
         if not row or not row["password_hash"] or not check_password_hash(row["password_hash"], password or ""):
