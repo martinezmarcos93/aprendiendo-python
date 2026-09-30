@@ -20,7 +20,8 @@
       <div class="proyecto-integrador-icono" aria-hidden="true">{{ p.icono }}</div>
       <h2>{{ p.titulo }}</h2>
       <p>{{ p.descripcion }}</p>
-      <p class="tenue"><b>Integra:</b> {{ p.bloques|join(" + ")|upper }}</p>
+      <p class="tenue"><b>Integra:</b> {{ p.bloques|join(" + ")|upper }} · <b>Dificultad:</b> {{ p.adaptacion.dificultad }}</p>
+      {% if p.adaptacion.descripcion %}<p class="tenue">{{ p.adaptacion.descripcion }}</p>{% endif %}
       {% if p.completado %}
         <div class="veredicto bien"><b>✓ Proyecto completado</b><br>Ya cumple todas sus etapas.</div>
         <a class="boton verde" href="{{ url_for('proyecto_integrador', proyecto_id=p.id) }}">▶ Abrir proyecto</a>
@@ -29,7 +30,7 @@
       {% elif p.desbloqueado %}
         <button class="boton violeta" type="button" data-iniciar-proyecto="{{ p.id }}">🚀 Empezar</button>
       {% else %}
-        <p class="tenue">🔒 Necesitás completar al menos dos de estos bloques: {{ p.bloques|join(" + ") }}.</p>
+        <p class="tenue">🔒 {% if p.motivo_bloqueo == "franja" %}Este proyecto no está adaptado a tu franja actual.{% else %}Necesitás completar al menos dos de estos bloques: {{ p.bloques|join(" + ") }}.{% endif %}</p>
       {% endif %}
     </article>
     {% endfor %}
