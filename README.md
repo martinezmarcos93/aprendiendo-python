@@ -54,7 +54,7 @@ Si la red de tu oficina o escuela intercepta certificados SSL y `pip` falla, apu
 
 ## Qué hay adentro
 
-### 🗺️ Aprender: nueve cursos, 105 lecciones
+### 🗺️ Aprender: nueve cursos, 108 lecciones + proyectos integradores
 Cada lección dura unos 2 minutos y sigue el ciclo **explicar → practicar → escribir**: una tarjeta que explica con un ejemplo que se puede ejecutar, preguntas de elegir, predecir lo que muestra un programa, completar con fichas, ordenar líneas y, al final, escribir el programa. Ante un error hay una pista específica; se puede reintentar y, tras dos errores, ver la respuesta (sin XP en ese paso). **No hay vidas ni castigos.**
 
 | Curso | Lecciones | De qué trata |
