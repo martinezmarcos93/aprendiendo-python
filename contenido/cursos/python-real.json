@@ -483,8 +483,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "En Python, cada dato tiene un tipo. Los números sirven para calcular, los textos para palabras y los booleanos para responder verdadero o falso.",
-              "codigo": "edad = 12\\nnombre = \"Luna\"\\nes_mayor = edad >= 18\\nprint(type(edad).__name__)"
+              "texto": "En Python, cada dato tiene un tipo de dato. Los números sirven para calcular, los textos para palabras y los booleanos para responder verdadero o falso.",
+              "codigo": "edad = 12\\nnombre = \"Luna\"\\nes_mayor = edad >= 18\\nprint(es_mayor)"
             },
             {
               "tipo": "elegir",
