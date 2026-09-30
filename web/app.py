@@ -234,7 +234,7 @@ def create_app(token=None):
         if request.method != "GET" or request.endpoint in (None, "static", "bienvenida") \
                 or request.path.startswith("/api/"):
             return None
-        if progreso.necesita_onboarding(progreso.cargar_progreso()):
+        if progreso.necesita_onboarding(_cargar_progreso()):
             return redirect(url_for("bienvenida"))
         return None
 
@@ -243,7 +243,7 @@ def create_app(token=None):
         """Al cambiar de semana se resuelve la liga anterior (¿subió?) una sola vez."""
         if request.method != "GET" or request.endpoint in (None, "static") or request.path.startswith("/api/"):
             return None
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         viejo = dict(p.get("liga") or {})
 
         def otros_de_la_semana(domingo):
@@ -251,19 +251,19 @@ def create_app(token=None):
                     if (xp := liga.xp_de_la_semana(dias, domingo)) > 0}
         liga.cerrar_semana(p, otros_de_la_semana, date.today())
         if p.get("liga") != viejo or p.get("avisos"):
-            progreso.guardar_progreso(p)
+            _guardar_progreso(p)
         return None
 
     @app.context_processor
     def _globales():
         # Lo que quedó pendiente (p. ej. subir de liga al cambiar la semana) se cuenta en la próxima página
-        avisos = progreso.tomar_avisos(progreso.cargar_progreso())
+        avisos = progreso.tomar_avisos(_cargar_progreso())
         return {"token": app.config["TOKEN"], "estado": _estado(), "perfil": progreso.PERFIL_ACTUAL,
-                "avisos_pendientes": avisos, "ajustes": progreso.ajustes_de(progreso.cargar_progreso())}
+                "avisos_pendientes": avisos, "ajustes": progreso.ajustes_de(_cargar_progreso())}
 
     # ─────────────── helpers ───────────────
     def _estado():
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         xp = p.get("xp_total", 0)
         nivel, xp_actual, xp_max = progreso.calcular_nivel(xp)
         completados = [int(k) for k, v in p["ejercicios"].items() if v.get("completado")]
@@ -292,13 +292,13 @@ def create_app(token=None):
         }
 
     def _desbloqueado(indice, p=None):
-        p = p or progreso.cargar_progreso()
+        p = p or _cargar_progreso()
         ej = p["ejercicios"]
         return indice == 0 or ej.get(str(indice), {}).get("completado") or \
             ej.get(str(indice - 1), {}).get("completado")
 
     def _siguiente_pendiente():
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         return next((i for i in range(len(EJERCICIOS))
                      if not p["ejercicios"].get(str(i), {}).get("completado")), len(EJERCICIOS) - 1)
 
@@ -336,7 +336,7 @@ def create_app(token=None):
         return contenido.todos_los_cursos()
 
     def _camino(p=None):
-        return motor.estado_cursos(_cursos(), p or progreso.cargar_progreso(), INDICES_POR_LECCION)
+        return motor.estado_cursos(_cursos(), p or _cargar_progreso(), INDICES_POR_LECCION)
 
     def _leccion_o_404(leccion_id):
         hallada = motor.buscar_en_cursos(_cursos(), leccion_id)
@@ -345,7 +345,7 @@ def create_app(token=None):
         return hallada                                          # (curso, sección, lección)
 
     def _nivel0_completo(p=None):
-        p = p or progreso.cargar_progreso()
+        p = p or _cargar_progreso()
         curso = next((c for c in _camino(p) if c["id"] == "alfabetizacion-digital"), None)
         return bool(curso and curso["completo"])
 
@@ -353,7 +353,7 @@ def create_app(token=None):
         return {"web": "web-esencial", "python": "python-real"}.get(recorrido)
 
     def _completada(leccion, p=None):
-        p = p or progreso.cargar_progreso()
+        p = p or _cargar_progreso()
         return motor.esta_completada(p, leccion["id"], INDICES_POR_LECCION.get(leccion["id"], []))
 
     def _leccion_desbloqueada(leccion_id, p=None):
@@ -370,7 +370,7 @@ def create_app(token=None):
         resultado = {**info, **palabras_por_leccion.get(leccion_id, {"aprendiste": [], "practicaste": []}),
                      "siguiente": siguiente["id"] if siguiente else None,
                      "titulo_siguiente": siguiente["titulo"] if siguiente else None}
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         if leccion_id.startswith("nivel0-") and _nivel0_completo(p):
             recorrido = p.get("recorrido_inicial")
             if recorrido:
@@ -426,7 +426,7 @@ def create_app(token=None):
     @app.get("/")
     def inicio():
         camino = _camino()
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         # ADR-005: se pregunta después de usar el producto: como mucho una encuesta por curso terminado
         terminados = sum(1 for c in camino if c["completo"])
         encuesta = intereses.pendiente(p, "curso-terminado", cupo=terminados) if terminados else None
@@ -464,7 +464,7 @@ def create_app(token=None):
     @app.get("/leccion/<leccion_id>")
     def leccion(leccion_id):
         curso, seccion, lec = _leccion_o_404(leccion_id)
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         if not _leccion_desbloqueada(leccion_id, p):
             return redirect(url_for("aprender"))
         for i in range(len(lec["pasos"])):
@@ -477,7 +477,7 @@ def create_app(token=None):
 
     @app.route("/elegir-recorrido", methods=["GET", "POST"])
     def elegir_recorrido():
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         if not _nivel0_completo(p):
             return redirect(url_for("mapa"))
         if request.method == "POST":
@@ -486,7 +486,7 @@ def create_app(token=None):
             if not curso_id:
                 abort(400)
             p["recorrido_inicial"] = recorrido
-            progreso.guardar_progreso(p)
+            _guardar_progreso(p)
             curso = next(c for c in _cursos() if c["id"] == curso_id)
             primera = contenido.lecciones(curso)[0][1]
             return redirect(url_for("leccion", leccion_id=primera["id"]))
@@ -501,7 +501,7 @@ def create_app(token=None):
 
     @app.get("/mapa")
     def mapa():
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         datos = p["ejercicios"]
         niveles = {}
         for i, ej in enumerate(EJERCICIOS):
@@ -534,7 +534,7 @@ def create_app(token=None):
 
     @app.get("/resumen")
     def resumen():
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         hoy = progreso.resumen_sesion_hoy(p, EJERCICIOS)
         return render_template(
             "resumen.html", hoy=hoy, racha=progreso.racha_vigente(p), racha_max=p.get("racha_max", 0),
@@ -545,7 +545,7 @@ def create_app(token=None):
     @app.get("/practica")
     def practica():
         """Práctica del día: hasta 6 tarjetas que ya tocan, de lecciones distintas (repaso espaciado)."""
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         elegidas = espaciado.elegir(p, _cursos(), date.today())
         if not elegidas:
             return render_template("practica_vacia.html")
@@ -564,7 +564,7 @@ def create_app(token=None):
     @app.get("/certificado/<curso_id>")
     def certificado(curso_id):
         """Diploma imprimible (o para guardar como PDF) al terminar un curso. Gratis y sin cuentas."""
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         curso = next((c for c in _camino(p) if c["id"] == curso_id), None)
         if curso is None:
             abort(404)
@@ -575,13 +575,13 @@ def create_app(token=None):
 
     @app.get("/logros")
     def pagina_logros():
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         return render_template("logros.html", catalogo=logros.catalogo(p),
                                diplomas=[c for c in _camino(p) if c["completo"]])
 
     @app.get("/liga")
     def pagina_liga():
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         return render_template("liga.html", liga=liga.resumen(p, _otros_en_liga(date.today()), date.today()),
                                ligas=liga.LIGAS)
 
@@ -595,7 +595,7 @@ def create_app(token=None):
 
     @app.get("/repaso")
     def repaso():
-        completados, imperfectos = contar(progreso.cargar_progreso(), len(EJERCICIOS))
+        completados, imperfectos = contar(_cargar_progreso(), len(EJERCICIOS))
         return render_template("repaso.html", modos=MODOS, completados=completados, imperfectos=imperfectos)
 
     def _cola_o_404(modo, semilla, nueva=False):
@@ -605,7 +605,7 @@ def create_app(token=None):
             abort(404)
         clave = (progreso.PERFIL_ACTUAL, modo, semilla)
         if nueva or clave not in colas:
-            colas[clave] = cola_repaso(progreso.cargar_progreso(), modo, len(EJERCICIOS), semilla)
+            colas[clave] = cola_repaso(_cargar_progreso(), modo, len(EJERCICIOS), semilla)
         return colas[clave]
 
     @app.get("/repaso/<modo>")
@@ -637,7 +637,7 @@ def create_app(token=None):
         pedido = request.args.get("proyecto")
         if not pedido:
             return None, None
-        p = mis_proyectos.obtener(progreso.cargar_progreso(), pedido)
+        p = mis_proyectos.obtener(_cargar_progreso(), pedido)
         if p is None:
             return None, redirect(url_for(tipo))
         if p["tipo"] != tipo:
@@ -682,7 +682,7 @@ def create_app(token=None):
 
     @app.get("/proyectos")
     def proyectos():
-        return render_template("proyectos.html", proyectos=mis_proyectos.listar(progreso.cargar_progreso()),
+        return render_template("proyectos.html", proyectos=mis_proyectos.listar(_cargar_progreso()),
                                maximo=mis_proyectos.MAX_PROYECTOS)
     @app.get("/proyectos-integradores/vscode")
     def guia_vscode():
@@ -691,11 +691,11 @@ def create_app(token=None):
     @app.get("/proyectos-integradores")
     def proyectos_integradores_pagina():
         return render_template("proyectos_integradores.html",
-                               proyectos=proyectos_integradores.resumen_catalogo(progreso.cargar_progreso()))
+                               proyectos=proyectos_integradores.resumen_catalogo(_cargar_progreso()))
 
     @app.get("/proyectos-integradores/<proyecto_id>")
     def proyecto_integrador(proyecto_id):
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         estado = proyectos_integradores.estado(p, proyecto_id)
         if estado is None:
             return redirect(url_for("proyectos_integradores_pagina"))
@@ -743,7 +743,7 @@ def create_app(token=None):
             estado_paso["errores"] += 1
             return jsonify(ok=False, pista=r["pista"], malos=r["malos"],
                            puede_ver_respuesta=motor.puede_ver_respuesta(estado_paso["errores"]))
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
         xp = 0 if paso["tipo"] == "explicacion" else motor.xp_por_intentos(estado_paso["errores"] + 1, False)
         perfecto = estado_paso["errores"] == 0
@@ -763,7 +763,7 @@ def create_app(token=None):
         if not motor.puede_ver_respuesta(estado_paso["errores"]):
             abort(403)                           # primero hay que intentarlo (2 errores)
         estado_paso["revelado"] = True
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         info = _registrar_paso_leccion(p, leccion_id, i, 0, False, len(lec["pasos"]))
         return jsonify(respuesta=motor.respuesta_correcta(paso), leccion=_resumen_leccion(leccion_id, info),
                        estado_juego=_estado(), avisos=_avisos_tras(p))
@@ -779,7 +779,7 @@ def create_app(token=None):
                 _, _, lec = _leccion_o_404(leccion_id)
                 vistas = pistas_vistas.get((progreso.PERFIL_ACTUAL, leccion_id, i), 0)
                 estrellas, xp = evaluacion.estrellas_por_pistas(vistas)
-                p = progreso.cargar_progreso()
+                p = _cargar_progreso()
                 nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
                 indice = contenido.indices_ejercicio(leccion_id).get(i)
                 runtime, raw_session = _runtime_autenticado()
@@ -825,7 +825,7 @@ def create_app(token=None):
                 _, _, lec = _leccion_o_404(leccion_id)
                 vistas = pistas_vistas.get((progreso.PERFIL_ACTUAL, leccion_id, i), 0)
                 estrellas, xp = evaluacion.estrellas_por_pistas(vistas)
-                p = progreso.cargar_progreso()
+                p = _cargar_progreso()
                 nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
                 indice = contenido.indices_ejercicio(leccion_id).get(i)
                 runtime, raw_session = _runtime_autenticado()
@@ -873,7 +873,7 @@ def create_app(token=None):
             _, _, lec = _leccion_o_404(leccion_id)
             vistas = pistas_vistas.get((progreso.PERFIL_ACTUAL, leccion_id, i), 0)
             estrellas, xp = evaluacion.estrellas_por_pistas(vistas)
-            p = progreso.cargar_progreso()
+            p = _cargar_progreso()
             nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
             indice = contenido.indices_ejercicio(leccion_id).get(i)
             if indice is not None:
@@ -967,7 +967,7 @@ def create_app(token=None):
             estado_paso["errores"] += 1
             return jsonify(ok=False, pista=r["pista"], malos=r["malos"],
                            puede_ver_respuesta=motor.puede_ver_respuesta(estado_paso["errores"]))
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
         acierto = estado_paso["errores"] == 0
         ganado = _registrar_practica(p, leccion_id, i, acierto)
@@ -986,7 +986,7 @@ def create_app(token=None):
         if not motor.puede_ver_respuesta(estado_paso["errores"]):
             abort(403)
         estado_paso["revelado"] = True
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         _registrar_practica(p, leccion_id, i, False)
         intentos.pop(clave, None)
         return jsonify(respuesta=motor.respuesta_correcta(paso), leccion={"siguiente": None},
@@ -994,12 +994,12 @@ def create_app(token=None):
 
     def _con_proyectos(accion):
         """Aplica `accion(p)` al progreso; los errores que el chico puede corregir vuelven como 400."""
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         try:
             resultado = accion(p)
         except mis_proyectos.ErrorProyecto as e:
             return jsonify(ok=False, mensaje=str(e)), 400
-        progreso.guardar_progreso(p)
+        _guardar_progreso(p)
         return jsonify(ok=True, id=resultado, total=len(p.get("proyectos", {})), avisos=_avisos_tras(p),
                        estado_juego=_estado())
 
@@ -1018,10 +1018,10 @@ def create_app(token=None):
         return _con_proyectos(lambda p: mis_proyectos.borrar(p, proyecto_id))
     @app.post("/api/proyectos-integradores/<proyecto_id>")
     def api_proyecto_integrador_iniciar(proyecto_id):
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         try:
             proyectos_integradores.iniciar(p, proyecto_id)
-            progreso.guardar_progreso(p)
+            _guardar_progreso(p)
         except proyectos_integradores.ErrorProyectoIntegrador as e:
             return jsonify(ok=False, mensaje=str(e)), 400
         return jsonify(ok=True, url=url_for("proyecto_integrador", proyecto_id=proyecto_id),
@@ -1030,39 +1030,39 @@ def create_app(token=None):
     @app.post("/api/proyectos-integradores/<proyecto_id>/archivo")
     def api_proyecto_integrador_archivo(proyecto_id):
         d = request.get_json(silent=True) or {}
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         try:
             proyectos_integradores.guardar_archivo(p, proyecto_id, d.get("nombre"), d.get("codigo"))
-            progreso.guardar_progreso(p)
+            _guardar_progreso(p)
         except proyectos_integradores.ErrorProyectoIntegrador as e:
             return jsonify(ok=False, mensaje=str(e)), 400
         return jsonify(ok=True)
 
     @app.post("/api/proyectos-integradores/<proyecto_id>/etapas/<etapa_id>")
     def api_proyecto_integrador_etapa(proyecto_id, etapa_id):
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         try:
             resultado = proyectos_integradores.validar_etapa(p, proyecto_id, etapa_id)
             if not resultado["ok"]:
                 return jsonify(ok=False, mensaje=resultado["mensaje"]), 400
-            progreso.guardar_progreso(p)
+            _guardar_progreso(p)
         except proyectos_integradores.ErrorProyectoIntegrador as e:
             return jsonify(ok=False, mensaje=str(e)), 400
         return jsonify(ok=True, completado=resultado["completado"])
 
     @app.post("/api/proyectos-integradores/<proyecto_id>/ayudas/<ayuda_id>")
     def api_proyecto_integrador_ayuda(proyecto_id, ayuda_id):
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         try:
             texto = proyectos_integradores.ver_ayuda(p, proyecto_id, ayuda_id)
-            progreso.guardar_progreso(p)
+            _guardar_progreso(p)
         except proyectos_integradores.ErrorProyectoIntegrador as e:
             return jsonify(ok=False, mensaje=str(e)), 400
         return jsonify(ok=True, texto=texto)
 
     @app.post("/api/proyectos-integradores/<proyecto_id>/exportar")
     def api_proyecto_integrador_exportar(proyecto_id):
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         try:
             datos, nombre = proyectos_integradores.exportar(p, proyecto_id)
         except proyectos_integradores.ErrorProyectoIntegrador as e:
@@ -1084,7 +1084,7 @@ def create_app(token=None):
         entrada = datos.get("entrada")                   # diagnóstico (ADR-004): solo el punto que le toca
         if entrada and entrada not in diagnostico.entradas_permitidas(datos.get("experiencia")):
             return jsonify(ok=False, mensaje="Alguna respuesta no es válida."), 400
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         ok = progreso.guardar_config(p, experiencia=datos.get("experiencia"), meta_min=datos.get("meta_min"),
                                      nombre=crudo or None, onboarding=True)
         if not ok:
@@ -1096,7 +1096,7 @@ def create_app(token=None):
     @app.post("/api/config")
     def api_config():
         datos = request.get_json(silent=True) or {}
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         if not progreso.guardar_config(p, meta_min=datos.get("meta_min")):
             return jsonify(ok=False, mensaje="Esa meta no existe."), 400
         return jsonify(ok=True, estado=_estado())
@@ -1104,7 +1104,7 @@ def create_app(token=None):
     @app.post("/api/ajustes")
     def api_ajustes():
         datos = request.get_json(silent=True) or {}
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         cambios = {k: datos.get(k) for k in progreso.AJUSTES if k in datos}
         if not progreso.guardar_ajustes(p, **cambios):
             return jsonify(ok=False, mensaje="Ese ajuste no existe."), 400
@@ -1129,7 +1129,7 @@ def create_app(token=None):
     def api_exportar_perfil():
         """El progreso del perfil actual, listo para descargar como archivo."""
         return jsonify(archivo=respaldo.nombre_de_archivo(progreso.PERFIL_ACTUAL),
-                       datos=respaldo.exportar(progreso.cargar_progreso(), progreso.PERFIL_ACTUAL))
+                       datos=respaldo.exportar(_cargar_progreso(), progreso.PERFIL_ACTUAL))
 
     @app.post("/api/perfil/importar")
     def api_importar_perfil():
@@ -1162,7 +1162,7 @@ def create_app(token=None):
     def api_intereses(encuesta_id):
         """Guarda lo que el chico eligió (o "Ahora no"), solo en su progreso local."""
         datos = request.get_json(silent=True) or {}
-        p = progreso.cargar_progreso()
+        p = _cargar_progreso()
         try:
             if datos.get("omitir") is True:
                 intereses.omitir(p, encuesta_id)
@@ -1170,13 +1170,13 @@ def create_app(token=None):
                 intereses.responder(p, encuesta_id, datos.get("respuestas"))
         except ValueError as e:
             return jsonify(ok=False, mensaje=str(e)), 400
-        progreso.guardar_progreso(p)
+        _guardar_progreso(p)
         return jsonify(ok=True)
 
     @app.get("/api/catalogo-producto")
     def api_catalogo_producto():
         """Catálogo curricular, competencias y acceso para la UI de producto V1."""
-        return jsonify(catalogo_producto.progreso_para_mostrar(progreso.cargar_progreso()))
+        return jsonify(catalogo_producto.progreso_para_mostrar(_cargar_progreso()))
 
     @app.get("/api/estado")
     def api_estado():
