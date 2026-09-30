@@ -67,6 +67,23 @@ class TestPythonV1(unittest.TestCase):
         errores = [h for h in validar_curso(cargado) if h.nivel == "error"]
         self.assertEqual(errores, [], "\n".join(str(h) for h in errores))
 
+    def test_todo_codigo_de_las_nuevas_unidades_se_puede_ejecutar(self):
+        from tortuscript.validacion import _correr
+        for leccion in self.lecciones:
+            if leccion["id"] not in {"py-datos", "py-listas", "py-problemas"}:
+                continue
+            for paso in leccion["pasos"]:
+                codigo = paso.get("codigo") or paso.get("solucion") or ""
+                if paso["tipo"] == "completar":
+                    codigo = paso["codigo"]
+                    for r in paso.get("respuesta", []):
+                        codigo = codigo.replace("___", r, 1)
+                elif paso["tipo"] == "ordenar":
+                    codigo = "\n".join(paso.get("lineas", []))
+                if not codigo.strip():
+                    continue
+                salida, error, _ = _correr(codigo, paso.get("entradas_prueba"))
+                self.assertEqual(error, "", f"{leccion['id']} / {paso['tipo']}: {error}")
     def test_nuevos_retos_tienen_soluciones_completas(self):
         for lesson_id in ("py-datos", "py-listas", "py-problemas"):
             leccion = next(l for l in self.lecciones if l["id"] == lesson_id)
