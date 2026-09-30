@@ -264,8 +264,7 @@ def create_app(token=None):
         viejo = dict(p.get("liga") or {})
 
         def otros_de_la_semana(domingo):
-            return {n: xp for n, dias in progreso.leer_otros_perfiles().items()
-                    if (xp := liga.xp_de_la_semana(dias, domingo)) > 0}
+            return _otros_en_liga(domingo)
         liga.cerrar_semana(p, otros_de_la_semana, date.today())
         if p.get("liga") != viejo or p.get("avisos"):
             _guardar_progreso(p)
@@ -325,9 +324,14 @@ def create_app(token=None):
         return EJERCICIOS[n]
 
     def _otros_en_liga(dia):
-        """XP de la semana (hasta `dia`) de los otros perfiles de la PC que jugaron esta semana."""
-        return {n: xp for n, dias in progreso.leer_otros_perfiles().items()
-                if (xp := liga.xp_de_la_semana(dias, dia)) > 0}
+        """Rivales de la liga; el modo autenticado no lee perfiles locales ajenos."""
+        runtime, _ = _runtime_autenticado()
+        if runtime is not None:
+            return {}
+        return {
+            n: xp for n, dias in progreso.leer_otros_perfiles().items()
+            if (xp := liga.xp_de_la_semana(dias, dia)) > 0
+        }
 
     def _avisos_tras(p):
         """Revisa los logros con el progreso ya actualizado y devuelve (y guarda) los avisos pendientes."""
