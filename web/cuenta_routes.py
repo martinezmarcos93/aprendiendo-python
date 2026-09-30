@@ -10,6 +10,7 @@ from flask import Blueprint, current_app, jsonify, make_response, request
 from tortuscript.acceso import AccesoProducto
 from tortuscript.auth import AuthError, AuthRepository
 from tortuscript.cuentas import CuentaError, CuentaRepository
+from tortuscript.migracion_progreso import MigracionProgresoError, MigracionProgresoLocal
 from tortuscript.perfil_educativo import ContextoEducativoError, PerfilEducativoService
 from tortuscript.progreso_childprofile import ProgresoChildProfile
 from tortuscript.progreso_contrato import importar_snapshot
@@ -234,4 +235,38 @@ def acceso_producto():
         perfil_id=contexto.perfil.id,
         producto=producto,
         permitido=acceso.get(producto, False),
+    )
+
+
+@bp.get("/progreso/locales")
+def listar_progresos_locales():
+    raw = request.cookies.get("tortu_session")
+    try:
+        locales = MigracionProgresoLocal(_educativo()).listar_locales(raw)
+    except (ContextoEducativoError, MigracionProgresoError) as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 401
+    return jsonify(ok=True, perfiles=locales)
+
+
+@bp.post("/progreso/importar-local")
+def importar_progreso_local():
+    raw = request.cookies.get("tortu_session")
+    resultado = _require_session()
+    if not resultado:
+        return jsonify(ok=False, mensaje="Sesión requerida."), 401
+    _, auth, _ = resultado
+    if not _require_csrf(auth, raw):
+        return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
+    datos = request.get_json(silent=True) or {}
+    nombre = datos.get("perfil_local")
+    reemplazar = datos.get("reemplazar") is True
+    try:
+        snapshot = MigracionProgresoLocal(_educativo()).importar_local(raw, nombre, reemplazar=reemplazar)
+    except (ContextoEducativoError, MigracionProgresoError) as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 400
+    return jsonify(
+        ok=True,
+        profile_id=snapshot.profile_id,
+        updated_at=snapshot.updated_at,
+        progreso=snapshot.data,
     )
