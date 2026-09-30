@@ -34,6 +34,7 @@ from tortuscript.error_handler import armar_mensaje_error  # noqa: E402
 from tortuscript.ejercicios import EJERCICIOS  # noqa: E402
 from tortuscript.proceso import correr  # noqa: E402
 from tortuscript.referencia import cargar_referencia  # noqa: E402
+from tortuscript.runtime_educativo import RuntimeEducativo, ContextoEducativoError  # noqa: E402
 from tortuscript.repaso import MODOS, cola_repaso, contar  # noqa: E402
 from tortuscript.translator import TraductorTortuScript, detectar_tipo  # noqa: E402
 from web.cuenta_routes import bp as cuenta_bp  # noqa: E402
@@ -134,6 +135,32 @@ def create_app(token=None):
         codigo = codigo_de_referencia()
         logger.error("Error interno [%s] en %s %s: %s", codigo, request.method, request.path, e, exc_info=True)
         return _respuesta_de_error(500, codigo)
+
+    # ─────────────── almacenamiento educativo ───────────────
+    def _runtime_autenticado():
+        """Devuelve el runtime comercial si hay sesión adulta + perfil educativo activo."""
+        raw_session = request.cookies.get("tortu_session")
+        if not raw_session:
+            return None, None
+        runtime = RuntimeEducativo(_educativo())
+        try:
+            runtime.contexto(raw_session)
+        except ContextoEducativoError:
+            return None, raw_session
+        return runtime, raw_session
+
+    def _cargar_progreso():
+        runtime, raw_session = _runtime_autenticado()
+        if runtime is not None:
+            return runtime.cargar_datos(raw_session)
+        return progreso.cargar_progreso()
+
+    def _guardar_progreso(p):
+        runtime, raw_session = _runtime_autenticado()
+        if runtime is not None:
+            runtime.guardar_datos(raw_session, p)
+            return True
+        return progreso.guardar_progreso(p)
 
     # ─────────────── seguridad ───────────────
     @app.after_request
@@ -721,13 +748,32 @@ def create_app(token=None):
                 p = progreso.cargar_progreso()
                 nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
                 indice = contenido.indices_ejercicio(leccion_id).get(i)
-                if indice is not None:
-                    mejora = progreso.registrar_ejercicio(p, indice, estrellas, xp)
-                    info = progreso.registrar_paso_leccion(p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"]))
+                runtime, raw_session = _runtime_autenticado()
+                if runtime is not None:
+                    if indice is not None:
+                        mejora = runtime.registrar_ejercicio(raw_session, indice, estrellas, xp)
+                        info = runtime.registrar_paso_leccion(
+                            raw_session, leccion_id, i, 0, estrellas == 3, len(lec["pasos"])
+                        )
+                    else:
+                        info = runtime.registrar_paso_leccion(
+                            raw_session, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
+                            estrellas=estrellas
+                        )
+                        mejora = info["xp_ganado"] > 0
+                    p = _cargar_progreso()
                 else:
-                    info = progreso.registrar_paso_leccion(p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
-                                                           estrellas=estrellas)
-                    mejora = info["xp_ganado"] > 0
+                    if indice is not None:
+                        mejora = progreso.registrar_ejercicio(p, indice, estrellas, xp)
+                        info = progreso.registrar_paso_leccion(
+                            p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"])
+                        )
+                    else:
+                        info = progreso.registrar_paso_leccion(
+                            p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
+                            estrellas=estrellas
+                        )
+                        mejora = info["xp_ganado"] > 0
                 r["premio"] = {"estrellas": estrellas, "xp": xp, "mejora": mejora,
                                "sube_nivel": progreso.calcular_nivel(p["xp_total"])[0] > nivel_antes}
                 r["leccion"] = _resumen_leccion(leccion_id, info)
@@ -748,13 +794,32 @@ def create_app(token=None):
                 p = progreso.cargar_progreso()
                 nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
                 indice = contenido.indices_ejercicio(leccion_id).get(i)
-                if indice is not None:
-                    mejora = progreso.registrar_ejercicio(p, indice, estrellas, xp)
-                    info = progreso.registrar_paso_leccion(p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"]))
+                runtime, raw_session = _runtime_autenticado()
+                if runtime is not None:
+                    if indice is not None:
+                        mejora = runtime.registrar_ejercicio(raw_session, indice, estrellas, xp)
+                        info = runtime.registrar_paso_leccion(
+                            raw_session, leccion_id, i, 0, estrellas == 3, len(lec["pasos"])
+                        )
+                    else:
+                        info = runtime.registrar_paso_leccion(
+                            raw_session, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
+                            estrellas=estrellas
+                        )
+                        mejora = info["xp_ganado"] > 0
+                    p = _cargar_progreso()
                 else:
-                    info = progreso.registrar_paso_leccion(p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
-                                                           estrellas=estrellas)
-                    mejora = info["xp_ganado"] > 0
+                    if indice is not None:
+                        mejora = progreso.registrar_ejercicio(p, indice, estrellas, xp)
+                        info = progreso.registrar_paso_leccion(
+                            p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"])
+                        )
+                    else:
+                        info = progreso.registrar_paso_leccion(
+                            p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
+                            estrellas=estrellas
+                        )
+                        mejora = info["xp_ganado"] > 0
                 r["premio"] = {"estrellas": estrellas, "xp": xp, "mejora": mejora,
                                "sube_nivel": progreso.calcular_nivel(p["xp_total"])[0] > nivel_antes}
                 r["leccion"] = _resumen_leccion(leccion_id, info)
