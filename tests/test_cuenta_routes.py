@@ -140,6 +140,97 @@ class CuentaRoutesTests(unittest.TestCase):
 
 
 
+    def test_aislamiento_entre_cuentas_para_perfiles_y_progreso(self):
+        for email in ("a@example.com", "b@example.com"):
+            respuesta = self.client.post("/cuenta/registro", json={
+                "email": email,
+                "password": "una-clave-larga-123",
+            })
+            self.assertEqual(respuesta.status_code, 202)
+
+        repo = CuentaRepository(self.tmp / "cuentas.sqlite3")
+        repo.ensure_schema()
+        auth = AuthRepository(self.tmp / "cuentas.sqlite3")
+        for email in ("a@example.com", "b@example.com"):
+            cuenta = repo.obtener_account(
+                "acc_" + __import__("hashlib").sha256(email.encode()).hexdigest()[:24]
+            )
+            auth.marcar_verificada(cuenta.id)
+
+        cliente_a = self.app.test_client()
+        cliente_b = self.app.test_client()
+        login_a = cliente_a.post("/cuenta/login", json={
+            "email": "a@example.com",
+            "password": "una-clave-larga-123",
+        })
+        login_b = cliente_b.post("/cuenta/login", json={
+            "email": "b@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(login_a.status_code, 200)
+        self.assertEqual(login_b.status_code, 200)
+        csrf_a = login_a.json["csrf"]
+        csrf_b = login_b.json["csrf"]
+
+        perfil_a = cliente_a.post(
+            "/cuenta/perfiles",
+            json={"nombre": "Perfil A"},
+            headers={"X-Tortu-CSRF": csrf_a},
+        )
+        perfil_b = cliente_b.post(
+            "/cuenta/perfiles",
+            json={"nombre": "Perfil B"},
+            headers={"X-Tortu-CSRF": csrf_b},
+        )
+        self.assertEqual(perfil_a.status_code, 201)
+        self.assertEqual(perfil_b.status_code, 201)
+        pid_a = perfil_a.json["perfil"]["id"]
+        pid_b = perfil_b.json["perfil"]["id"]
+
+        seleccionado_a = cliente_a.post(
+            "/cuenta/perfil",
+            json={"perfil_id": pid_a},
+            headers={"X-Tortu-CSRF": csrf_a},
+        )
+        self.assertEqual(seleccionado_a.status_code, 200)
+
+        cruzado = cliente_a.post(
+            "/cuenta/perfil",
+            json={"perfil_id": pid_b},
+            headers={"X-Tortu-CSRF": csrf_a},
+        )
+        self.assertEqual(cruzado.status_code, 403)
+
+        snapshot = {
+            "contract_version": 1,
+            "profile_id": pid_b,
+            "updated_at": "2026-09-30T12:00:00+00:00",
+            "data": {"xp_total": 999},
+        }
+        escritura_cruzada = cliente_a.put(
+            "/cuenta/progreso",
+            json=snapshot,
+            headers={"X-Tortu-CSRF": csrf_a},
+        )
+        self.assertEqual(escritura_cruzada.status_code, 400)
+
+        acceso_b = cliente_b.get("/cuenta/acceso?producto=tortuscript-premium")
+        self.assertEqual(acceso_b.status_code, 200)
+        self.assertFalse(acceso_b.json["permitido"])
+
+        repo.establecer_entitlement(
+            "acc_" + __import__("hashlib").sha256("b@example.com".encode()).hexdigest()[:24],
+            "tortuscript-premium",
+            True,
+            "payment",
+        )
+        acceso_b_premium = cliente_b.get("/cuenta/acceso?producto=tortuscript-premium")
+        self.assertTrue(acceso_b_premium.json["permitido"])
+
+        # La sesión de A no puede observar el entitlement de B porque no puede seleccionar su perfil.
+        acceso_a = cliente_a.get("/cuenta/acceso?producto=tortuscript-premium")
+        self.assertFalse(acceso_a.json["permitido"])
+
     def test_runtime_educativo_registra_xp_leccion_practica_y_proyecto(self):
         self.client.post("/cuenta/registro", json={
             "email": "runtime@example.com",
