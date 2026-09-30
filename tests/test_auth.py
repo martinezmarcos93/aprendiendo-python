@@ -25,7 +25,7 @@ class AuthTests(unittest.TestCase):
         self.auth.set_password(cuenta.id, "una-clave-larga-123")
         with self.assertRaises(AuthError):
             self.auth.verify_password("adulto@example.com", "una-clave-larga-123")
-        self.cuentas.marcar_verificada(cuenta.id)
+        self.auth.marcar_verificada(cuenta.id)
         fila = self.auth.verify_password("adulto@example.com", "una-clave-larga-123")
         self.assertEqual(fila["id"], cuenta.id)
         with self.assertRaises(AuthError):
