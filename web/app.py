@@ -747,7 +747,7 @@ def create_app(token=None):
         nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
         xp = 0 if paso["tipo"] == "explicacion" else motor.xp_por_intentos(estado_paso["errores"] + 1, False)
         perfecto = estado_paso["errores"] == 0
-        info = progreso.registrar_paso_leccion(p, leccion_id, i, xp, perfecto, len(lec["pasos"]))
+        info = _registrar_paso_leccion(p, leccion_id, i, xp, perfecto, len(lec["pasos"]))
         avisos = _avisos_tras(p)
         return jsonify(ok=True, xp=info["xp_ganado"], perfecto=perfecto,
                        sube_nivel=progreso.calcular_nivel(p["xp_total"])[0] > nivel_antes,
@@ -764,7 +764,7 @@ def create_app(token=None):
             abort(403)                           # primero hay que intentarlo (2 errores)
         estado_paso["revelado"] = True
         p = progreso.cargar_progreso()
-        info = progreso.registrar_paso_leccion(p, leccion_id, i, 0, False, len(lec["pasos"]))
+        info = _registrar_paso_leccion(p, leccion_id, i, 0, False, len(lec["pasos"]))
         return jsonify(respuesta=motor.respuesta_correcta(paso), leccion=_resumen_leccion(leccion_id, info),
                        estado_juego=_estado(), avisos=_avisos_tras(p))
 
@@ -798,12 +798,12 @@ def create_app(token=None):
                     p = _cargar_progreso()
                 else:
                     if indice is not None:
-                        mejora = progreso.registrar_ejercicio(p, indice, estrellas, xp)
-                        info = progreso.registrar_paso_leccion(
+                        mejora = _registrar_ejercicio(p, indice, estrellas, xp)
+                        info = _registrar_paso_leccion(
                             p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"])
                         )
                     else:
-                        info = progreso.registrar_paso_leccion(
+                        info = _registrar_paso_leccion(
                             p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
                             estrellas=estrellas
                         )
@@ -844,12 +844,12 @@ def create_app(token=None):
                     p = _cargar_progreso()
                 else:
                     if indice is not None:
-                        mejora = progreso.registrar_ejercicio(p, indice, estrellas, xp)
-                        info = progreso.registrar_paso_leccion(
+                        mejora = _registrar_ejercicio(p, indice, estrellas, xp)
+                        info = _registrar_paso_leccion(
                             p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"])
                         )
                     else:
-                        info = progreso.registrar_paso_leccion(
+                        info = _registrar_paso_leccion(
                             p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
                             estrellas=estrellas
                         )
@@ -877,10 +877,10 @@ def create_app(token=None):
             nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
             indice = contenido.indices_ejercicio(leccion_id).get(i)
             if indice is not None:
-                mejora = progreso.registrar_ejercicio(p, indice, estrellas, xp)
-                info = progreso.registrar_paso_leccion(p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"]))
+                mejora = _registrar_ejercicio(p, indice, estrellas, xp)
+                info = _registrar_paso_leccion(p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"]))
             else:
-                info = progreso.registrar_paso_leccion(p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
+                info = _registrar_paso_leccion(p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
                                                        estrellas=estrellas)
                 mejora = info["xp_ganado"] > 0
             r["premio"] = {"estrellas": estrellas, "xp": xp, "mejora": mejora,
@@ -970,7 +970,7 @@ def create_app(token=None):
         p = progreso.cargar_progreso()
         nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
         acierto = estado_paso["errores"] == 0
-        ganado = progreso.registrar_practica(p, leccion_id, i, acierto)
+        ganado = _registrar_practica(p, leccion_id, i, acierto)
         intentos.pop(clave, None)
         avisos = _avisos_tras(p)
         return jsonify(ok=True, xp=ganado, perfecto=acierto,
@@ -987,7 +987,7 @@ def create_app(token=None):
             abort(403)
         estado_paso["revelado"] = True
         p = progreso.cargar_progreso()
-        progreso.registrar_practica(p, leccion_id, i, False)
+        _registrar_practica(p, leccion_id, i, False)
         intentos.pop(clave, None)
         return jsonify(respuesta=motor.respuesta_correcta(paso), leccion={"siguiente": None},
                        estado_juego=_estado(), avisos=_avisos_tras(p))
