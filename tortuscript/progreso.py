@@ -130,6 +130,8 @@ PROGRESO_INICIAL = {
     "salteadas": {},
     # Intereses (v10, ADR-005): {encuesta_id: {"respuestas": [...], "fecha", "omitida"?}}. Solo local, sin texto libre.
     "intereses": {},
+    # Recorrido inicial elegido después de Nivel 0: "web" o "python".
+    "recorrido_inicial": None,
 }
 
 
