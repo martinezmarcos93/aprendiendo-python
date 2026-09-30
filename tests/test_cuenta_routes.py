@@ -182,5 +182,56 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertIn("leccion-runtime", progreso.json["progreso"]["data"]["lecciones"])
         self.assertEqual(len(progreso.json["progreso"]["data"]["proyectos"]), 1)
 
+
+    def test_pantallas_educativas_usan_childprofile_activo(self):
+        self.client.post("/cuenta/registro", json={
+            "email": "pantallas@example.com",
+            "password": "una-clave-larga-123",
+        })
+        repo = CuentaRepository(self.tmp / "cuentas.sqlite3")
+        repo.ensure_schema()
+        cuenta = repo.obtener_account("acc_" + __import__("hashlib").sha256(
+            "pantallas@example.com".encode()
+        ).hexdigest()[:24])
+        AuthRepository(self.tmp / "cuentas.sqlite3").marcar_verificada(cuenta.id)
+
+        login = self.client.post("/cuenta/login", json={
+            "email": "pantallas@example.com",
+            "password": "una-clave-larga-123",
+        })
+        csrf = login.json["csrf"]
+        perfil = self.client.post(
+            "/cuenta/perfiles", json={"nombre": "Ana"},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        pid = perfil.json["perfil"]["id"]
+        self.client.post(
+            "/cuenta/perfil", json={"perfil_id": pid},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+
+        estado = self.client.get("/api/estado")
+        self.assertEqual(estado.status_code, 200)
+        self.assertEqual(estado.json["nombre"], "Ana")
+
+        proyecto = self.client.post(
+            "/api/proyectos",
+            json={"nombre": "Proyecto UI", "tipo": "python", "codigo": "print(1)"},
+        )
+        self.assertEqual(proyecto.status_code, 200)
+
+        listado = self.client.get("/api/proyectos")
+        self.assertEqual(listado.status_code, 200)
+
+        snapshot = self.client.get("/cuenta/progreso")
+        self.assertEqual(snapshot.status_code, 200)
+        data = snapshot.json["progreso"]["data"]
+        self.assertEqual(data["config"]["nombre"], "Ana")
+        self.assertEqual(len(data["proyectos"]), 1)
+
+        archivos = list((self.tmp / "progreso_perfiles").glob("progreso_*.json"))
+        self.assertEqual(len(archivos), 1)
+        self.assertIn(pid, archivos[0].name)
+
 if __name__ == "__main__":
     unittest.main()
