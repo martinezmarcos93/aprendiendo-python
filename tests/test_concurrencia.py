@@ -6,7 +6,7 @@ import time
 import unittest
 from pathlib import Path
 
-from tortuscript import progreso
+from tortuscript import persistencia_local, progreso
 
 try:
     import flask  # noqa: F401
@@ -19,15 +19,15 @@ except ImportError:
 class TestConcurrencia(unittest.TestCase):
     def setUp(self):
         self._dir = Path(tempfile.mkdtemp())
-        self._orig = (progreso.DIRECTORIO, progreso.PERFIL_ACTUAL)
-        progreso.DIRECTORIO = self._dir
-        progreso.PERFIL_ACTUAL = "default"
+        self._orig = (persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL)
+        persistencia_local.DIRECTORIO = self._dir
+        persistencia_local.PERFIL_ACTUAL = "default"
         from web.app import create_app
         self.app = create_app(token="t")
-        progreso.guardar_config(progreso.cargar_progreso(), onboarding=True)
+        progreso.guardar_config(persistencia_local.cargar_progreso(), onboarding=True)
 
     def tearDown(self):
-        progreso.DIRECTORIO, progreso.PERFIL_ACTUAL = self._orig
+        persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
         shutil.rmtree(self._dir)
 
     def lanzar(self, cantidad, tarea):
@@ -71,7 +71,7 @@ class TestConcurrencia(unittest.TestCase):
                 c.post(f"/api/lecciones/hola-mundo/pasos/{paso}/comprobar", json={"respuesta": resp},
                        headers={"X-Tortu-Token": "t"})
         self.lanzar(6, tarea)
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         # El paso 1 (elegir, 5 XP) se completa una sola vez aunque 6 pedidos lo intenten a la vez.
         self.assertEqual(p["xp_total"], 5)
         self.assertEqual(sorted(p["lecciones"]["hola-mundo"]["pasos"]), ["0", "1"])
@@ -111,13 +111,13 @@ class TestConcurrencia(unittest.TestCase):
         self.assertEqual(respuesta, [200])
 
     def test_un_error_del_servidor_tampoco_deja_el_turno_tomado(self):
-        original = progreso.cargar_progreso
-        progreso.cargar_progreso = lambda *a, **k: (_ for _ in ()).throw(RuntimeError("falla"))
+        original = persistencia_local.cargar_progreso
+        persistencia_local.cargar_progreso = lambda *a, **k: (_ for _ in ()).throw(RuntimeError("falla"))
         try:
             self.app.config["PROPAGATE_EXCEPTIONS"] = False
             self.assertEqual(self.app.test_client().get("/resumen").status_code, 500)
         finally:
-            progreso.cargar_progreso = original
+            persistencia_local.cargar_progreso = original
         hilo = threading.Thread(target=lambda: self.app.test_client().get("/resumen"))
         hilo.start()
         hilo.join(timeout=10)
