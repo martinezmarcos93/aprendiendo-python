@@ -57,6 +57,17 @@ class AuthRepository:
                 CREATE INDEX IF NOT EXISTS idx_sessions_account ON sessions(account_id);
             """)
 
+
+    def marcar_verificada(self, account_id):
+        with self._db() as db:
+            row = db.execute("SELECT 1 FROM accounts WHERE id=?", (account_id,)).fetchone()
+            if not row:
+                raise AuthError("La cuenta no existe.")
+            db.execute(
+                "UPDATE accounts SET verified_at=? WHERE id=?",
+                (_iso(_now()), account_id),
+            )
+
     def set_password(self, account_id, password):
         if not isinstance(password, str) or len(password) < 12:
             raise AuthError("La contraseña debe tener al menos 12 caracteres.")
