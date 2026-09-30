@@ -118,6 +118,8 @@ class TestWebProyectosIntegradores(unittest.TestCase):
         html = self.c.get("/proyectos-integradores").get_data(as_text=True)
         self.assertIn("Ficha interactiva de una criatura", html)
         self.assertIn("Inventario de aventura", html)
+        self.assertIn("Aprender VS Code", html)
+        self.assertIn("Abrí la carpeta", self.c.get("/proyectos-integradores/vscode").get_data(as_text=True))
 
     def test_iniciar_editar_validar_y_exportar(self):
         r = self.post("/api/proyectos-integradores/ficha-criatura")
