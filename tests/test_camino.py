@@ -189,10 +189,10 @@ class TestWebCamino(Base):
         self.post("/api/onboarding", {"meta_min": 10})
         html = self.c.get("/").get_data(as_text=True)
         self.assertIn("Camino de lecciones", html)
-        self.assertEqual(html.count('class="parada'), 43)
+        self.assertEqual(html.count('class="parada'), 46)
         self.assertIn("¡Te toca!", html)
         self.assertIn('href="/leccion/hola-mundo"', html)
-        self.assertIn("0/82", html)
+        self.assertIn("0/108", html)
 
     def test_aprender_lleva_a_la_leccion_actual(self):
         self.post("/api/onboarding", {"meta_min": 10})
@@ -212,6 +212,13 @@ class TestWebCamino(Base):
             progreso.registrar_paso_leccion(p, lec["id"], 0, 0, True, 1)
             if lec["id"] == leccion_id:
                 break
+        if leccion_id == "desafio-final":
+            nivel0 = contenido.cargar_curso("alfabetizacion-digital")
+            for _, nivel0_lec in contenido.lecciones(nivel0):
+                for i in range(len(nivel0_lec["pasos"])):
+                    progreso.registrar_paso_leccion(p, nivel0_lec["id"], i, 0, True, len(nivel0_lec["pasos"]))
+            p["recorrido_inicial"] = "python"
+            progreso.guardar_progreso(p)
 
     def _dar_por_completa(self, leccion_id):
         progreso.registrar_paso_leccion(progreso.cargar_progreso(), leccion_id, 0, 0, True, 1)

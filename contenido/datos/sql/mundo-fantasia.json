@@ -1,0 +1,108 @@
+{
+  "tablas": {
+    "criaturas": {
+      "columnas": [
+        "id",
+        "nombre",
+        "reino",
+        "nivel"
+      ],
+      "tipos": [
+        "INTEGER",
+        "TEXT",
+        "TEXT",
+        "INTEGER"
+      ],
+      "filas": [
+        [
+          1,
+          "Lobo",
+          "Bosque",
+          2
+        ],
+        [
+          2,
+          "Dragón",
+          "Montaña",
+          5
+        ],
+        [
+          3,
+          "Gólem",
+          "Montaña",
+          3
+        ],
+        [
+          4,
+          "Sirena",
+          "Mar",
+          4
+        ],
+        [
+          5,
+          "Zorro",
+          "Bosque",
+          1
+        ]
+      ]
+    },
+    "guardianes": {
+      "columnas": [
+        "criatura_id",
+        "guarida"
+      ],
+      "tipos": [
+        "INTEGER",
+        "TEXT"
+      ],
+      "filas": [
+        [
+          1,
+          "Bosque Norte"
+        ],
+        [
+          2,
+          "Cima Roja"
+        ],
+        [
+          4,
+          "Bahía Azul"
+        ]
+      ]
+    },
+    "misiones": {
+      "columnas": [
+        "id",
+        "nombre",
+        "recompensa"
+      ],
+      "tipos": [
+        "INTEGER",
+        "TEXT",
+        "INTEGER"
+      ],
+      "filas": [
+        [
+          1,
+          "Patrulla",
+          10
+        ],
+        [
+          2,
+          "Rescate",
+          30
+        ],
+        [
+          3,
+          "Ruinas",
+          20
+        ],
+        [
+          4,
+          "Tormenta",
+          40
+        ]
+      ]
+    }
+  }
+}

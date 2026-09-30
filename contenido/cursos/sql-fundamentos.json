@@ -1,0 +1,558 @@
+{
+  "id": "sql-fundamentos",
+  "titulo": "SQL: datos y consultas",
+  "icono": "🗃️",
+  "descripcion": "Aprendé a consultar, filtrar, resumir y relacionar datos con SQL usando pequeños mundos de juego.",
+  "version": 2,
+  "requiere": {
+    "uno_de_cursos": [
+      "python-real",
+      "web-esencial"
+    ]
+  },
+  "secciones": [
+    {
+      "id": "sql-v1",
+      "nivel": 3,
+      "titulo": "Datos, consultas y relaciones",
+      "lecciones": [
+        {
+          "id": "sql-tablas",
+          "titulo": "1. Tablas, filas y columnas",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Una tabla organiza datos en filas y columnas. Cada fila representa un registro y cada columna describe una propiedad.",
+              "codigo": "SELECT nombre, reino FROM criaturas;",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué representa una columna en una tabla?",
+              "opciones": [
+                "Una propiedad de cada registro",
+                "Toda la base de datos",
+                "Una consulta completa"
+              ],
+              "correcta": 0,
+              "pista": "Una columna guarda una propiedad.",
+              "lenguaje": "sql"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué nombres aparecen?",
+              "codigo": "SELECT nombre FROM criaturas;",
+              "opciones": [
+                "Lobo\nDragón\nGólem\nSirena\nZorro",
+                "Bosque, Montaña, Mar",
+                "1, 2, 3, 4, 5"
+              ],
+              "correcta": 0,
+              "pista": "SELECT nombre pide la columna nombre.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Elegí la columna que falta para ver también el reino.",
+              "codigo": "SELECT nombre, ___ FROM criaturas;",
+              "fichas": [
+                "reino",
+                "fila",
+                "tabla"
+              ],
+              "respuesta": [
+                "reino"
+              ],
+              "pista": "Después de la coma va otra columna.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Mostrá nombre y reino de todas las criaturas.",
+              "solucion": "SELECT nombre, reino FROM criaturas;",
+              "palabras_pista": [
+                "SELECT",
+                "nombre",
+                "reino"
+              ],
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            }
+          ]
+        },
+        {
+          "id": "sql-select",
+          "titulo": "2. SELECT: elegir datos",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "SELECT indica qué columnas querés consultar. Podés pedir una sola columna o varias.",
+              "codigo": "SELECT nombre, nivel FROM criaturas;",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué hace SELECT nombre?",
+              "opciones": [
+                "Pide la columna nombre",
+                "Ordena por nombre",
+                "Borra nombres"
+              ],
+              "correcta": 0,
+              "pista": "SELECT elige qué datos leer.",
+              "lenguaje": "sql"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué nivel aparece primero?",
+              "codigo": "SELECT nivel FROM criaturas LIMIT 1;",
+              "opciones": [
+                "2",
+                "5",
+                "1"
+              ],
+              "correcta": 0,
+              "pista": "La primera criatura es el Lobo.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para consultar solo los nombres.",
+              "codigo": "SELECT ___ FROM criaturas;",
+              "fichas": [
+                "nombre",
+                "WHERE",
+                "ORDER"
+              ],
+              "respuesta": [
+                "nombre"
+              ],
+              "pista": "SELECT va seguido de la columna.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Consultá nombre y nivel de las criaturas.",
+              "solucion": "SELECT nombre, nivel FROM criaturas;",
+              "palabras_pista": [
+                "SELECT",
+                "nombre",
+                "nivel"
+              ],
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            }
+          ]
+        },
+        {
+          "id": "sql-where",
+          "titulo": "3. WHERE: buscar lo que necesitás",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "WHERE filtra las filas. La consulta puede pedir una columna y después indicar qué registros cumplen una condición.",
+              "codigo": "SELECT nombre FROM criaturas WHERE reino = 'Bosque';",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Para qué sirve WHERE?",
+              "opciones": [
+                "Filtrar filas",
+                "Elegir columnas",
+                "Crear una tabla"
+              ],
+              "correcta": 0,
+              "pista": "WHERE decide qué filas pasan el filtro.",
+              "lenguaje": "sql"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué criatura pertenece al Mar?",
+              "codigo": "SELECT nombre FROM criaturas WHERE reino = 'Mar';",
+              "opciones": [
+                "Sirena",
+                "Lobo",
+                "Dragón"
+              ],
+              "correcta": 0,
+              "pista": "Buscá la fila cuyo reino es Mar.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá el filtro para buscar criaturas de nivel mayor que 2.",
+              "codigo": "SELECT nombre FROM criaturas WHERE nivel ___ 2;",
+              "fichas": [
+                ">",
+                "=",
+                "<"
+              ],
+              "respuesta": [
+                ">"
+              ],
+              "pista": "Queremos niveles que superen 2.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Mostrá los nombres de las criaturas del reino Montaña.",
+              "solucion": "SELECT nombre FROM criaturas WHERE reino = 'Montaña';",
+              "palabras_pista": [
+                "SELECT",
+                "WHERE",
+                "Montaña"
+              ],
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            }
+          ]
+        },
+        {
+          "id": "sql-order",
+          "titulo": "4. ORDER BY y LIMIT",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "ORDER BY ordena los resultados. ASC va de menor a mayor y DESC de mayor a menor. LIMIT limita cuántas filas recibís.",
+              "codigo": "SELECT nombre, nivel FROM criaturas ORDER BY nivel DESC LIMIT 2;",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué palabra indica que queremos el nivel más alto primero?",
+              "opciones": [
+                "DESC",
+                "ASC",
+                "LIMIT"
+              ],
+              "correcta": 0,
+              "pista": "DESC ordena de mayor a menor.",
+              "lenguaje": "sql"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué criatura queda primero?",
+              "codigo": "SELECT nombre FROM criaturas ORDER BY nivel DESC LIMIT 1;",
+              "opciones": [
+                "Dragón",
+                "Sirena",
+                "Gólem"
+              ],
+              "correcta": 0,
+              "pista": "Ordená por nivel descendente.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para obtener las dos criaturas de mayor nivel.",
+              "codigo": "SELECT nombre FROM criaturas ORDER BY nivel DESC ___ 2;",
+              "fichas": [
+                "LIMIT",
+                "WHERE",
+                "GROUP"
+              ],
+              "respuesta": [
+                "LIMIT"
+              ],
+              "pista": "LIMIT recorta la cantidad de filas.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Mostrá nombre y nivel, de mayor a menor nivel, y solo las 3 primeras.",
+              "solucion": "SELECT nombre, nivel FROM criaturas ORDER BY nivel DESC LIMIT 3;",
+              "palabras_pista": [
+                "ORDER BY",
+                "DESC",
+                "LIMIT"
+              ],
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            }
+          ]
+        },
+        {
+          "id": "sql-agregaciones",
+          "titulo": "5. Contar y resumir datos",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "COUNT, MIN, MAX y AVG resumen varias filas. Son útiles para responder preguntas sobre un conjunto de datos.",
+              "codigo": "SELECT COUNT(*) FROM criaturas;",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué función cuenta filas?",
+              "opciones": [
+                "COUNT",
+                "ORDER",
+                "JOIN"
+              ],
+              "correcta": 0,
+              "pista": "COUNT sirve para contar.",
+              "lenguaje": "sql"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Cuántas criaturas hay?",
+              "codigo": "SELECT COUNT(*) FROM criaturas;",
+              "opciones": [
+                "5",
+                "4",
+                "3"
+              ],
+              "correcta": 0,
+              "pista": "Contá los cinco registros.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá para obtener el nivel máximo.",
+              "codigo": "SELECT ___(nivel) FROM criaturas;",
+              "fichas": [
+                "MAX",
+                "COUNT",
+                "AVG"
+              ],
+              "respuesta": [
+                "MAX"
+              ],
+              "pista": "MAX busca el valor más alto.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Consultá cuántas criaturas hay y cuál es su nivel máximo.",
+              "solucion": "SELECT COUNT(*) AS cantidad, MAX(nivel) AS nivel_maximo FROM criaturas;",
+              "palabras_pista": [
+                "COUNT",
+                "MAX",
+                "AS"
+              ],
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            }
+          ]
+        },
+        {
+          "id": "sql-group",
+          "titulo": "6. GROUP BY: resumir por grupos",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "GROUP BY reúne filas que comparten un valor. Combinado con COUNT permite saber cuántos registros hay en cada grupo.",
+              "codigo": "SELECT reino, COUNT(*) AS cantidad FROM criaturas GROUP BY reino;",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué hace GROUP BY reino?",
+              "opciones": [
+                "Agrupa las filas por reino",
+                "Ordena por reino",
+                "Borra reinos repetidos"
+              ],
+              "correcta": 0,
+              "pista": "Las filas con el mismo reino forman un grupo.",
+              "lenguaje": "sql"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Cuántas criaturas hay en Bosque?",
+              "codigo": "SELECT COUNT(*) AS cantidad FROM criaturas WHERE reino = 'Bosque';",
+              "opciones": [
+                "2",
+                "1",
+                "3"
+              ],
+              "correcta": 0,
+              "pista": "En Bosque están Lobo y Zorro.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá la consulta que cuenta criaturas por reino.",
+              "codigo": "SELECT reino, COUNT(*) FROM criaturas ___ BY reino;",
+              "fichas": [
+                "GROUP",
+                "ORDER",
+                "WHERE"
+              ],
+              "respuesta": [
+                "GROUP"
+              ],
+              "pista": "La expresión completa es GROUP BY.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Mostrá cada reino y la cantidad de criaturas que tiene, ordenado por reino.",
+              "solucion": "SELECT reino, COUNT(*) AS cantidad FROM criaturas GROUP BY reino ORDER BY reino;",
+              "palabras_pista": [
+                "GROUP BY",
+                "COUNT",
+                "ORDER BY"
+              ],
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            }
+          ]
+        },
+        {
+          "id": "sql-join",
+          "titulo": "7. JOIN: relacionar tablas",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Una clave permite relacionar tablas. JOIN combina filas de dos tablas cuando sus valores relacionados coinciden.",
+              "codigo": "SELECT criaturas.nombre, guardianes.guarida FROM criaturas JOIN guardianes ON criaturas.id = guardianes.criatura_id;",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué necesita un JOIN para relacionar estas tablas?",
+              "opciones": [
+                "Una condición que conecte columnas relacionadas",
+                "Un color",
+                "Un límite de filas"
+              ],
+              "correcta": 0,
+              "pista": "Mirá las columnas id y criatura_id.",
+              "lenguaje": "sql"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué guarida corresponde al Dragón?",
+              "codigo": "SELECT guardianes.guarida FROM criaturas JOIN guardianes ON criaturas.id = guardianes.criatura_id WHERE criaturas.nombre = 'Dragón';",
+              "opciones": [
+                "Cima Roja",
+                "Bosque Norte",
+                "Bahía Azul"
+              ],
+              "correcta": 0,
+              "pista": "El Dragón tiene id 2.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá la condición que relaciona las dos tablas.",
+              "codigo": "SELECT criaturas.nombre FROM criaturas JOIN guardianes ON criaturas.id = guardianes.___;",
+              "fichas": [
+                "criatura_id",
+                "id",
+                "reino"
+              ],
+              "respuesta": [
+                "criatura_id"
+              ],
+              "pista": "La segunda tabla guarda la referencia en criatura_id.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Mostrá el nombre de cada criatura que tiene guardián y su guarida.",
+              "solucion": "SELECT criaturas.nombre, guardianes.guarida FROM criaturas JOIN guardianes ON criaturas.id = guardianes.criatura_id;",
+              "palabras_pista": [
+                "JOIN",
+                "ON",
+                "criatura_id"
+              ],
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            }
+          ]
+        },
+        {
+          "id": "sql-seguridad",
+          "titulo": "8. Seguridad y consultas responsables",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "En este laboratorio SQL solo hacemos consultas de lectura. No necesitás INSERT, UPDATE, DELETE, DROP, ATTACH ni acceso a archivos para aprender a consultar datos.",
+              "codigo": "SELECT nombre FROM criaturas WHERE nivel >= 4;",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuál de estas consultas es apropiada para este laboratorio?",
+              "opciones": [
+                "SELECT nombre FROM criaturas",
+                "DROP TABLE criaturas",
+                "DELETE FROM criaturas"
+              ],
+              "correcta": 0,
+              "pista": "En V1 solo leemos los datos.",
+              "lenguaje": "sql"
+            },
+            {
+              "tipo": "predecir",
+              "pregunta": "¿Qué devuelve este filtro?",
+              "codigo": "SELECT nombre FROM criaturas WHERE nivel >= 4 ORDER BY nombre LIMIT 2;",
+              "opciones": [
+                "Dragón\nSirena",
+                "Lobo y Zorro",
+                "Gólem"
+              ],
+              "correcta": 0,
+              "pista": "Los niveles 4 o mayores son 5 y 4.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "completar",
+              "consigna": "Completá una consulta segura para buscar la misión con recompensa 40.",
+              "codigo": "SELECT nombre FROM misiones WHERE recompensa ___ 40;",
+              "fichas": [
+                "=",
+                "UPDATE",
+                "DELETE"
+              ],
+              "respuesta": [
+                "="
+              ],
+              "pista": "Queremos comparar el valor, no modificar la tabla.",
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            },
+            {
+              "tipo": "escribir",
+              "consigna": "Buscá las misiones cuya recompensa sea mayor o igual a 20 y ordenalas de mayor a menor recompensa.",
+              "solucion": "SELECT nombre, recompensa FROM misiones WHERE recompensa >= 20 ORDER BY recompensa DESC;",
+              "palabras_pista": [
+                "WHERE",
+                "ORDER BY",
+                ">="
+              ],
+              "lenguaje": "sql",
+              "sql_dataset": "mundo-fantasia"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -246,6 +246,26 @@ class TestVariosCursos(unittest.TestCase):
         self.assertFalse(est[1]["abierto"])
         self.assertEqual(est[1]["requiere"], "fantasma")
 
+    def test_curso_puede_pedir_otro_curso_completo(self):
+        web = _curso("web", ["w1", "w2"])
+        python = _curso("python", ["p1"], requiere=None)
+        python["requiere"] = {"curso": "web"}
+        p = {"lecciones": {"w1": {"completada": True}, "w2": {"completada": True}}}
+        est = leccion.estado_cursos([web, python], p, {})
+        self.assertTrue(est[1]["abierto"])
+        self.assertEqual(est[1]["hechas"], 0)
+
+    def test_curso_puede_pedir_uno_de_varios_cursos(self):
+        web = _curso("web", ["w1"])
+        python = _curso("python", ["p1"])
+        sql = _curso("sql", ["s1"])
+        sql["requiere"] = {"uno_de_cursos": ["web", "python"]}
+        p = {"lecciones": {"p1": {"completada": True}}}
+        est = leccion.estado_cursos([web, python, sql], p, {})
+        self.assertFalse(est[0]["completo"])
+        self.assertTrue(est[2]["abierto"])
+        self.assertIsNone(est[2]["requiere"])
+
 
 class TestLeccionQuePideOtra(unittest.TestCase):
     def setUp(self):

@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "tipo": "fuentes_curriculares_externas",
+  "regla": "No copiar repositorios externos al producto. Cada módulo futuro debe adaptarse y declarar sus propias competencias.",
+  "fuentes": [
+    {
+      "id": "avanzado-python-datos",
+      "repositorio": "martinezmarcos93/curso-python-datos",
+      "prerrequisitos": ["python-fundamentos", "sql-fundamentos", "integrador-inventario-fantasia"],
+      "areas": ["python_datos", "sql_avanzado", "backend_api", "visualizacion", "machine_learning", "analisis_negocios"],
+      "duracion_fuente": "24 semanas"
+    },
+    {
+      "id": "avanzado-desarrollo-aplicaciones",
+      "repositorio": "martinezmarcos93/curso-desarrollo-aplicaciones",
+      "prerrequisitos": ["python-fundamentos", "web-esencial"],
+      "areas": ["frontend", "escritorio", "llm_aplicado", "js_ts", "concurrencia", "linux", "juegos", "multimedia", "documentos", "seguridad_redes", "android"],
+      "duracion_fuente": "11 modulos"
+    },
+    {
+      "id": "avanzado-orquestacion-streaming-llm",
+      "repositorio": "martinezmarcos93/curso-orquestacion-streaming-llm",
+      "prerrequisitos": ["python-fundamentos", "sql-fundamentos"],
+      "areas": ["orquestacion", "streaming", "event_sourcing", "llm_operacional", "rag"],
+      "duracion_fuente": "24 semanas"
+    }
+  ]
+}

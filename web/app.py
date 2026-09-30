@@ -7,6 +7,7 @@ Seguridad de una app local:
   una página web ajena abierta en el navegador no puede mandarlo (no hay CORS).
 - El código del chico nunca corre en este proceso: va a tortuscript.proceso.
 """
+import base64
 import logging
 import secrets
 import sys
@@ -22,8 +23,10 @@ if str(RAIZ) not in sys.path:
     sys.path.insert(0, str(RAIZ))
 
 from tortuscript import contenido, evaluacion, leccion as motor, liga, logros, progreso  # noqa: E402
+from tortuscript import web_evaluacion, sql_evaluacion  # noqa: E402
 from tortuscript import practica as espaciado  # noqa: E402
 from tortuscript import proyectos as mis_proyectos  # noqa: E402
+from tortuscript import proyectos_integradores, catalogo_producto  # noqa: E402
 from tortuscript import diagnostico, intereses, respaldo  # noqa: E402
 from tortuscript.juego_ast import arbol_del_juego  # noqa: E402
 from tortuscript.executor import CodigoNoPermitido  # noqa: E402
@@ -275,6 +278,14 @@ def create_app(token=None):
             abort(404)
         return hallada                                          # (curso, sección, lección)
 
+    def _nivel0_completo(p=None):
+        p = p or progreso.cargar_progreso()
+        curso = next((c for c in _camino(p) if c["id"] == "alfabetizacion-digital"), None)
+        return bool(curso and curso["completo"])
+
+    def _curso_inicial(recorrido):
+        return {"web": "web-esencial", "python": "python-real"}.get(recorrido)
+
     def _completada(leccion, p=None):
         p = p or progreso.cargar_progreso()
         return motor.esta_completada(p, leccion["id"], INDICES_POR_LECCION.get(leccion["id"], []))
@@ -290,9 +301,23 @@ def create_app(token=None):
         if not palabras_por_leccion:
             palabras_por_leccion.update(motor.resumen_de_palabras(_cursos()))
         siguiente = motor.siguiente_global(_cursos(), leccion_id)
-        return {**info, **palabras_por_leccion.get(leccion_id, {"aprendiste": [], "practicaste": []}),
-                "siguiente": siguiente["id"] if siguiente else None,
-                "titulo_siguiente": siguiente["titulo"] if siguiente else None}
+        resultado = {**info, **palabras_por_leccion.get(leccion_id, {"aprendiste": [], "practicaste": []}),
+                     "siguiente": siguiente["id"] if siguiente else None,
+                     "titulo_siguiente": siguiente["titulo"] if siguiente else None}
+        p = progreso.cargar_progreso()
+        if leccion_id.startswith("nivel0-") and _nivel0_completo(p):
+            recorrido = p.get("recorrido_inicial")
+            if recorrido:
+                curso_id = _curso_inicial(recorrido)
+                curso = next((c for c in _cursos() if c["id"] == curso_id), None)
+                primera = contenido.lecciones(curso)[0][1] if curso and contenido.lecciones(curso) else None
+                resultado["siguiente"] = primera["id"] if primera else None
+                resultado["titulo_siguiente"] = primera["titulo"] if primera else None
+            else:
+                resultado["siguiente"] = None
+                resultado["titulo_siguiente"] = "Elegí qué aprender primero"
+                resultado["elegir_recorrido"] = True
+        return resultado
 
     def _ejecutar_para_motor(paso):
         """Cómo el motor corre un programa para comparar (completar/ordenar): devuelve
@@ -384,6 +409,30 @@ def create_app(token=None):
                  "ya_completada": _completada(lec, p)}
         return render_template("leccion.html", datos=datos, titulo=lec["titulo"])
 
+    @app.route("/elegir-recorrido", methods=["GET", "POST"])
+    def elegir_recorrido():
+        p = progreso.cargar_progreso()
+        if not _nivel0_completo(p):
+            return redirect(url_for("mapa"))
+        if request.method == "POST":
+            recorrido = (request.form.get("recorrido") or "").strip()
+            curso_id = _curso_inicial(recorrido)
+            if not curso_id:
+                abort(400)
+            p["recorrido_inicial"] = recorrido
+            progreso.guardar_progreso(p)
+            curso = next(c for c in _cursos() if c["id"] == curso_id)
+            primera = contenido.lecciones(curso)[0][1]
+            return redirect(url_for("leccion", leccion_id=primera["id"]))
+        return render_template(
+            "elegir_recorrido.html",
+            recorrido_actual=p.get("recorrido_inicial"),
+            cursos={c["id"]: c for c in _cursos()},
+            sql_desbloqueado=next(
+                (c["abierto"] for c in _camino(p) if c["id"] == "sql-fundamentos"), False
+            ),
+        )
+
     @app.get("/mapa")
     def mapa():
         p = progreso.cargar_progreso()
@@ -406,8 +455,8 @@ def create_app(token=None):
                     lp = p.get("lecciones", {}).get(lec["id"], {})
                     nivel0.append({
                         "leccion": lec["id"],
-                        "numero": lec["titulo"].partition(". ")[0],
-                        "nombre": lec["titulo"].partition(". ")[2] or lec["titulo"],
+                        "numero": lec["numero"],
+                        "nombre": lec["nombre"],
                         "completado": lec["estado"] in ("hecha", "perfecta"),
                         "perfecto": lec["estado"] == "perfecta",
                         "abierto": lec["estado"] != "bloqueada",
@@ -415,7 +464,7 @@ def create_app(token=None):
                     })
         tres = sum(1 for d in datos.values() if d.get("estrellas", 0) == 3)
         return render_template("mapa.html", niveles=niveles, nombres=_niveles(),
-                               nivel0=nivel0, tres_estrellas=tres)
+                               nivel0=nivel0, camino=camino, recorrido_inicial=p.get("recorrido_inicial"), tres_estrellas=tres)
 
     @app.get("/resumen")
     def resumen():
@@ -569,6 +618,24 @@ def create_app(token=None):
     def proyectos():
         return render_template("proyectos.html", proyectos=mis_proyectos.listar(progreso.cargar_progreso()),
                                maximo=mis_proyectos.MAX_PROYECTOS)
+    @app.get("/proyectos-integradores/vscode")
+    def guia_vscode():
+        return render_template("guia_vscode.html")
+
+    @app.get("/proyectos-integradores")
+    def proyectos_integradores_pagina():
+        return render_template("proyectos_integradores.html",
+                               proyectos=proyectos_integradores.resumen_catalogo(progreso.cargar_progreso()))
+
+    @app.get("/proyectos-integradores/<proyecto_id>")
+    def proyecto_integrador(proyecto_id):
+        p = progreso.cargar_progreso()
+        estado = proyectos_integradores.estado(p, proyecto_id)
+        if estado is None:
+            return redirect(url_for("proyectos_integradores_pagina"))
+        return render_template("proyecto_integrador.html", proyecto=estado,
+                               ayudas=proyectos_integradores.ayudas(p, proyecto_id))
+
 
     # ─────────────── API ───────────────
     @app.post("/api/traducir")
@@ -636,8 +703,59 @@ def create_app(token=None):
                        estado_juego=_estado(), avisos=_avisos_tras(p))
 
     def _evaluar_escribir(leccion_id, i, paso, datos):
-        """Ejecuta y evalúa un paso 'escribir'. Los ejercicios del curso clásico guardan su
-        resultado en `ejercicios` (clave histórica); los de otros cursos, en el paso de la lección."""
+        """Ejecuta y evalúa un paso escribir. Web se evalúa declarativamente: el servidor
+        nunca ejecuta HTML/CSS/JavaScript del alumno."""
+        if paso.get("lenguaje") == "sql":
+            r = {"evaluacion": sql_evaluacion.evaluar(
+                datos.get("codigo", ""), paso["solucion"], paso.get("sql_dataset"), paso.get("sql") or {}
+            )}
+            if r["evaluacion"]["estado"] == evaluacion.CORRECTO:
+                _, _, lec = _leccion_o_404(leccion_id)
+                vistas = pistas_vistas.get((progreso.PERFIL_ACTUAL, leccion_id, i), 0)
+                estrellas, xp = evaluacion.estrellas_por_pistas(vistas)
+                p = progreso.cargar_progreso()
+                nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
+                indice = contenido.indices_ejercicio(leccion_id).get(i)
+                if indice is not None:
+                    mejora = progreso.registrar_ejercicio(p, indice, estrellas, xp)
+                    info = progreso.registrar_paso_leccion(p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"]))
+                else:
+                    info = progreso.registrar_paso_leccion(p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
+                                                           estrellas=estrellas)
+                    mejora = info["xp_ganado"] > 0
+                r["premio"] = {"estrellas": estrellas, "xp": xp, "mejora": mejora,
+                               "sube_nivel": progreso.calcular_nivel(p["xp_total"])[0] > nivel_antes}
+                r["leccion"] = _resumen_leccion(leccion_id, info)
+                r["avisos"] = _avisos_tras(p)
+            r["estado_juego"] = _estado()
+            return r
+
+        if paso.get("web"):
+            reglas = paso.get("web") or {}
+            lenguaje = paso.get("lenguaje") or reglas.get("lenguaje")
+            r = {"evaluacion": web_evaluacion.evaluar(
+                datos.get("codigo", ""), paso["solucion"], lenguaje, reglas
+            )}
+            if r["evaluacion"]["estado"] == evaluacion.CORRECTO:
+                _, _, lec = _leccion_o_404(leccion_id)
+                vistas = pistas_vistas.get((progreso.PERFIL_ACTUAL, leccion_id, i), 0)
+                estrellas, xp = evaluacion.estrellas_por_pistas(vistas)
+                p = progreso.cargar_progreso()
+                nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
+                indice = contenido.indices_ejercicio(leccion_id).get(i)
+                if indice is not None:
+                    mejora = progreso.registrar_ejercicio(p, indice, estrellas, xp)
+                    info = progreso.registrar_paso_leccion(p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"]))
+                else:
+                    info = progreso.registrar_paso_leccion(p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
+                                                           estrellas=estrellas)
+                    mejora = info["xp_ganado"] > 0
+                r["premio"] = {"estrellas": estrellas, "xp": xp, "mejora": mejora,
+                               "sube_nivel": progreso.calcular_nivel(p["xp_total"])[0] > nivel_antes}
+                r["leccion"] = _resumen_leccion(leccion_id, info)
+                r["avisos"] = _avisos_tras(p)
+            r["estado_juego"] = _estado()
+            return r
         op = "evaluar_juego" if paso.get("juego") else "evaluar_tortuga" if paso.get("tortuga") else "evaluar"
         pedido = {"op": op, "fuente": datos.get("codigo", ""),
                   "entradas": datos.get("entradas", []), "solucion": paso["solucion"]}
@@ -682,7 +800,9 @@ def create_app(token=None):
                                "texto": f"En total son {len(lineas)} línea{'s' if len(lineas) != 1 else ''}."}
         else:
             contenido_pista = {"titulo": "Solución completa", "codigo": sol}
-            if paso.get("lenguaje") != "python":
+            if paso.get("web"):
+                contenido_pista["lenguaje"] = paso.get("lenguaje", "html")
+            elif paso.get("lenguaje") != "python":
                 contenido_pista["python"] = TraductorTortuScript().traducir_codigo(sol)
         return jsonify(nivel=nivel, **contenido_pista)
 
@@ -792,6 +912,59 @@ def create_app(token=None):
     @app.post("/api/proyectos/<proyecto_id>/borrar")
     def api_proyecto_borrar(proyecto_id):
         return _con_proyectos(lambda p: mis_proyectos.borrar(p, proyecto_id))
+    @app.post("/api/proyectos-integradores/<proyecto_id>")
+    def api_proyecto_integrador_iniciar(proyecto_id):
+        p = progreso.cargar_progreso()
+        try:
+            proyectos_integradores.iniciar(p, proyecto_id)
+            progreso.guardar_progreso(p)
+        except proyectos_integradores.ErrorProyectoIntegrador as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        return jsonify(ok=True, url=url_for("proyecto_integrador", proyecto_id=proyecto_id),
+                       estado=proyectos_integradores.estado(p, proyecto_id))
+
+    @app.post("/api/proyectos-integradores/<proyecto_id>/archivo")
+    def api_proyecto_integrador_archivo(proyecto_id):
+        d = request.get_json(silent=True) or {}
+        p = progreso.cargar_progreso()
+        try:
+            proyectos_integradores.guardar_archivo(p, proyecto_id, d.get("nombre"), d.get("codigo"))
+            progreso.guardar_progreso(p)
+        except proyectos_integradores.ErrorProyectoIntegrador as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        return jsonify(ok=True)
+
+    @app.post("/api/proyectos-integradores/<proyecto_id>/etapas/<etapa_id>")
+    def api_proyecto_integrador_etapa(proyecto_id, etapa_id):
+        p = progreso.cargar_progreso()
+        try:
+            resultado = proyectos_integradores.validar_etapa(p, proyecto_id, etapa_id)
+            if not resultado["ok"]:
+                return jsonify(ok=False, mensaje=resultado["mensaje"]), 400
+            progreso.guardar_progreso(p)
+        except proyectos_integradores.ErrorProyectoIntegrador as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        return jsonify(ok=True, completado=resultado["completado"])
+
+    @app.post("/api/proyectos-integradores/<proyecto_id>/ayudas/<ayuda_id>")
+    def api_proyecto_integrador_ayuda(proyecto_id, ayuda_id):
+        p = progreso.cargar_progreso()
+        try:
+            texto = proyectos_integradores.ver_ayuda(p, proyecto_id, ayuda_id)
+            progreso.guardar_progreso(p)
+        except proyectos_integradores.ErrorProyectoIntegrador as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        return jsonify(ok=True, texto=texto)
+
+    @app.post("/api/proyectos-integradores/<proyecto_id>/exportar")
+    def api_proyecto_integrador_exportar(proyecto_id):
+        p = progreso.cargar_progreso()
+        try:
+            datos, nombre = proyectos_integradores.exportar(p, proyecto_id)
+        except proyectos_integradores.ErrorProyectoIntegrador as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        return jsonify(ok=True, nombre=nombre, archivo=base64.b64encode(datos).decode("ascii"))
+
 
     @app.post("/api/onboarding")
     def api_onboarding():
@@ -895,6 +1068,11 @@ def create_app(token=None):
             return jsonify(ok=False, mensaje=str(e)), 400
         progreso.guardar_progreso(p)
         return jsonify(ok=True)
+
+    @app.get("/api/catalogo-producto")
+    def api_catalogo_producto():
+        """Catálogo curricular, competencias y acceso para la UI de producto V1."""
+        return jsonify(catalogo_producto.progreso_para_mostrar(progreso.cargar_progreso()))
 
     @app.get("/api/estado")
     def api_estado():

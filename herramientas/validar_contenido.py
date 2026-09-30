@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from tortuscript.contenido import CARPETA, cargar_curso, pasos  # noqa: E402
 from tortuscript.validacion import ERROR, validar_curso  # noqa: E402
+from tortuscript import proyectos_integradores  # noqa: E402
 
 
 def main():
@@ -32,6 +33,12 @@ def main():
             print("   ", h)
         estado = "✅ sin errores" if not errores else f"❌ {len(errores)} error(es)"
         print(f"   {estado}, {len(avisos)} aviso(s)")
+    errores_proyectos = proyectos_integradores.validar_catalogo()
+    print(f"\n🧩 Proyectos integradores — {len(proyectos_integradores.cargar_catalogo())} proyectos revisados")
+    for error in errores_proyectos:
+        print("   ❌", error)
+    total_errores += len(errores_proyectos)
+    print("  ", "✅ sin errores" if not errores_proyectos else f"❌ {len(errores_proyectos)} error(es)")
     sys.exit(1 if total_errores else 0)
 
 

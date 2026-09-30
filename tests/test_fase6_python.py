@@ -32,12 +32,51 @@ class TestPythonV1(unittest.TestCase):
         self.assertIn("lista", por_id["py-listas"]["pasos"][0]["texto"].lower())
         self.assertIn("problema", por_id["py-problemas"]["pasos"][0]["texto"].lower())
 
+    def test_nuevas_unidades_validan_sin_errores_detallados(self):
+        from tortuscript.validacion import ERROR, validar_curso
+        errores = [h for h in validar_curso(self.curso) if h.nivel == ERROR]
+        self.assertEqual(errores, [], "\n".join(str(h) for h in errores))
+
     def test_ejercicios_python_declarados_como_python(self):
         for leccion in self.lecciones:
             for paso in leccion["pasos"]:
                 if paso["tipo"] == "escribir":
                     self.assertEqual(paso.get("lenguaje"), "python", leccion["id"])
 
+    def test_runtime_reconoce_python_real_nuevo(self):
+        from tortuscript.translator import detectar_tipo
+        from tortuscript.validacion import _correr
+        codigo = 'edad = 12\nnombre = "Luna"\nes_mayor = edad >= 18\nprint(es_mayor)'
+        self.assertEqual(detectar_tipo(codigo), "python")
+        ejemplos = [
+            'frutas = ["manzana", "pera", "banana"]\nprint(frutas[0])',
+            'numeros = [3, 8, 5]\nmayores = 0\nfor n in numeros:\n    if n >= 5:\n        mayores = mayores + 1\nprint(mayores)',
+        ]
+        for ejemplo in ejemplos:
+            self.assertEqual(detectar_tipo(ejemplo), "python", ejemplo)
+            salida, error, _ = _correr(ejemplo)
+            self.assertEqual(error, "", error)
+        salida, error, _ = _correr(codigo)
+        self.assertEqual(error, "", error)
+        self.assertEqual(salida.strip(), "False")
+
+    def test_todo_codigo_de_las_nuevas_unidades_se_puede_ejecutar(self):
+        from tortuscript.validacion import _correr
+        for leccion in self.lecciones:
+            if leccion["id"] not in {"py-datos", "py-listas", "py-problemas"}:
+                continue
+            for paso in leccion["pasos"]:
+                codigo = paso.get("codigo") or paso.get("solucion") or ""
+                if paso["tipo"] == "completar":
+                    codigo = paso["codigo"]
+                    for r in paso.get("respuesta", []):
+                        codigo = codigo.replace("___", r, 1)
+                elif paso["tipo"] == "ordenar":
+                    codigo = "\n".join(paso.get("lineas", []))
+                if not codigo.strip():
+                    continue
+                salida, error, _ = _correr(codigo, paso.get("entradas_prueba"))
+                self.assertEqual(error, "", f"{leccion['id']} / {paso['tipo']}: {error} | {codigo!r}")
     def test_nuevos_retos_tienen_soluciones_completas(self):
         for lesson_id in ("py-datos", "py-listas", "py-problemas"):
             leccion = next(l for l in self.lecciones if l["id"] == lesson_id)

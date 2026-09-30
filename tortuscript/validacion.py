@@ -9,6 +9,7 @@ Revisa TODO lo que un chico va a ver, sin abrir la app:
 
 Uso: validar_curso(curso) -> list[Hallazgo];  herramientas/validar_contenido.py lo imprime.
 """
+import ast
 import itertools
 import re
 from dataclasses import dataclass
@@ -47,10 +48,10 @@ class Hallazgo:
         return f"{icono} {self.donde}: {self.mensaje}"
 
 
-def _correr_dibujo(codigo_tortu, entradas=None):
+def _correr_dibujo(codigo_tortu, entradas=None, lenguaje=None):
     """Traduce y ejecuta con la tortuga. Devuelve (salida_programa, error, palabras_usadas, ordenes)."""
     t = TraductorTortuScript()
-    python = codigo_tortu if detectar_tipo(codigo_tortu) == "python" else t.traducir_codigo(codigo_tortu)
+    python = codigo_tortu if lenguaje == "python" or detectar_tipo(codigo_tortu) == "python" else t.traducir_codigo(codigo_tortu)
     detalles = {}
     registro = tortuga.Registro()
     _, hay_error, mensaje = ejecutar_codigo(python, entradas_fijas=list(entradas or []), detalles=detalles,
@@ -67,15 +68,15 @@ def _correr_juego(codigo_tortu, entradas=None):
     return primera, r["eventos"], palabras_usadas(codigo_tortu)
 
 
-def _correr(codigo_tortu, entradas=None):
+def _correr(codigo_tortu, entradas=None, lenguaje=None):
     """Traduce y ejecuta. Devuelve (salida_programa, error, palabras_usadas)."""
-    salida, error, palabras, _ = _correr_dibujo(codigo_tortu, entradas)
+    salida, error, palabras, _ = _correr_dibujo(codigo_tortu, entradas, lenguaje)
     return salida, error, palabras
 
 
-def _dibuja(codigo_tortu, entradas=None):
+def _dibuja(codigo_tortu, entradas=None, lenguaje=None):
     """(hay_error, ordenes, palabras) de un programa de tortuga."""
-    _, error, palabras, ordenes = _correr_dibujo(codigo_tortu, entradas)
+    _, error, palabras, ordenes = _correr_dibujo(codigo_tortu, entradas, lenguaje)
     return error, ordenes, palabras
 
 
@@ -141,6 +142,48 @@ def _validar_paso(paso, donde, hallazgos):
     tipo = paso.get("tipo")
     entradas = paso.get("entradas_prueba")
     usadas = set()
+    if paso.get("lenguaje") == "sql":
+        from .sql_evaluacion import evaluar, ejecutar
+        dataset = paso.get("sql_dataset")
+        if tipo == "explicacion" and paso.get("codigo"):
+            r = ejecutar(paso["codigo"], dataset)
+            if not r["ok"]:
+                hallazgos.append(Hallazgo(ERROR, donde, f"la consulta SQL de ejemplo no corre: {r['mensaje']}"))
+        elif tipo == "predecir":
+            r = ejecutar(paso.get("codigo", ""), dataset)
+            if not r["ok"]:
+                hallazgos.append(Hallazgo(ERROR, donde, f"la consulta SQL no corre: {r['mensaje']}"))
+            elif str(paso["opciones"][paso["correcta"]]) != r["salida"]:
+                hallazgos.append(Hallazgo(ERROR, donde, f"la opción correcta dice {paso['opciones'][paso['correcta']]!r} pero la consulta devuelve {r['salida']!r}"))
+        elif tipo == "completar":
+            codigo = paso["codigo"]
+            for respuesta in paso.get("respuesta", []):
+                codigo = codigo.replace(HUECO, respuesta, 1)
+            r = ejecutar(codigo, dataset)
+            if not r["ok"]:
+                hallazgos.append(Hallazgo(ERROR, donde, f"el completado SQL no corre: {r['mensaje']}"))
+        elif tipo == "ordenar":
+            r = ejecutar("\n".join(paso.get("lineas", [])), dataset)
+            if not r["ok"]:
+                hallazgos.append(Hallazgo(ERROR, donde, f"el orden correcto SQL no corre: {r['mensaje']}"))
+        elif tipo == "escribir":
+            r = evaluar(paso["solucion"], paso["solucion"], dataset)
+            if r["estado"] != "correcto":
+                hallazgos.append(Hallazgo(ERROR, donde, f"la solución SQL no es válida: {r.get('mensaje', 'error desconocido')}"))
+        return set()
+
+    if paso.get("lenguaje") in {"html", "css", "javascript", "web-conceptual"}:
+        from .web_evaluacion import validar_codigo
+        reglas = paso.get("web") or {}
+        codigo = paso.get("codigo") or paso.get("solucion") or ""
+        if paso.get("lineas"):
+            codigo = "\n".join(paso["lineas"])
+        if not codigo.strip():
+            return set()
+        ok, mensaje = validar_codigo(codigo, paso["lenguaje"], reglas)
+        if not ok:
+            hallazgos.append(Hallazgo(ERROR, donde, f"el código Web no es válido: {mensaje}"))
+        return set()
     for campo in ("laberinto", "usar"):
         if campo in paso and tipo != "escribir":
             hallazgos.append(Hallazgo(ERROR, donde, f"«{campo}» solo sirve en pasos «escribir»"))
@@ -161,7 +204,7 @@ def _validar_paso(paso, donde, hallazgos):
             elif not eventos:
                 hallazgos.append(Hallazgo(ERROR, donde, "el juego de ejemplo no hace nada"))
         elif _requeridos(paso, ["texto"], donde, hallazgos) and paso.get("codigo"):
-            err, ordenes, usadas = _dibuja(paso["codigo"], entradas)
+            err, ordenes, usadas = _dibuja(paso["codigo"], entradas, paso.get("lenguaje"))
             if err:
                 hallazgos.append(Hallazgo(ERROR, donde, f"el ejemplo no corre: {err}"))
             elif paso.get("lienzo") and not tortuga.trazos(ordenes):
@@ -190,7 +233,7 @@ def _validar_paso(paso, donde, hallazgos):
                 if any(str(o) == real for i, o in enumerate(opciones) if i != correcta):
                     hallazgos.append(Hallazgo(ERROR, donde, "otra opción también es correcta"))
         elif tipo == "predecir":
-            salida, err, usadas = _correr(paso["codigo"], entradas)
+            salida, err, usadas = _correr(paso["codigo"], entradas, paso.get("lenguaje"))
             if err:
                 hallazgos.append(Hallazgo(ERROR, donde, f"el código no corre: {err}"))
             else:
@@ -225,7 +268,7 @@ def _validar_paso(paso, donde, hallazgos):
             elif not eventos:
                 hallazgos.append(Hallazgo(ERROR, donde, "completado con la respuesta, el juego no hace nada"))
             return set(usadas)
-        salida, err, usadas, ordenes = _correr_dibujo(codigo, entradas)
+        salida, err, usadas, ordenes = _correr_dibujo(codigo, entradas, paso.get("lenguaje"))
         if err:
             hallazgos.append(Hallazgo(ERROR, donde, f"completado con la respuesta, no corre: {err}"))
         elif paso.get("tortuga"):
@@ -253,7 +296,7 @@ def _validar_paso(paso, donde, hallazgos):
                             hallazgos.append(Hallazgo(AVISO, donde, "hay otro orden que hace el mismo juego; aceptá los dos al evaluar"))
                             break
             return set(usadas)
-        salida, err, usadas, ordenes = _correr_dibujo("\n".join(lineas), entradas)
+        salida, err, usadas, ordenes = _correr_dibujo("\n".join(lineas), entradas, paso.get("lenguaje"))
         dibujando = bool(paso.get("tortuga"))
         if err:
             hallazgos.append(Hallazgo(ERROR, donde, f"en el orden correcto no corre: {err}"))
@@ -266,7 +309,7 @@ def _validar_paso(paso, donde, hallazgos):
             for orden in itertools.permutations(lineas):
                 if list(orden) == lineas:
                     continue
-                s, e, _, o = _correr_dibujo("\n".join(orden), entradas)
+                s, e, _, o = _correr_dibujo("\n".join(orden), entradas, paso.get("lenguaje"))
                 igual = tortuga.mismo_dibujo(o, ordenes) if dibujando else normalizar_salida(s) == objetivo
                 if not e and igual:
                     hallazgos.append(Hallazgo(AVISO, donde, "hay otro orden que muestra lo mismo; aceptá los dos al evaluar"))
@@ -275,6 +318,16 @@ def _validar_paso(paso, donde, hallazgos):
     elif tipo == "escribir":
         if not _requeridos(paso, ["consigna", "solucion"], donde, hallazgos):
             return set()
+        if paso.get("web"):
+            from .web_evaluacion import validar_codigo
+            reglas = paso.get("web") or {}
+            lenguaje = paso.get("lenguaje") or reglas.get("lenguaje")
+            ok, mensaje = validar_codigo(paso["solucion"], lenguaje, reglas)
+            if not ok:
+                hallazgos.append(Hallazgo(ERROR, donde, f"la solución Web no es válida: {mensaje}"))
+            if not paso.get("palabras_pista"):
+                hallazgos.append(Hallazgo(AVISO, donde, "ejercicio Web sin «palabras_pista»"))
+            return set()
         if paso.get("juego"):
             err, eventos, usadas = _correr_juego(paso["solucion"], entradas)
             if err:
@@ -282,7 +335,7 @@ def _validar_paso(paso, donde, hallazgos):
             elif not eventos:
                 hallazgos.append(Hallazgo(ERROR, donde, "la solución del juego no hace nada (no se podría evaluar)"))
             return set(usadas)
-        salida, err, usadas, ordenes = _correr_dibujo(paso["solucion"], entradas)
+        salida, err, usadas, ordenes = _correr_dibujo(paso["solucion"], entradas, paso.get("lenguaje"))
         usadas = set(usadas)
         if ("preguntar" in usadas or "input(" in paso["solucion"]) and not entradas:
             hallazgos.append(Hallazgo(ERROR, donde, "la solución usa preguntar/input: agregá «entradas_prueba»"))
@@ -325,6 +378,26 @@ def validar_curso(curso):
         donde = f"{leccion.get('titulo', leccion.get('id'))} · paso {i + 1} ({paso.get('tipo')})"
         for texto in _textos_del_paso(paso):
             _revisar_texto(texto, donde, hallazgos)
+
+        if paso.get("lenguaje") == "web-conceptual":
+            continue
+        if paso.get("lenguaje") == "python":
+            codigo_python = paso.get("codigo") or paso.get("solucion") or ""
+            if paso.get("tipo") == "completar":
+                codigo_python = paso["codigo"]
+                for r in paso.get("respuesta", []):
+                    codigo_python = codigo_python.replace(HUECO, r, 1)
+            elif paso.get("tipo") == "ordenar":
+                codigo_python = "\n".join(paso.get("lineas", []))
+            if codigo_python.strip():
+                try:
+                    ast.parse(codigo_python)
+                except SyntaxError as e:
+                    hallazgos.append(Hallazgo(ERROR, donde, f"código Python con sintaxis inválida: {e.msg}"))
+            continue
+        if paso.get("lenguaje") in {"html", "css", "javascript"}:
+            _validar_paso(paso, donde, hallazgos)
+            continue
 
         nuevas = set()
         if paso.get("forma"):

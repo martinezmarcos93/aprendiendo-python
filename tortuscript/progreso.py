@@ -27,7 +27,7 @@ logger = logging.getLogger("tortuscript.progreso")
 # Los archivos viven en la carpeta raíz del proyecto (no en la carpeta desde donde se
 # lo abre, ni dentro del paquete tortuscript/).
 DIRECTORIO = Path(__file__).resolve().parent.parent
-VERSION_ESQUEMA = 10
+VERSION_ESQUEMA = 11
 
 PERFIL_ACTUAL = "default"
 
@@ -124,12 +124,14 @@ PROGRESO_INICIAL = {
     # Práctica del día (v6): tarjetas de repaso espaciado {"leccion:paso": {caja, proximo, aciertos, fallos}}
     "repaso": {},
     "xp_practica": {},        # XP ganado practicando por día (tope diario), últimos 7 días
-    "proyectos": {},          # Mis proyectos (v7): {id: {nombre, tipo, codigo, creado, actualizado}}
+    "proyectos": {},          # Mis proyectos (v7): {id: {nombre, tipo, codigo, creado, actualizado}}\n    "proyectos_integradores": {},  # Proyectos integradores V1: estado, archivos, etapas y ayudas
     # Diagnóstico (v9, ADR-004): lecciones salteadas al elegir dónde empezar {leccion_id: "YYYY-MM-DD"}.
     # No cuentan como hechas (sin XP, logros, liga ni certificado); solo dejan pasar el camino.
     "salteadas": {},
     # Intereses (v10, ADR-005): {encuesta_id: {"respuestas": [...], "fecha", "omitida"?}}. Solo local, sin texto libre.
     "intereses": {},
+    # Recorrido inicial elegido después de Nivel 0: "web" o "python".
+    "recorrido_inicial": None,
 }
 
 

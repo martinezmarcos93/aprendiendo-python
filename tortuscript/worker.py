@@ -71,8 +71,12 @@ def atender(pedido):
     semilla = semilla_del_pedido(pedido)
     detalles = {}
     registro = Registro() if pedido.get("op") in ("tortuga", "evaluar_tortuga") else None
+    entradas = list(pedido.get("entradas") or [])
+    # Una evaluación web sin respuestas todavía debe detenerse en la primera pregunta.
+    # `[]` se reserva para la segunda ejecución, cuando ya llegaron respuestas.
+    entradas_fijas = entradas if entradas else None
     salida, hay_error, mensaje = ejecutar_codigo(
-        python, entradas_fijas=list(pedido.get("entradas") or []),
+        python, entradas_fijas=entradas_fijas,
         detalles=detalles, completar_con_vacio=False,
         extra_globals=registro.globales() if registro else None,
         callback_linea=registro.callback_linea if registro else None, semilla=semilla)

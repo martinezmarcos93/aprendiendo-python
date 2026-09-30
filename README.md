@@ -54,19 +54,20 @@ Si la red de tu oficina o escuela intercepta certificados SSL y `pip` falla, apu
 
 ## Qué hay adentro
 
-### 🗺️ Aprender: seis cursos, 69 lecciones
+### 🗺️ Aprender: nueve cursos, 108 lecciones + proyectos integradores
 Cada lección dura unos 2 minutos y sigue el ciclo **explicar → practicar → escribir**: una tarjeta que explica con un ejemplo que se puede ejecutar, preguntas de elegir, predecir lo que muestra un programa, completar con fichas, ordenar líneas y, al final, escribir el programa. Ante un error hay una pista específica; se puede reintentar y, tras dos errores, ver la respuesta (sin XP en ese paso). **No hay vidas ni castigos.**
 
 | Curso | Lecciones | De qué trata |
 |---|---|---|
-| 🐢 Primeros pasos con TortuScript | 30 | mostrar, variables, preguntar, cuentas, si/sino, repetir, mientras, funciones |
+| 💻 Nivel 0 — El mundo digital por dentro | 16 | conceptos de programas, código, navegador, redes, servidor, datos, API y seguridad |\n| 🐢 Primeros pasos con TortuScript | 30 | mostrar, variables, preguntar, cuentas, si/sino, repetir, mientras, funciones |
 | 🎨 Dibujá con la tortuga | 15 | avanzar y girar, figuras con repetir, colores, lápiz, variables y funciones; al final, 3 laberintos donde la tortuga busca la salida (se abre al terminar *Dos variables*) |
 | 🛠️ Proyectos guiados | 3 | un adivinador de números, una calculadora y una casa; cada paso sigue desde el código anterior |
-| 🐍 De TortuScript a Python real | 6 | print, input, if, for/while y def, escritos en Python de verdad (se abre al terminar *Desafío final*) |
-| 🐉 Tortuaria: tu primer juego de rol | 10 | un juego de rol por consola: héroe, golpes, `dado()`, ataques con funciones, combate por turnos con `mientras`, inventario con listas y el jefe final (se abre al terminar *Desafío final*) |
+| 🐍 De TortuScript a Python real | 9 | print, input, if, for/while, def, datos, listas y resolución de problemas (se abre al terminar *Desafío final*) |
+| 🌐 Web esencial | 12 | HTML, CSS y JavaScript para leer, modificar, depurar y construir interfaces pequeñas (se abre al terminar Nivel 0; el recorrido puede elegirse después de alfabetización digital) |
+| 🗃️ SQL: datos y consultas | 8 | SELECT, filtros, orden, agregaciones, GROUP BY, JOIN y seguridad básica (se abre al terminar Python o Web) |\n| 🐉 Tortuaria: tu primer juego de rol | 10 | un juego de rol por consola: héroe, golpes, `dado()`, ataques con funciones, combate por turnos con `mientras`, inventario con listas y el jefe final (se abre al terminar *Desafío final*) |
 | 🎮 Creá tu juego | 5 | TortuGame: escenas, héroes, enemigos, combates, diálogos, inventario, ganar o perder y decisiones con `preguntar` (se abre al terminar *Tortuaria*) |
 
-El **camino** es la pantalla de inicio: muestra dónde estás y qué sigue. Las lecciones se desbloquean en orden.
+El **camino** es la pantalla de inicio: muestra dónde estás y qué sigue. Nivel 0 es la entrada conceptual; al completarlo se puede elegir comenzar por Web o Python. SQL se habilita al completar uno de esos dos recorridos. Las demás rutas históricas mantienen sus prerrequisitos.
 Quien ya programó puede elegir en la bienvenida **dónde empezar** (*Variables*, *Condicionales* o lo que recomiende una
 **prueba corta de 6 preguntas**): las lecciones
 anteriores quedan ⏭ salteadas, sin XP ni logros, para hacerlas cuando quiera. Al volver otro día, el inicio saluda con

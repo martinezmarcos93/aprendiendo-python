@@ -21,6 +21,7 @@
       <a href="{{ url_for('experimentar') }}" class="{{ 'activo' if request.endpoint == 'experimentar' }}">Experimentar</a>
       <a href="{{ url_for('tortuga') }}" class="{{ 'activo' if request.endpoint == 'tortuga' }}">Tortuga</a>
       <a href="{{ url_for('juego') }}" class="{{ 'activo' if request.endpoint == 'juego' }}">Juegos</a>
+      <a href="{{ url_for('proyectos_integradores_pagina') }}" class="{{ 'activo' if request.endpoint in ('proyectos_integradores_pagina', 'proyecto_integrador') }}">Proyectos</a>
       <a href="{{ url_for('practica') }}" class="{{ 'activo' if request.endpoint == 'practica' }}">Practicar{% if estado.practica_pendientes %} <span class="insignia" aria-label="{{ estado.practica_pendientes }} pendientes">{{ estado.practica_pendientes }}</span>{% endif %}</a>
       <details class="mas">
         <summary class="{{ 'activo' if request.endpoint in ('mapa', 'referencia', 'pagina_logros', 'pagina_liga', 'resumen', 'proyectos') or request.endpoint.startswith('repaso') }}">Más ▾</summary>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block titulo %}VS Code{% endblock %}
+{% block contenido %}
+<div class="columna-angosta">
+  <section class="tarjeta">
+    <h1>🧰 Tu proyecto fuera de TortuScript</h1>
+    <p>Cuando termines un proyecto integrador vas a poder abrirlo en tu computadora. VS Code es un editor que te ayuda a trabajar con los archivos.</p>
+  </section>
+  <section class="tarjeta">
+    <h2>1. Abrí la carpeta</h2>
+    <p>En VS Code elegí <b>Archivo → Abrir carpeta</b> y seleccioná la carpeta de tu proyecto.</p>
+  </section>
+  <section class="tarjeta">
+    <h2>2. Mirá los archivos</h2>
+    <p>El panel de la izquierda muestra los archivos. No todos hacen lo mismo: HTML organiza la página, CSS la presenta y JavaScript agrega comportamiento. Python puede encargarse de la lógica del servidor.</p>
+  </section>
+  <section class="tarjeta">
+    <h2>3. Abrí la terminal</h2>
+    <p>La terminal permite escribir comandos. En un proyecto Python podés usar <code>python app.py</code> para iniciar el programa cuando el proyecto lo indique.</p>
+  </section>
+  <section class="tarjeta">
+    <h2>4. Leé los errores</h2>
+    <p>Un error no significa que rompiste todo. Mirá el archivo y la línea que indica el mensaje. Volvé al código, hacé un cambio pequeño y probá otra vez.</p>
+  </section>
+  <section class="tarjeta">
+    <h2>5. Guardá y comprobá</h2>
+    <p>Guardá el archivo, ejecutá el proyecto y comprobá qué hace realmente. El objetivo es entender el resultado, no solamente conseguir que desaparezca un mensaje rojo.</p>
+    <a class="boton violeta" href="{{ url_for('proyectos_integradores_pagina') }}">Volver a proyectos</a>
+  </section>
+</div>
+{% endblock %}

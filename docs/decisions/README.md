@@ -31,12 +31,19 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 | [ADR-017](ADR-017-modelo-curricular-por-edades.md) | Edad y nivel como dimensiones curriculares | Propuesta |
 | [ADR-018](ADR-018-fuentes-curriculares-externas.md) | Repositorios avanzados como fuentes curriculares | Propuesta |
 | [ADR-019](ADR-019-estados-de-acceso.md) | Estados de acceso independientes del motor | Propuesta |
-| [ADR-020](ADR-020-nivel-web-esencial.md) | HTML/CSS/JS como alfabetización web | Propuesta |
-| [ADR-021](ADR-021-nivel-sql.md) | SQL como segundo bloque de datos | Propuesta |
+| [ADR-020](ADR-020-nivel-web-esencial.md) | HTML/CSS/JS como alfabetización web | Aceptada |
+| [ADR-021](ADR-021-nivel-sql.md) | SQL como segundo bloque de datos | Aceptada |
 | [ADR-022](ADR-022-preparacion-saas-sin-implementacion.md) | Preparación comercial sin SaaS en V1 | Propuesta |
+| [ADR-023](ADR-023-recorridos-iniciales.md) | Recorridos iniciales después de Nivel 0 | Aceptada |
+| [ADR-024](ADR-024-proyecto-integrador-adaptativo.md) | Proyecto integrador adaptativo y exportable | Aceptada |
 
 ## Documentos de producto
 
 - [PRODUCTO_V1](../PRODUCTO_V1.md)
 - [ROADMAP V1 hasta 31/12/2026](../ROADMAP_V1_2026-12-31.md)
 - [Catálogo curricular V1](../catalogo_curricular_v1.json)
+
+- ADR-025 Aceptada — Arquitectura web/comercial futura
+- ADR-026 Aceptada — Privacidad y menores
+- ADR-027 Aceptada — UX diferenciada por edad
+- ADR-028 Aceptada — Fuentes curriculares avanzadas externas
