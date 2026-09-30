@@ -55,6 +55,7 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(login.status_code, 200)
         csrf = login.json["csrf"]
         self.assertIn("tortu_session=", login.headers.get("Set-Cookie", ""))
+        self.assertIn("tortu_csrf=", login.headers.get("Set-Cookie", ""))
 
         me = self.client.get("/cuenta/me")
         self.assertEqual(me.status_code, 200)
@@ -74,6 +75,11 @@ class CuentaRoutesTests(unittest.TestCase):
 
         me2 = self.client.get("/cuenta/me")
         self.assertEqual([p["nombre"] for p in me2.json["perfiles"]], ["Ana"])
+
+        perfiles_api = self.client.get("/api/perfiles", headers={"X-Tortu-Token": "test-token"})
+        self.assertEqual(perfiles_api.status_code, 200)
+        self.assertEqual(perfiles_api.json["modo"], "cuenta")
+        self.assertEqual(perfiles_api.json["perfiles"][0]["id"], created.json["perfil"]["id"])
 
         selected = self.client.post(
             "/cuenta/perfil",
