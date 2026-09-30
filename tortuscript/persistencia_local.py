@@ -23,7 +23,7 @@ PERFIL_ACTUAL = "default"
 
 
 # ─────────────────────────────────────────
-# PERFILES LOCALES
+# PERFILES LOCALES LOCALES
 # ─────────────────────────────────────────
 # ─────────────────────────────────────────
 # PERFILES
@@ -103,17 +103,8 @@ def _leer(archivo):
     return data
 
 
-def progreso._migrar(data):
-    for campo, valor in progreso.PROGRESO_INICIAL.items():
-        if campo not in data:
-            data[campo] = copy.deepcopy(valor)
-    for clave, valor in PROGRESO_INICIAL["config"].items():      # config de versiones anteriores, a medias
-        data["config"].setdefault(clave, copy.deepcopy(valor))
-    for clave, valor in PROGRESO_INICIAL["config"]["ajustes"].items():
-        data["config"]["ajustes"].setdefault(clave, valor)
-    data["version"] = progreso.VERSION_ESQUEMA
-    return data
-
+def _migrar(data):
+    return progreso._migrar(data)
 
 def cargar_progreso(perfil=None):
     perfil = perfil or PERFIL_ACTUAL
@@ -137,7 +128,7 @@ def cargar_progreso(perfil=None):
                     logger.warning("Progreso recuperado desde %s", respaldo.name)
                 except (OSError, ValueError) as e3:
                     logger.error("El respaldo también está dañado: %s", e3)
-    data = _migrar(data) if data is not None else copy.deepcopy(PROGRESO_INICIAL)
+    data = _migrar(data) if data is not None else copy.deepcopy(progreso.PROGRESO_INICIAL)
     data["_perfil"] = perfil
     return data
 
