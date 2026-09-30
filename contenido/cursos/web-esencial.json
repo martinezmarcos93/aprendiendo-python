@@ -656,7 +656,7 @@
             {
               "tipo": "explicacion",
               "texto": "Ahora juntamos las piezas: HTML estructura, CSS cambia la apariencia y JavaScript agrega comportamiento.",
-              "lenguaje": "html"
+              "lenguaje": "web-conceptual"
             },
             {
               "tipo": "elegir",
@@ -668,7 +668,7 @@
               ],
               "correcta": 0,
               "pista": "Cada tecnología cumple un papel distinto.",
-              "lenguaje": "html"
+              "lenguaje": "web-conceptual"
             },
             {
               "tipo": "completar",
@@ -683,7 +683,7 @@
                 "HTML"
               ],
               "pista": "La estructura pertenece a HTML.",
-              "lenguaje": "html"
+              "lenguaje": "web-conceptual"
             },
             {
               "tipo": "ordenar",
@@ -694,7 +694,7 @@
                 "JavaScript: comportamiento"
               ],
               "pista": "Primero se estructura, después se presenta y finalmente se agrega comportamiento.",
-              "lenguaje": "html"
+              "lenguaje": "web-conceptual"
             },
             {
               "tipo": "escribir",
@@ -723,7 +723,7 @@
             {
               "tipo": "explicacion",
               "texto": "Una interfaz pequeña puede responder a una acción. Un botón y un evento son suficientes para empezar.",
-              "lenguaje": "html"
+              "lenguaje": "web-conceptual"
             },
             {
               "tipo": "elegir",
@@ -735,7 +735,7 @@
               ],
               "correcta": 0,
               "pista": "El comportamiento lo agrega JavaScript.",
-              "lenguaje": "html"
+              "lenguaje": "web-conceptual"
             },
             {
               "tipo": "completar",
@@ -791,7 +791,7 @@
             {
               "tipo": "explicacion",
               "texto": "El último reto mezcla lectura y reparación. No necesitás escribir mucho: necesitás encontrar qué pieza no cumple su función.",
-              "lenguaje": "html"
+              "lenguaje": "web-conceptual"
             },
             {
               "tipo": "elegir",
@@ -803,7 +803,7 @@
               ],
               "correcta": 0,
               "pista": "Si la apariencia está bien pero no hay respuesta, revisá el comportamiento.",
-              "lenguaje": "html"
+              "lenguaje": "web-conceptual"
             },
             {
               "tipo": "completar",
