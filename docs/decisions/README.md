@@ -31,7 +31,7 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 | [ADR-017](ADR-017-modelo-curricular-por-edades.md) | Edad y nivel como dimensiones curriculares | Propuesta |
 | [ADR-018](ADR-018-fuentes-curriculares-externas.md) | Repositorios avanzados como fuentes curriculares | Propuesta |
 | [ADR-019](ADR-019-estados-de-acceso.md) | Estados de acceso independientes del motor | Propuesta |
-| [ADR-020](ADR-020-nivel-web-esencial.md) | HTML/CSS/JS como alfabetización web | Propuesta |
+| [ADR-020](ADR-020-nivel-web-esencial.md) | HTML/CSS/JS como alfabetización web | Aceptada |
 | [ADR-021](ADR-021-nivel-sql.md) | SQL como segundo bloque de datos | Propuesta |
 | [ADR-022](ADR-022-preparacion-saas-sin-implementacion.md) | Preparación comercial sin SaaS en V1 | Propuesta |
 
