@@ -360,10 +360,10 @@ class TestWeb(unittest.TestCase):
     def test_mapa_refleja_progreso(self):
         self._completar((0, 3), (1, 1))
         html = self.c.get("/mapa").get_data(as_text=True)
-        self.assertIn("NIVEL 1", html)
+        self.assertIn("Mapa de progreso", html)
         self.assertIn("2/30", html)                      # ejercicios completados
         self.assertIn("ficha perfecto", html)
-        self.assertIn("ficha intentado", html)
+        self.assertIn("ficha bien", html)
         self.assertIn("ficha bloqueada", html)           # los que aún no se desbloquean
         self.assertIn("¡Te toca!", html)                 # el siguiente pendiente
         self.assertIn('href="/leccion/', html)              # las fichas abren la lección
