@@ -301,3 +301,39 @@ def exportar(progreso, proyecto_id):
                    "Proyecto creado con TortuScript.\n"
                    "Abrilo en una carpeta y seguí las instrucciones de README.md si existe.\n")
     return salida.getvalue(), proyecto["id"] + ".zip"
+
+
+def validar_catalogo():
+    """Valida la integridad estructural del catálogo sin ejecutar código de alumnos."""
+    errores = []
+    ids = set()
+    for proyecto in cargar_catalogo():
+        pid = proyecto.get("id")
+        if not pid or pid in ids:
+            errores.append(f"id de proyecto duplicado o vacío: {pid!r}")
+        ids.add(pid)
+        if len(set(proyecto.get("bloques", []))) < 2:
+            errores.append(f"{pid}: necesita al menos dos bloques")
+        if not proyecto.get("franjas_edad"):
+            errores.append(f"{pid}: faltan franjas_edad")
+        archivos = proyecto.get("archivos_iniciales") or {}
+        try:
+            _normalizar_archivos(archivos)
+        except ErrorProyectoIntegrador as exc:
+            errores.append(f"{pid}: archivos iniciales inválidos: {exc}")
+        etapas = proyecto.get("etapas") or []
+        if not etapas:
+            errores.append(f"{pid}: no tiene etapas")
+        for i, etapa in enumerate(etapas):
+            if not etapa.get("id") or not etapa.get("criterios"):
+                errores.append(f"{pid}: etapa {i + 1} incompleta")
+            for criterio in etapa.get("criterios", []):
+                if criterio.get("archivo") not in archivos:
+                    errores.append(f"{pid}: criterio referencia archivo inexistente {criterio.get('archivo')!r}")
+        adaptaciones = proyecto.get("adaptaciones") or {}
+        for franja, datos in adaptaciones.items():
+            if franja != "default" and franja not in proyecto.get("franjas_edad", []):
+                errores.append(f"{pid}: adaptación para franja incompatible {franja}")
+            if int(datos.get("ayudas_maximas", 0)) < 0:
+                errores.append(f"{pid}: ayudas_maximas inválido para {franja}")
+    return errores
