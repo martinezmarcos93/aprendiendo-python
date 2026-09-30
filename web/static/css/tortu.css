@@ -633,3 +633,9 @@ html[data-contraste="alto"] .opcion-ajuste[aria-checked="true"] { background: #f
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Resultados del laboratorio SQL: tabla legible, sin HTML generado por el alumno. */
+.sql-resultado { margin-top: 1rem; overflow-x: auto; }
+.tabla-sql { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.tabla-sql th, .tabla-sql td { border: 1px solid var(--linea); padding: .45rem .6rem; text-align: left; }
+.tabla-sql th { font-weight: 700; }
