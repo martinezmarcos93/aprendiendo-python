@@ -639,3 +639,12 @@ html[data-contraste="alto"] .opcion-ajuste[aria-checked="true"] { background: #f
 .tabla-sql { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 .tabla-sql th, .tabla-sql td { border: 1px solid var(--linea); padding: .45rem .6rem; text-align: left; }
 .tabla-sql th { font-weight: 700; }
+
+/* Mapa curricular: cada recorrido funciona como un panel desplegable independiente. */
+.mapa-panel { margin-bottom: 1rem; }
+.mapa-panel > summary { list-style: none; cursor: pointer; padding: 1rem; border-radius: 12px; }
+.mapa-panel > summary::-webkit-details-marker { display: none; }
+.mapa-panel > summary::before { content: "▸"; display: inline-block; width: 1.2rem; }
+.mapa-panel[open] > summary::before { content: "▾"; }
+.mapa-panel > summary:hover { filter: brightness(1.04); }
+.mapa-panel > .mapa-panel-contenido { padding: 0 1rem 1rem; }
