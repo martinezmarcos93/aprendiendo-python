@@ -52,10 +52,14 @@ class AuthRepository:
                     csrf_hash TEXT NOT NULL,
                     created_at TEXT NOT NULL,
                     expires_at TEXT NOT NULL,
-                    revoked_at TEXT
+                    revoked_at TEXT,
+                    active_profile_id TEXT REFERENCES child_profiles(id) ON DELETE SET NULL
                 );
                 CREATE INDEX IF NOT EXISTS idx_sessions_account ON sessions(account_id);
             """)
+            session_cols = {row["name"] for row in db.execute("PRAGMA table_info(sessions)")}
+            if "active_profile_id" not in session_cols:
+                db.execute("ALTER TABLE sessions ADD COLUMN active_profile_id TEXT REFERENCES child_profiles(id) ON DELETE SET NULL")
 
 
     def marcar_verificada(self, account_id):
@@ -95,7 +99,7 @@ class AuthRepository:
         expires = now + timedelta(hours=SESSION_HOURS)
         with self._db() as db:
             db.execute(
-                "INSERT INTO sessions VALUES (?,?,?,?,?,NULL)",
+                "INSERT INTO sessions(id_hash,account_id,csrf_hash,created_at,expires_at,revoked_at,active_profile_id) VALUES (?,?,?,?,?,NULL,NULL)",
                 (_digest(session), account_id, _digest(csrf), _iso(now), _iso(expires)),
             )
         return session, csrf, expires
@@ -118,6 +122,28 @@ class AuthRepository:
         row = self.get_session(session)
         return bool(row and csrf and hmac.compare_digest(row["csrf_hash"], _digest(csrf)))
 
+    def select_profile(self, session, profile_id):
+        if not session or not profile_id:
+            raise AuthError("Sesión y perfil son obligatorios.")
+        with self._db() as db:
+            row = db.execute(
+                """SELECT s.id_hash, s.account_id, p.id
+                   FROM sessions s
+                   JOIN child_profiles p ON p.account_id=s.account_id
+                   WHERE s.id_hash=? AND p.id=? AND p.active=1 AND s.revoked_at IS NULL""",
+                (_digest(session), profile_id),
+            ).fetchone()
+            if not row:
+                raise AuthError("El perfil no pertenece a la cuenta o no está activo.")
+            db.execute("UPDATE sessions SET active_profile_id=? WHERE id_hash=?",
+                       (profile_id, _digest(session)))
+
+    def clear_profile(self, session):
+        if not session:
+            return
+        with self._db() as db:
+            db.execute("UPDATE sessions SET active_profile_id=NULL WHERE id_hash=?",
+                       (_digest(session),))
     def revoke(self, session):
         if not session:
             return
