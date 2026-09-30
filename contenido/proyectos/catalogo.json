@@ -143,7 +143,29 @@
           "min_nivel": 3,
           "texto": "Una ruta como /api/estado puede devolver datos con jsonify. JavaScript puede pedirlos usando fetch."
         }
-      ]
+      ],
+      "adaptaciones": {
+        "default": {
+          "dificultad": "media",
+          "ayudas_maximas": 6,
+          "descripcion": "Recorrido estándar con cinco etapas y ayudas graduadas."
+        },
+        "constructores": {
+          "dificultad": "media",
+          "ayudas_maximas": 8,
+          "descripcion": "Más acompañamiento y consignas pequeñas; el proyecto conserva el mismo producto final."
+        },
+        "creadores": {
+          "dificultad": "media",
+          "ayudas_maximas": 6,
+          "descripcion": "Menos andamiaje y mayor espacio para decisiones propias."
+        },
+        "desarrolladores": {
+          "dificultad": "alta",
+          "ayudas_maximas": 4,
+          "descripcion": "Mayor autonomía y menos ayudas directas."
+        }
+      }
     },
     {
       "id": "inventario-fantasia",
@@ -264,7 +286,24 @@
           "min_nivel": 3,
           "texto": "sqlite3 permite abrir una base SQLite. En este proyecto la base inicial es local para que puedas experimentar sin una cuenta ni un servidor externo."
         }
-      ]
+      ],
+      "adaptaciones": {
+        "default": {
+          "dificultad": "alta",
+          "ayudas_maximas": 5,
+          "descripcion": "Proyecto orientado a integrar lógica y datos."
+        },
+        "creadores": {
+          "dificultad": "alta",
+          "ayudas_maximas": 7,
+          "descripcion": "Se mantiene el objetivo técnico con mayor acompañamiento."
+        },
+        "desarrolladores": {
+          "dificultad": "alta",
+          "ayudas_maximas": 4,
+          "descripcion": "Mayor autonomía y énfasis en decisiones de diseño."
+        }
+      }
     }
   ]
 }
