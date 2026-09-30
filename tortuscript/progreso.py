@@ -36,7 +36,7 @@ def avisar(progreso, tipo, **datos):
     progreso.setdefault("avisos", []).append({"tipo": tipo, **datos})
 
 
-def tomar_avisos(progreso)
+def tomar_avisos(progreso):
     """Devuelve los avisos pendientes y los borra."""
     avisos = progreso.get("avisos") or []
     if avisos:
