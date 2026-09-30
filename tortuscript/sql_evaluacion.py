@@ -15,7 +15,7 @@ MAX_FILAS = 100
 MAX_CELDAS = 1000
 MAX_OPS = 100_000
 
-_RE_INICIO = re.compile(r"^\s*(?:--[^\\n]*\\n|/\\*.*?\\*/\s*)*(SELECT|WITH)\\b", re.I | re.S)
+_RE_INICIO = re.compile(r"^\s*(?:--[^\n]*\n|/\*.*?\*/\s*)*(SELECT|WITH)\\b", re.I | re.S)
 _BLOQUEADOS = re.compile(
     r"\b(?:INSERT|UPDATE|DELETE|REPLACE|UPSERT|DROP|ALTER|CREATE|ATTACH|DETACH|VACUUM|"
     r"PRAGMA|REINDEX|ANALYZE|SAVEPOINT|RELEASE|ROLLBACK|COMMIT)\\b|"
