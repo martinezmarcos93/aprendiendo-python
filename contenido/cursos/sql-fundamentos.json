@@ -44,7 +44,7 @@
               "pregunta": "¿Qué nombres aparecen?",
               "codigo": "SELECT nombre FROM criaturas;",
               "opciones": [
-                "Lobo, Dragón, Gólem, Sirena, Zorro",
+                "Lobo\nDragón\nGólem\nSirena\nZorro",
                 "Bosque, Montaña, Mar",
                 "1, 2, 3, 4, 5"
               ],
