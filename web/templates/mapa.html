@@ -22,7 +22,7 @@
     <span class="espacio"></span>
     {% if nivel0|selectattr('completado')|list|length == nivel0|length %}
       <a class="boton" href="{{ url_for('elegir_recorrido') }}">
-        {% if perfil.recorrido_inicial %}Cambiar recorrido{% else %}Elegir qué aprender{% endif %}
+        {% if recorrido_inicial %}Cambiar recorrido{% else %}Elegir qué aprender{% endif %}
       </a>
     {% endif %}
   </div>
