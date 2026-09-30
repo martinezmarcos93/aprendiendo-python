@@ -79,13 +79,13 @@ class RuntimeEducativo:
 
     def registrar_ejercicio(self, raw_session: str | None, indice: int, estrellas: int, xp_ganado: int) -> bool:
         from tortuscript import progreso as legado
-        return self.ejecutar(raw_session, lambda p: legado.registrar_ejercicio(p, indice, estrellas, xp_ganado, persistir=False))
+        return self.ejecutar(raw_session, lambda p: legado.registrar_ejercicio(p, indice, estrellas, xp_ganado))
 
     def registrar_paso_leccion(self, raw_session: str | None, leccion_id: str, indice: int, xp: int,
                                perfecto: bool, total_pasos: int, estrellas=None) -> dict:
         from tortuscript import progreso as legado
         return self.ejecutar(raw_session, lambda p: legado.registrar_paso_leccion(
-            p, leccion_id, indice, xp, perfecto, total_pasos, estrellas, persistir=False))
+            p, leccion_id, indice, xp, perfecto, total_pasos, estrellas))
 
     def registrar_practica(self, raw_session: str | None, leccion_id: str, paso: int, acierto: bool) -> int:
         from tortuscript import progreso as legado
