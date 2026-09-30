@@ -7,6 +7,7 @@ activo resuelto por PerfilEducativoService.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 
 from .perfil_educativo import ContextoEducativo, ContextoEducativoError, PerfilEducativoService
 from .progreso_contrato import ProgresoSnapshot
@@ -22,8 +23,25 @@ class RuntimeEducativo:
     def cargar(self, raw_session: str | None) -> ProgresoSnapshot | None:
         return self.service.cargar_progreso(raw_session)
 
+    def cargar_datos(self, raw_session: str | None) -> dict:
+        snapshot = self.cargar(raw_session)
+        if snapshot is None:
+            from tortuscript import progreso as legado
+            return legado._migrar(legado.PROGRESO_INICIAL.copy())
+        return snapshot.data
+
     def guardar(self, raw_session: str | None, snapshot: ProgresoSnapshot) -> None:
         self.service.guardar_progreso(raw_session, snapshot)
+
+    def guardar_datos(self, raw_session: str | None, data: dict) -> None:
+        contexto = self.contexto(raw_session)
+        from copy import deepcopy
+        self.guardar(raw_session, ProgresoSnapshot(
+            profile_id=contexto.perfil.id,
+            schema_version=1,
+            updated_at=datetime.now(timezone.utc).isoformat(),
+            data=deepcopy({k: v for k, v in data.items() if not k.startswith("_")}),
+        ))
 
     def exigir_producto(self, raw_session: str | None, producto: str) -> None:
         self.service.exigir_acceso(raw_session, producto)
@@ -45,21 +63,16 @@ class RuntimeEducativo:
         }
     def ejecutar(self, raw_session: str | None, operacion) -> object:
         """Carga, ejecuta una operación educativa sobre el progreso autenticado y persiste."""
-        contexto = self.contexto(raw_session)
-        snapshot = self.cargar(raw_session)
         from copy import deepcopy
         from tortuscript import progreso as legado
+
+        contexto = self.contexto(raw_session)
+        snapshot = self.cargar(raw_session)
         data = deepcopy(snapshot.data if snapshot is not None else legado.PROGRESO_INICIAL)
         data = legado._migrar(data)
         data["_perfil"] = contexto.perfil.id
         resultado = operacion(data)
-        payload = {k: deepcopy(v) for k, v in data.items() if not k.startswith("_")}
-        self.guardar(raw_session, ProgresoSnapshot(
-            profile_id=contexto.perfil.id,
-            schema_version=1,
-            updated_at=__import__("datetime").datetime.now(__import__("datetime").timezone.utc).isoformat(),
-            data=payload,
-        ))
+        self.guardar_datos(raw_session, data)
         return resultado
 
     def registrar_ejercicio(self, raw_session: str | None, indice: int, estrellas: int, xp_ganado: int) -> bool:
