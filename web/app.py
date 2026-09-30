@@ -1137,24 +1137,12 @@ def create_app(token=None):
         ]
         return jsonify(modo="cuenta", actual=contexto.perfil.id, perfiles=perfiles)
 
-    @app.post("/api/perfil")
-    def api_perfil():
-        return jsonify(ok=False, mensaje="Seleccioná el perfil desde /cuenta/perfil."), 409
-
     @app.get("/api/perfil/exportar")
     def api_exportar_perfil():
         """El progreso del perfil actual, listo para descargar como archivo."""
         nombre = _nombre_perfil_contexto()
         return jsonify(archivo=respaldo.nombre_de_archivo(nombre),
                        datos=respaldo.exportar(_cargar_progreso(), nombre))
-
-    @app.post("/api/perfil/importar")
-    def api_importar_perfil():
-        """La importación histórica local quedó fuera del producto V1."""
-        return jsonify(
-            ok=False,
-            mensaje="La importación de progreso local no está disponible en cuentas. Usá el flujo de migración de /cuenta/progreso/importar-local.",
-        ), 410
 
     @app.post("/api/diagnostico")
     def api_diagnostico():
