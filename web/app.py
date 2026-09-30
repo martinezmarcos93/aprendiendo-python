@@ -1115,7 +1115,7 @@ def create_app(token=None):
                 entrada, persistir=False
             )
         _guardar_progreso(p)
-        return jsonify(ok=True, actual=progreso.PERFIL_ACTUAL, estado=_estado())
+        return jsonify(ok=True, actual=_nombre_perfil_contexto(p), estado=_estado())
 
     @app.post("/api/config")
     def api_config():
