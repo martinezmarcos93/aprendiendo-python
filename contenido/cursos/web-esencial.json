@@ -5,7 +5,7 @@
   "descripcion": "HTML, CSS y JavaScript para entender, modificar y depurar interfaces pequeñas.",
   "version": 1,
   "requiere": {
-    "leccion": "py-problemas"
+    "curso": "alfabetizacion-digital"
   },
   "secciones": [
     {
