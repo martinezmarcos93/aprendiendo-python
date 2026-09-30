@@ -208,6 +208,8 @@ def paso_publico(paso, leccion_id, indice, numero_ejercicio=None):
             publico[bandera] = True
     if paso.get("lenguaje"):
         publico["lenguaje"] = paso["lenguaje"]
+    if paso.get("web"):
+        publico["web"] = {"lenguaje": paso["web"].get("lenguaje", paso.get("lenguaje", "html"))}
     if paso.get("laberinto"):                                  # el mundo del paso: paredes y salida (no es la respuesta)
         publico["laberinto"] = {"paredes": paso["laberinto"]["paredes"], "salida": paso["laberinto"]["salida"]}
     if tipo == "explicacion":
