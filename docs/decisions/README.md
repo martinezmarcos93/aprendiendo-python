@@ -47,6 +47,8 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 | [ADR-033](ADR-033-sandbox-remoto-para-ejecucion-de-codigo.md) | Sandbox remoto para ejecución de código | **Aceptada** |
 | [ADR-034](ADR-034-mobile-ux-y-sistema-visual-comercial.md) | Mobile-first, UX y sistema visual | **Aceptada** |
 | [ADR-035](ADR-035-tortu-llm-como-asistente-pedagogico.md) | Tortu-LLM como asistente pedagógico | **Aceptada** |
+| [ADR-036](ADR-036-croco-script-como-producto-avanzado.md) | Croco-Script como producto avanzado separado | **Aceptada** |
+| [ADR-037](ADR-037-integracion-tortuscript-croco-script.md) | Integración entre TortuScript y Croco-Script | **Aceptada** |
 
 ## Documentos de producto
 
@@ -57,4 +59,4 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 
 ## Regla de transición comercial
 
-ADR-025 a ADR-035 forman ahora el bloque de arquitectura comercial. Las ADR anteriores siguen vigentes salvo contradicción explícita. La implementación comercial debe respetar las separaciones entre núcleo educativo, identidad adulta, perfiles infantiles, acceso comercial y ejecución remota.
+ADR-025 a ADR-037 forman ahora el bloque de arquitectura comercial y de evolución de producto. Las ADR anteriores siguen vigentes salvo contradicción explícita. La implementación comercial debe respetar las separaciones entre núcleo educativo, identidad adulta, perfiles infantiles, acceso comercial, ejecución remota y producto avanzado Croco-Script.
