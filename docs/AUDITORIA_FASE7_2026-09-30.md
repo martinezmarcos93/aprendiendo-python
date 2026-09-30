@@ -1,7 +1,7 @@
 # Auditoría Fase 7 — Web esencial
 ## 2026-09-30
 
-Estado: implementación en rama de consolidación; pendiente validación final de CI y validación local.
+Estado: implementación completa en rama de consolidación; CI verde.
 
 ### Alcance implementado
 
@@ -34,6 +34,6 @@ La previsualización está aislada del documento principal mediante sandbox y no
 
 ### Verificación
 
-Se añadieron pruebas estructurales del curso y del evaluador declarativo. La ejecución final de GitHub Actions se considera requisito para cerrar formalmente la fase.
+Se añadieron pruebas estructurales del curso y del evaluador declarativo. GitHub Actions verificó la rama con 494 tests y conclusión `success` en el commit 2b7a0aee5ee3b19c6f1f79427abd909d380be37a.
 
 No se inicia Fase 8 como parte de este trabajo.
