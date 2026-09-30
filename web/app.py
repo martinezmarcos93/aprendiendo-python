@@ -162,6 +162,12 @@ def create_app(token=None):
             return True
         return progreso.guardar_progreso(p)
 
+    def _tomar_avisos(p):
+        avisos = progreso.tomar_avisos(p, guardar=False)
+        if avisos:
+            _guardar_progreso(p)
+        return avisos
+
     def _registrar_ejercicio(p, indice, estrellas, xp_ganado):
         runtime, raw_session = _runtime_autenticado()
         if runtime is not None:
@@ -257,7 +263,7 @@ def create_app(token=None):
     @app.context_processor
     def _globales():
         # Lo que quedó pendiente (p. ej. subir de liga al cambiar la semana) se cuenta en la próxima página
-        avisos = progreso.tomar_avisos(_cargar_progreso())
+        avisos = _tomar_avisos(_cargar_progreso())
         return {"token": app.config["TOKEN"], "estado": _estado(), "perfil": progreso.PERFIL_ACTUAL,
                 "avisos_pendientes": avisos, "ajustes": progreso.ajustes_de(_cargar_progreso())}
 
@@ -315,7 +321,7 @@ def create_app(token=None):
     def _avisos_tras(p):
         """Revisa los logros con el progreso ya actualizado y devuelve (y guarda) los avisos pendientes."""
         logros.revisar(p, logros.resumen_de(p, _camino(p)))
-        return progreso.tomar_avisos(p)
+        return _tomar_avisos(p)
 
     def _niveles():
         return {s["nivel"]: s["titulo"] for s in contenido.cargar_curso()["secciones"]}
@@ -1085,20 +1091,27 @@ def create_app(token=None):
         if entrada and entrada not in diagnostico.entradas_permitidas(datos.get("experiencia")):
             return jsonify(ok=False, mensaje="Alguna respuesta no es válida."), 400
         p = _cargar_progreso()
-        ok = progreso.guardar_config(p, experiencia=datos.get("experiencia"), meta_min=datos.get("meta_min"),
-                                     nombre=crudo or None, onboarding=True)
+        ok = progreso.guardar_config(
+            p, experiencia=datos.get("experiencia"), meta_min=datos.get("meta_min"),
+            nombre=crudo or None, onboarding=True, persistir=False
+        )
         if not ok:
             return jsonify(ok=False, mensaje="Alguna respuesta no es válida."), 400
         if entrada:
-            progreso.saltear_hasta(p, [lec["id"] for _, lec in contenido.lecciones(contenido.cargar_curso())], entrada)
+            progreso.saltear_hasta(
+                p, [lec["id"] for _, lec in contenido.lecciones(contenido.cargar_curso())],
+                entrada, persistir=False
+            )
+        _guardar_progreso(p)
         return jsonify(ok=True, actual=progreso.PERFIL_ACTUAL, estado=_estado())
 
     @app.post("/api/config")
     def api_config():
         datos = request.get_json(silent=True) or {}
         p = _cargar_progreso()
-        if not progreso.guardar_config(p, meta_min=datos.get("meta_min")):
+        if not progreso.guardar_config(p, meta_min=datos.get("meta_min"), persistir=False):
             return jsonify(ok=False, mensaje="Esa meta no existe."), 400
+        _guardar_progreso(p)
         return jsonify(ok=True, estado=_estado())
 
     @app.post("/api/ajustes")
@@ -1106,8 +1119,9 @@ def create_app(token=None):
         datos = request.get_json(silent=True) or {}
         p = _cargar_progreso()
         cambios = {k: datos.get(k) for k in progreso.AJUSTES if k in datos}
-        if not progreso.guardar_ajustes(p, **cambios):
+        if not progreso.guardar_ajustes(p, persistir=False, **cambios):
             return jsonify(ok=False, mensaje="Ese ajuste no existe."), 400
+        _guardar_progreso(p)
         return jsonify(ok=True, ajustes=progreso.ajustes_de(p))
 
     @app.get("/api/perfiles")
