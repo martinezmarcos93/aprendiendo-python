@@ -648,3 +648,29 @@ html[data-contraste="alto"] .opcion-ajuste[aria-checked="true"] { background: #f
 .mapa-panel[open] > summary::before { content: "▾"; }
 .mapa-panel > summary:hover { filter: brightness(1.04); }
 .mapa-panel > .mapa-panel-contenido { padding: 0 1rem 1rem; }
+
+
+/* ───────── proyectos integradores ───────── */
+.proyectos-integradores-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.proyecto-integrador-card { display: grid; gap: .65rem; align-content: start; }
+.proyecto-integrador-card.bloqueado { opacity: .72; }
+.proyecto-integrador-icono { font-size: 3rem; line-height: 1; }
+.integrador-etapas { display: grid; gap: .6rem; }
+.integrador-etapa { display: flex; align-items: center; gap: .8rem; padding: .8rem; border: 1px solid var(--borde); border-radius: var(--radio-chico); background: var(--fondo-2); }
+.integrador-etapa.hecha { border-color: var(--verde); }
+.integrador-etapa.actual { border-color: var(--violeta); }
+.integrador-etapa.bloqueada { opacity: .55; }
+.integrador-etapa-num { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--superficie-2); font-weight: 900; }
+.integrador-archivos { display: grid; gap: 1rem; margin-top: 1rem; }
+.integrador-archivo { border: 1px solid var(--borde); border-radius: var(--radio-chico); padding: .8rem; background: var(--fondo-2); }
+.integrador-archivo h3 { font-family: var(--fuente-codigo); font-size: .95rem; margin: 0; }
+.campo-codigo { display: block; width: 100%; min-height: 260px; resize: vertical; margin-top: .7rem; padding: 1rem; border: 2px solid var(--borde); border-radius: var(--radio-chico); background: var(--editor); color: var(--texto); font: .95rem/1.55 var(--fuente-codigo); tab-size: 4; }
+.campo-codigo:focus { outline: 3px solid var(--amarillo); outline-offset: 2px; border-color: var(--violeta); }
+.ayudas-integrador { display: grid; gap: .6rem; }
+.ayuda-integrador { border: 1px solid var(--borde); border-radius: var(--radio-chico); padding: .8rem; background: var(--fondo-2); }
+.ayuda-integrador.bloqueada { opacity: .55; }
+.ayuda-integrador p { margin-bottom: 0; white-space: pre-wrap; }
+
+@media (max-width: 720px) {
+  .proyectos-integradores-grid { grid-template-columns: 1fr; }
+}
