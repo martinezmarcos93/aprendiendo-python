@@ -1,21 +1,17 @@
-"""
-Progreso del chico: XP, estrellas, racha, sesión del día y perfiles.
+"""Motor educativo de progreso.
 
-Guardado seguro:
-- Escritura atómica (archivo temporal + os.replace): un corte a mitad nunca deja
-  el JSON a medio escribir.
-- Antes de reemplazar se guarda una copia `.bak` del progreso anterior.
-- Si el JSON está dañado, NO se pisa: se aparta como `.corrupto-<fecha>` y se
-  recupera desde el `.bak` (o se empieza de cero si no hay copia).
-- Cada progreso cargado recuerda su perfil (`_perfil`), así una ventana abierta
-  con el perfil A nunca guarda sobre el archivo del perfil B.
+Este módulo contiene únicamente estado y reglas educativas: XP, rachas,
+lecciones, práctica, gamificación y configuración del perfil. La persistencia
+de archivos y la identidad de perfiles locales viven en persistencia_local.py.
 """
 import copy
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from . import practica
 
-\nVERSION_ESQUEMA = 11\n
+
+VERSION_ESQUEMA = 11
+
 
 
 PROGRESO_INICIAL = {
@@ -47,7 +43,8 @@ PROGRESO_INICIAL = {
     # Práctica del día (v6): tarjetas de repaso espaciado {"leccion:paso": {caja, proximo, aciertos, fallos}}
     "repaso": {},
     "xp_practica": {},        # XP ganado practicando por día (tope diario), últimos 7 días
-    "proyectos": {},          # Mis proyectos (v7): {id: {nombre, tipo, codigo, creado, actualizado}}\n    "proyectos_integradores": {},  # Proyectos integradores V1: estado, archivos, etapas y ayudas
+    "proyectos": {},          # Mis proyectos (v7): {id: {nombre, tipo, codigo, creado, actualizado}}
+    "proyectos_integradores": {},  # Proyectos integradores V1: estado, archivos, etapas y ayudas
     # Diagnóstico (v9, ADR-004): lecciones salteadas al elegir dónde empezar {leccion_id: "YYYY-MM-DD"}.
     # No cuentan como hechas (sin XP, logros, liga ni certificado); solo dejan pasar el camino.
     "salteadas": {},
