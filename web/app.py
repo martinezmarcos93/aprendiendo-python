@@ -276,6 +276,14 @@ def create_app(token=None):
             abort(404)
         return hallada                                          # (curso, sección, lección)
 
+    def _nivel0_completo(p=None):
+        p = p or progreso.cargar_progreso()
+        curso = next((c for c in _camino(p) if c["id"] == "alfabetizacion-digital"), None)
+        return bool(curso and curso["completo"])
+
+    def _curso_inicial(recorrido):
+        return {"web": "web-esencial", "python": "python-real"}.get(recorrido)
+
     def _completada(leccion, p=None):
         p = p or progreso.cargar_progreso()
         return motor.esta_completada(p, leccion["id"], INDICES_POR_LECCION.get(leccion["id"], []))
@@ -291,9 +299,23 @@ def create_app(token=None):
         if not palabras_por_leccion:
             palabras_por_leccion.update(motor.resumen_de_palabras(_cursos()))
         siguiente = motor.siguiente_global(_cursos(), leccion_id)
-        return {**info, **palabras_por_leccion.get(leccion_id, {"aprendiste": [], "practicaste": []}),
-                "siguiente": siguiente["id"] if siguiente else None,
-                "titulo_siguiente": siguiente["titulo"] if siguiente else None}
+        resultado = {**info, **palabras_por_leccion.get(leccion_id, {"aprendiste": [], "practicaste": []}),
+                     "siguiente": siguiente["id"] if siguiente else None,
+                     "titulo_siguiente": siguiente["titulo"] if siguiente else None}
+        p = progreso.cargar_progreso()
+        if leccion_id.startswith("nivel0-") and _nivel0_completo(p):
+            recorrido = p.get("recorrido_inicial")
+            if recorrido:
+                curso_id = _curso_inicial(recorrido)
+                curso = next((c for c in _cursos() if c["id"] == curso_id), None)
+                primera = contenido.lecciones(curso)[0][1] if curso and contenido.lecciones(curso) else None
+                resultado["siguiente"] = primera["id"] if primera else None
+                resultado["titulo_siguiente"] = primera["titulo"] if primera else None
+            else:
+                resultado["siguiente"] = None
+                resultado["titulo_siguiente"] = "Elegí qué aprender primero"
+                resultado["elegir_recorrido"] = True
+        return resultado
 
     def _ejecutar_para_motor(paso):
         """Cómo el motor corre un programa para comparar (completar/ordenar): devuelve
@@ -384,6 +406,30 @@ def create_app(token=None):
                  "nivel": seccion["nivel"], "pasos": [_publico(paso, leccion_id, i) for i, paso in enumerate(lec["pasos"])],
                  "ya_completada": _completada(lec, p)}
         return render_template("leccion.html", datos=datos, titulo=lec["titulo"])
+
+    @app.route("/elegir-recorrido", methods=["GET", "POST"])
+    def elegir_recorrido():
+        p = progreso.cargar_progreso()
+        if not _nivel0_completo(p):
+            return redirect(url_for("mapa"))
+        if request.method == "POST":
+            recorrido = (request.form.get("recorrido") or "").strip()
+            curso_id = _curso_inicial(recorrido)
+            if not curso_id:
+                abort(400)
+            p["recorrido_inicial"] = recorrido
+            progreso.guardar_progreso(p)
+            curso = next(c for c in _cursos() if c["id"] == curso_id)
+            primera = contenido.lecciones(curso)[0][1]
+            return redirect(url_for("leccion", leccion_id=primera["id"]))
+        return render_template(
+            "elegir_recorrido.html",
+            recorrido_actual=p.get("recorrido_inicial"),
+            cursos={c["id"]: c for c in _cursos()},
+            sql_desbloqueado=next(
+                (c["abierto"] for c in _camino(p) if c["id"] == "sql-fundamentos"), False
+            ),
+        )
 
     @app.get("/mapa")
     def mapa():
