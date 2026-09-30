@@ -109,7 +109,7 @@
             {
               "tipo": "predecir",
               "pregunta": "¿Qué nivel aparece primero?",
-              "codigo": "SELECT nivel FROM criaturas;",
+              "codigo": "SELECT nivel FROM criaturas LIMIT 1;",
               "opciones": [
                 "2",
                 "5",
@@ -243,7 +243,7 @@
             {
               "tipo": "predecir",
               "pregunta": "¿Qué criatura queda primero?",
-              "codigo": "SELECT nombre FROM criaturas ORDER BY nivel DESC;",
+              "codigo": "SELECT nombre FROM criaturas ORDER BY nivel DESC LIMIT 1;",
               "opciones": [
                 "Dragón",
                 "Sirena",
@@ -377,7 +377,7 @@
             {
               "tipo": "predecir",
               "pregunta": "¿Cuántas criaturas hay en Bosque?",
-              "codigo": "SELECT reino, COUNT(*) AS cantidad FROM criaturas GROUP BY reino ORDER BY reino;",
+              "codigo": "SELECT COUNT(*) AS cantidad FROM criaturas WHERE reino = 'Bosque';",
               "opciones": [
                 "2",
                 "1",
@@ -511,7 +511,7 @@
             {
               "tipo": "predecir",
               "pregunta": "¿Qué devuelve este filtro?",
-              "codigo": "SELECT nombre FROM criaturas WHERE nivel >= 4;",
+              "codigo": "SELECT nombre FROM criaturas WHERE nivel >= 4 ORDER BY nombre LIMIT 2;",
               "opciones": [
                 "Dragón y Sirena",
                 "Lobo y Zorro",
