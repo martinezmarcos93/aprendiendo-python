@@ -20,6 +20,46 @@ from . import practica
 VERSION_ESQUEMA = 11
 
 
+PROGRESO_INICIAL = {
+    "version": VERSION_ESQUEMA,
+    "xp_total": 0,
+    "ejercicios": {},
+    "racha": 0,
+    "racha_max": 0,
+    "ultimo_dia": None,       # "YYYY-MM-DD"
+    "dias_activo": [],        # lista de "YYYY-MM-DD" únicos, últimos 90
+    "sesion_hoy": [],         # índices completados en `ultimo_dia`
+    # Lecciones (v3): {leccion_id: {"pasos": {"0": {"xp": 5, "perfecto": true}}, "completada": bool, "perfecta": bool}}
+    "lecciones": {},
+    # Configuración del chico (v4): se completa en el onboarding y se cambia desde el resumen.
+    "config": {"onboarding": False, "nombre": None, "experiencia": None, "meta_min": 10,
+               # Accesibilidad (v8): la elige cada chico y la aplica el servidor al dibujar cada página
+               "ajustes": {"tam": "normal", "contraste": "normal", "movimiento": "normal",
+                           "letra": "normal", "voz": "no", "velocidad": "normal"}},
+    # XP ganado por día (últimos 30), para la meta diaria.
+    "xp_por_dia": {},
+    # Gamificación amable (v5): sin vidas ni compras; todo se gana jugando.
+    "congeladores": 0,        # protegen la racha si se falta UN día (se ganan cada 7 días de racha)
+    "dias_congelados": [],    # días que un congelador salvó (últimos 30)
+    "dias_meta": [],          # días en que se cumplió la meta diaria (últimos 60)
+    "logros": {},             # {id_logro: "YYYY-MM-DD"}
+    "liga": {"nivel": 0, "semana": None},
+    "stats": {"congeladores_ganados": 0},
+    "avisos": [],             # cosas para contarle al chico (logro nuevo, congelador...) hasta que se muestren
+    # Práctica del día (v6): tarjetas de repaso espaciado {"leccion:paso": {caja, proximo, aciertos, fallos}}
+    "repaso": {},
+    "xp_practica": {},        # XP ganado practicando por día (tope diario), últimos 7 días
+    "proyectos": {},          # Mis proyectos (v7): {id: {nombre, tipo, codigo, creado, actualizado}}\n    "proyectos_integradores": {},  # Proyectos integradores V1: estado, archivos, etapas y ayudas
+    # Diagnóstico (v9, ADR-004): lecciones salteadas al elegir dónde empezar {leccion_id: "YYYY-MM-DD"}.
+    # No cuentan como hechas (sin XP, logros, liga ni certificado); solo dejan pasar el camino.
+    "salteadas": {},
+    # Intereses (v10, ADR-005): {encuesta_id: {"respuestas": [...], "fecha", "omitida"?}}. Solo local, sin texto libre.
+    "intereses": {},
+    # Recorrido inicial elegido después de Nivel 0: "web" o "python".
+    "recorrido_inicial": None,
+}
+
+
 # ─────────────────────────────────────────
 # CONFIGURACIÓN, XP Y META DIARIA
 # ─────────────────────────────────────────
