@@ -383,6 +383,55 @@
     pintar();
   }
 
+  function escribirSQL(paso) {
+    cont.appendChild(el("h2", "", "🗃️ Consultá los datos"));
+    cont.appendChild(el("p", "texto-grande", paso.consigna));
+    if (paso.nota) cont.appendChild(el("p", "tenue", paso.nota));
+    const zona = el("div", "columna-editor");
+    const area = el("textarea"); area.id = "editor-paso"; zona.appendChild(area);
+    const resultado = el("div", "sql-resultado");
+    zona.appendChild(el("div", "rotulo-zona", "Resultado de tu consulta:")); zona.appendChild(resultado); cont.appendChild(zona);
+    editor = CodeMirror.fromTextArea(area, {mode:"text/plain", lineNumbers:true, indentUnit:2, tabSize:2, autofocus:true, extraKeys:{"Ctrl-Enter":()=>ejecutar(),"Cmd-Enter":()=>ejecutar(),Esc:()=>run.focus()}});
+    editor.setSize(null, 220);
+    const acciones = el("div", "acciones");
+    const run = el("button", "boton verde", "▶ Ejecutar consulta"); run.type = "button";
+    const pista = el("button", "boton amarillo", "💡 Pista (1/3)"); pista.type = "button";
+    acciones.append(run, pista); zona.appendChild(acciones);
+    zona.appendChild(el("p", "tenue ayuda-teclado", "Con el teclado: Ctrl+Enter ejecuta la consulta · Esc sale del editor."));
+    const cajaPista = el("div", "pista-caja"); cont.appendChild(cajaPista); ocultarPie();
+    function pintarResultado(data) {
+      resultado.textContent = ""; if (!data) return;
+      if (!data.ok) { resultado.appendChild(el("p", "veredicto mal", data.mensaje || "La consulta no se pudo ejecutar.")); return; }
+      const tabla = el("table", "tabla-sql"); const thead = document.createElement("thead"); const trh = document.createElement("tr");
+      (data.columnas || []).forEach((col) => trh.appendChild(el("th", "", col))); thead.appendChild(trh); tabla.appendChild(thead);
+      const tbody = document.createElement("tbody");
+      (data.filas || []).forEach((fila) => { const tr=document.createElement("tr"); fila.forEach((valor)=>tr.appendChild(el("td","",valor===null ? "NULL" : String(valor)))); tbody.appendChild(tr); });
+      tabla.appendChild(tbody); resultado.appendChild(tabla);
+      if (!(data.filas || []).length) resultado.appendChild(el("p", "tenue", "La consulta no devolvió filas."));
+    }
+    async function ejecutar() {
+      if (run.disabled) return; run.disabled=true; ocultarPie();
+      try {
+        const r=await Tortu.api(rutaPaso(paso.indice,"evaluar"),{codigo:editor.getValue()});
+        pintarResultado(r.evaluacion && r.evaluacion.obtenido);
+        if (r.evaluacion && r.evaluacion.estado === "correcto") {
+          const p=r.premio || {}; hechos+=1; if(p.estrellas===3) perfectos+=1; xpTotal+=p.mejora?p.xp:0; resultadoFinal=r.leccion||resultadoFinal;
+          pintarProgreso(); editor.setOption("readOnly",true); run.disabled=true; pista.disabled=true; Tortu.tocar(p.sube_nivel?"level_up":"success");
+          mostrarPie("bien",["✅ ¡Consulta correcta!","⭐".repeat(p.estrellas)+"☆".repeat(3-p.estrellas)+"  +"+p.xp+" XP"],actual+1<pasos.length?"Continuar":"Terminar",siguientePaso,false); return;
+        }
+        Tortu.tocar("error"); mostrarPie("mal",["🤔 La consulta todavía no cumple la consigna.",(r.evaluacion&&r.evaluacion.mensaje)||"Revisá el resultado y probá otra vez."],"Reintentar",()=>{ocultarPie();editor.focus();},false);
+      } catch(e) { mostrarPie("mal",["😵 No pude comunicarme con TortuScript.",String(e)],"Reintentar",()=>ocultarPie(),false); }
+      finally { if(!editor.getOption("readOnly")) run.disabled=false; }
+    }
+    run.addEventListener("click", ejecutar);
+    pista.addEventListener("click", async () => {
+      const r=await Tortu.api(rutaPaso(paso.indice,"pista"),{}); cajaPista.textContent=""; const caja=el("div","veredicto info");
+      caja.appendChild(el("h3","","💡 Pista "+r.nivel+": "+r.titulo)); if(r.texto) caja.appendChild(el("div","",r.texto)); if(r.codigo) caja.appendChild(el("pre","",r.codigo));
+      pista.textContent=r.nivel>=3?"💡 Pista (vista)":"💡 Pista ("+(r.nivel+1)+"/3)"; if(r.nivel>=3) pista.disabled=true;
+    });
+  }
+
+
   function escribirWeb(paso) {
     cont.appendChild(el("h2", "", "🌐 Construí y probá"));
     cont.appendChild(el("p", "texto-grande", paso.consigna));
@@ -470,6 +519,7 @@
   }
 
   function escribir(paso) {
+    if (paso.lenguaje === "sql") return escribirSQL(paso);
     if (paso.web) return escribirWeb(paso);
     const dibuja = Boolean(paso.tortuga);
     const esJuego = Boolean(paso.juego);                  // TortuGame: se evalúa comparando el registro del juego
