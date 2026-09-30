@@ -1,0 +1,15 @@
+{
+  "id": "sql-fundamentos",
+  "titulo": "SQL: datos y consultas",
+  "icono": "🗃️",
+  "descripcion": "Recorrido de SQL para consultar y relacionar datos. El contenido se incorporará en su propia fase curricular.",
+  "version": 1,
+  "proximamente": true,
+  "requiere": {
+    "uno_de_cursos": [
+      "python-real",
+      "web-esencial"
+    ]
+  },
+  "secciones": []
+}
