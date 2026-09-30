@@ -63,3 +63,4 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 ADR-025 a ADR-037 forman ahora el bloque de arquitectura comercial y de evolución de producto. Las ADR anteriores siguen vigentes salvo contradicción explícita. La implementación comercial debe respetar las separaciones entre núcleo educativo, identidad adulta, perfiles infantiles, acceso comercial, ejecución remota y producto avanzado Croco-Script.
 
 | [ADR-041](ADR-041-progreso-por-childprofile.md) | Contrato de progreso asociado a ChildProfile | **Aceptada** |
+| [ADR-042](ADR-042-adaptador-progreso-childprofile.md) | Adaptador de progreso por ChildProfile | **Aceptada** |
