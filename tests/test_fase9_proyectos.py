@@ -139,12 +139,12 @@ class TestWebProyectosIntegradores(unittest.TestCase):
         self.assertEqual(self.c.get("/proyectos-integradores/ficha-criatura").status_code, 200)
         self.post("/api/proyectos-integradores/ficha-criatura/archivo", {
             "nombre": "templates/index.html",
-            "codigo": '<h1>Mi criatura</h1><p id="estado"></p><button id="accion">x</button><script src="app.js"></script>'
+            "codigo": '<link rel="stylesheet" href="{{ url_for(\'static\', filename=\'style.css\') }}"><h1>Mi criatura</h1><p id="estado"></p><button id="accion">x</button><script src="{{ url_for(\'static\', filename=\'app.js\') }}"></script>'
         })
         r = self.post("/api/proyectos-integradores/ficha-criatura/etapas/estructura")
         self.assertTrue(r.get_json()["ok"])
         self.assertEqual(self.post("/api/proyectos-integradores/ficha-criatura/exportar").status_code, 400)
-        self.assertEqual(self.post("/api/proyectos-integradores/ficha-criatura/ayudas/estructura-html").status_code, 200)
+        self.assertEqual(self.post("/api/proyectos-integradores/ficha-criatura/ayudas/estructura-python").status_code, 200)
 
     def test_api_rechaza_sin_token(self):
         self.assertEqual(self.c.post("/api/proyectos-integradores/ficha-criatura", json={}).status_code, 403)
