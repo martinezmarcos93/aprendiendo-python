@@ -14,7 +14,7 @@ BLOQUEADOS = (
 def _normalizar(codigo):
     return str(codigo or "").replace("\r\n", "\n").replace("\r", "\n").strip()
 
-def validar_codigo(codigo, lenguaje, reglas=None):
+def validar_codigo(codigo, lenguaje, reglas=None, estructura=False):
     codigo = _normalizar(codigo)
     reglas = reglas or {}
     if not codigo:
@@ -25,13 +25,13 @@ def validar_codigo(codigo, lenguaje, reglas=None):
     for patron in BLOQUEADOS:
         if re.search(patron, bajo):
             return False, "Ese recurso externo no está permitido en el laboratorio Web."
-    if lenguaje == "html":
+    if estructura and lenguaje == "html":
         if "<" not in codigo or ">" not in codigo:
             return False, "Esto parece necesitar al menos un elemento HTML."
-    elif lenguaje == "css":
+    elif estructura and lenguaje == "css":
         if "{" not in codigo or "}" not in codigo:
             return False, "El CSS necesita una regla con llaves."
-    elif lenguaje == "javascript":
+    elif estructura and lenguaje == "javascript":
         if not re.search(r"\b(function|const|let|var)\b", codigo):
             return False, "Escribí al menos una variable o función de JavaScript."
     requeridos = reglas.get("contiene", [])
@@ -41,7 +41,7 @@ def validar_codigo(codigo, lenguaje, reglas=None):
     return True, None
 
 def evaluar(codigo, solucion, lenguaje, reglas=None):
-    ok, mensaje = validar_codigo(codigo, lenguaje, reglas)
+    ok, mensaje = validar_codigo(codigo, lenguaje, reglas, estructura=True)
     if not ok:
         return {"estado": "incorrecto", "mensaje": mensaje}
     esperado = _normalizar(solucion)
