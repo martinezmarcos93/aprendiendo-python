@@ -89,7 +89,7 @@ class RuntimeEducativo:
 
     def registrar_practica(self, raw_session: str | None, leccion_id: str, paso: int, acierto: bool) -> int:
         from tortuscript import progreso as legado
-        return self.ejecutar(raw_session, lambda p: legado.registrar_practica(p, leccion_id, paso, acierto, persistir=False))
+        return self.ejecutar(raw_session, lambda p: legado.registrar_practica(p, leccion_id, paso, acierto))
 
     def guardar_proyecto(self, raw_session: str | None, nombre: str, tipo: str, codigo: str, proyecto_id=None) -> str:
         from tortuscript import proyectos
