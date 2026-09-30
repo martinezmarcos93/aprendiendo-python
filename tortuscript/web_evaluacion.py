@@ -9,6 +9,7 @@ MAX_CODIGO_WEB = 12000
 BLOQUEADOS = (
     r"<iframe\b", r"<object\b", r"<embed\b", r"<form\b",
     r"javascript\s*:", r"<script[^>]+src\s*=", r"@import\s+url\s*\(",
+    r"\bfetch\s*\(", r"\bXMLHttpRequest\b", r"\bWebSocket\b", r"\bsendBeacon\s*\(",
 )
 
 def _normalizar(codigo):
