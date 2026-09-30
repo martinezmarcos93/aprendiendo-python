@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Optional
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 MAX_CHILD_PROFILES = 5
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
@@ -36,6 +36,7 @@ class Account:
     id: str
     email: str
     created_at: str
+    role: str = "adult"
 
 
 @dataclass(frozen=True)
@@ -102,7 +103,8 @@ class CuentaRepository:
                 CREATE TABLE IF NOT EXISTS accounts (
                     id TEXT PRIMARY KEY,
                     email TEXT NOT NULL UNIQUE,
-                    created_at TEXT NOT NULL
+                    created_at TEXT NOT NULL,
+                    role TEXT NOT NULL DEFAULT 'adult' CHECK (role IN ('adult', 'admin'))
                 );
 
                 CREATE TABLE IF NOT EXISTS child_profiles (
@@ -140,9 +142,14 @@ class CuentaRepository:
                 );
                 """
             )
+            cols = {r["name"] for r in con.execute("PRAGMA table_info(accounts)")}
+            if "role" not in cols:
+                con.execute("ALTER TABLE accounts ADD COLUMN role TEXT NOT NULL DEFAULT 'adult'")
             row = con.execute("SELECT version FROM schema_version LIMIT 1").fetchone()
             if row is None:
                 con.execute("INSERT INTO schema_version(version) VALUES (?)", (SCHEMA_VERSION,))
+            elif row["version"] == 1:
+                con.execute("UPDATE schema_version SET version=?", (SCHEMA_VERSION,))
             elif row["version"] != SCHEMA_VERSION:
                 raise CuentaError("Versión de esquema de cuentas no compatible.")
 
@@ -165,7 +172,35 @@ class CuentaRepository:
             row = con.execute(
                 "SELECT id,email,created_at FROM accounts WHERE id=?", (account_id,)
             ).fetchone()
-        return Account(row["id"], row["email"], row["created_at"]) if row else None
+        return Account(row["id"], row["email"], row["created_at"], row["role"]) if row else None
+
+
+    def establecer_role(self, account_id: str, role: str) -> Account:
+        if role not in {"adult", "admin"}:
+            raise CuentaError("Rol de cuenta inválido.")
+        with self._conexion() as con:
+            con.execute("UPDATE accounts SET role=? WHERE id=?", (role, account_id))
+            row = con.execute(
+                "SELECT id,email,created_at,role FROM accounts WHERE id=?", (account_id,)
+            ).fetchone()
+            if not row:
+                raise CuentaError("La cuenta no existe.")
+        return Account(row["id"], row["email"], row["created_at"], row["role"])
+
+    def es_admin(self, account_id: str) -> bool:
+        with self._conexion() as con:
+            row = con.execute("SELECT role FROM accounts WHERE id=?", (account_id,)).fetchone()
+        return bool(row and row["role"] == "admin")
+
+    def es_admin_por_perfil(self, profile_id: str) -> bool:
+        with self._conexion() as con:
+            row = con.execute(
+                """SELECT a.role FROM child_profiles p
+                   JOIN accounts a ON a.id=p.account_id
+                   WHERE p.id=? AND p.active=1""",
+                (profile_id,),
+            ).fetchone()
+        return bool(row and row["role"] == "admin")
 
     def crear_child_profile(self, account_id: str, display_name: str) -> ChildProfile:
         display_name = _normalizar_nombre(display_name)
