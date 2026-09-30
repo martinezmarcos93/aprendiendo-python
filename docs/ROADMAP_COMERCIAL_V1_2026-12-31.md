@@ -1,8 +1,9 @@
-
 # TortuScript — Roadmap Comercial V1
 ## Replanificación: 30/09/2026 → 31/12/2026
 
-Este roadmap complementa ROADMAP_V1_2026-12-31.md. Las Fases 0–14 se consideran cerradas según la auditoría actual. Desde el 01/10 comienza la transición de producto local a producto web comercial.
+Este roadmap complementa ROADMAP_V1_2026-12-31.md. El producto V1 mantiene como objetivo principal la experiencia educativa infantil. Desde el 01/10 comienza la transición de producto local a producto web comercial.
+
+Los cursos avanzados no son requisito del release V1.0.0. Su evolución queda definida por ADR-036 y ADR-037 bajo el producto separado **Croco-Script**.
 
 ## Dependencias obligatorias
 
@@ -13,8 +14,9 @@ Este roadmap complementa ROADMAP_V1_2026-12-31.md. Las Fases 0–14 se considera
 5. Entitlements requieren pagos/webhooks y perfiles.
 6. Sandbox remoto puede diseñarse antes, pero su integración requiere API/worker.
 7. Tortu-LLM requiere privacidad, cuenta/perfil y política de datos.
-8. Fase 15 requiere todos los bloques críticos integrados.
-9. Fase 16 es release de software; el lanzamiento publicitario queda sujeto a la puerta de producción.
+8. La integración futura con Croco-Script requiere identidad, entitlement y contratos de progreso definidos antes de V1.0.0.
+9. Fase 15 requiere todos los bloques críticos integrados.
+10. Fase 16 es release de software; el lanzamiento publicitario queda sujeto a la puerta de producción.
 
 ## Calendario
 
@@ -22,8 +24,9 @@ Este roadmap complementa ROADMAP_V1_2026-12-31.md. Las Fases 0–14 se considera
 - Auditoría pantalla por pantalla.
 - Inventario de endpoints.
 - Contratos de servicios.
-- ADR-029 a ADR-035.
+- ADR-029 a ADR-037.
 - Matriz de requisitos de lanzamiento.
+- Definición de contratos de integración con Croco-Script.
 
 ### 06–12/10 — Bloque B: Mobile + sistema visual
 - Responsive real.
@@ -52,6 +55,7 @@ Este roadmap complementa ROADMAP_V1_2026-12-31.md. Las Fases 0–14 se considera
 - Rate limiting.
 - CSRF.
 - Autorización.
+- Preparación de identidad federable para Croco-Script.
 
 ### 03–09/11 — Bloque E: Pagos + AccessService
 - PaymentService.
@@ -60,6 +64,7 @@ Este roadmap complementa ROADMAP_V1_2026-12-31.md. Las Fases 0–14 se considera
 - Checkout.
 - Webhooks.
 - Idempotencia.
+- Definición del entitlement avanzado de Croco-Script.
 
 ### 10–23/11 — Bloque F: Sandbox + seguridad de producción
 - Worker.
@@ -70,6 +75,7 @@ Este roadmap complementa ROADMAP_V1_2026-12-31.md. Las Fases 0–14 se considera
 - Pruebas de abuso.
 - Logging.
 - Backups.
+- Evaluación de requisitos de runtime que Croco-Script podrá reutilizar.
 
 ### 24/11–07/12 — Bloque G: Integración cloud completa
 - Cuenta → perfiles.
@@ -78,6 +84,7 @@ Este roadmap complementa ROADMAP_V1_2026-12-31.md. Las Fases 0–14 se considera
 - Entitlement → contenido.
 - Migración.
 - Cancelación/recuperación.
+- Prototipo mínimo de transición autenticada hacia Croco-Script.
 
 ### 08–14/12 — Bloque H: Tortu-LLM
 - TutorService.
@@ -86,6 +93,7 @@ Este roadmap complementa ROADMAP_V1_2026-12-31.md. Las Fases 0–14 se considera
 - Límites.
 - Privacidad.
 - Control de costos.
+- Definición de contratos reutilizables para la futura experiencia avanzada.
 
 ### 15–19/12 — Bloque I: Assets + UX final
 - Assets funcionales.
@@ -104,6 +112,36 @@ Este roadmap complementa ROADMAP_V1_2026-12-31.md. Las Fases 0–14 se considera
 - Restauración de backup.
 - Simulación de incidentes.
 - Revisión legal de documentación.
+- Validación del contrato de integración TortuScript ↔ Croco-Script.
+
+## Preparación de Croco-Script antes de V1.0.0
+
+Croco-Script se prepara en paralelo, pero no bloquea el release de TortuScript.
+
+### Obligatorio antes de V1.0.0
+
+- ADR-036 y ADR-037 aceptadas.
+- Repositorio inicial de Croco-Script.
+- Contrato de identidad.
+- Contrato de entitlement.
+- Contrato de autorización entre aplicaciones.
+- Contrato inicial de progreso.
+- Formato curricular compatible.
+- Prototipo mínimo de transición autenticada.
+- Definición de dominios/despliegues.
+- Validación de aislamiento de perfiles.
+- Identificación de requisitos especiales de runtime/sandbox.
+
+### No obligatorio antes de V1.0.0
+
+- terminar los tres cursos avanzados;
+- publicar el catálogo avanzado;
+- terminar todos los proyectos avanzados;
+- completar la interfaz final de Croco-Script;
+- completar todos sus assets;
+- abrir comercialmente el nivel avanzado.
+
+El desarrollo curricular completo de Croco-Script comenzará después de estabilizar TortuScript V1, salvo prototipos que reduzcan riesgos de integración.
 
 ## Fase 15 — 23–28/12 — Release Candidate
 
@@ -170,9 +208,18 @@ TortuScript queda listo para beta pública controlada cuando:
 - la experiencia móvil es usable;
 - las políticas están publicadas;
 - backups y restauración funcionan;
-- las pruebas de seguridad pasan.
+- las pruebas de seguridad pasan;
+- los contratos mínimos para una futura integración con Croco-Script están definidos y probados donde corresponda.
 
-## Fuera de alcance
+## Relación entre productos
+
+`TortuScript = iniciación y formación infantil`
+
+`Croco-Script = formación técnica avanzada`
+
+La familia mantiene una única cuenta y relación comercial. Cada producto conserva autonomía técnica y pedagógica.
+
+## Fuera de alcance de V1
 
 - aplicación móvil nativa;
 - comunidad;
@@ -180,5 +227,7 @@ TortuScript queda listo para beta pública controlada cuando:
 - ranking mundial;
 - publicidad comportamental;
 - marketplace;
-- expansión masiva del catálogo avanzado;
+- expansión masiva del catálogo avanzado dentro de TortuScript;
 - analítica comercial sofisticada.
+
+La existencia de Croco-Script no contradice esta exclusión: el catálogo avanzado se desarrolla como producto separado.
