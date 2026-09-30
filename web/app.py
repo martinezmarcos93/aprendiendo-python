@@ -1149,8 +1149,8 @@ def create_app(token=None):
                 {"id": p.id, "nombre": p.display_name}
                 for p in contexto.cuentas.listar_child_profiles(contexto.account.id)
             ]
-            return jsonify(actual=contexto.perfil.id, perfiles=perfiles)
-        return jsonify(actual=progreso.PERFIL_ACTUAL, perfiles=progreso.obtener_perfiles())
+            return jsonify(modo="cuenta", actual=contexto.perfil.id, perfiles=perfiles)
+        return jsonify(modo="local", actual=progreso.PERFIL_ACTUAL, perfiles=progreso.obtener_perfiles())
 
     @app.post("/api/perfil")
     def api_perfil():
