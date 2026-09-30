@@ -167,7 +167,7 @@ def create_app(token=None):
         return True
 
     def _tomar_avisos(p):
-        avisos = progreso.tomar_avisos(p, guardar=False)
+        avisos = progreso.tomar_avisos(p)
         if avisos:
             _guardar_progreso(p)
         return avisos
@@ -1103,7 +1103,7 @@ def create_app(token=None):
         if entrada:
             progreso.saltear_hasta(
                 p, [lec["id"] for _, lec in contenido.lecciones(contenido.cargar_curso())],
-                entrada, persistir=False
+                entrada
             )
         _guardar_progreso(p)
         return jsonify(ok=True, actual=_nombre_perfil_contexto(p), estado=_estado())
@@ -1112,7 +1112,7 @@ def create_app(token=None):
     def api_config():
         datos = request.get_json(silent=True) or {}
         p = _cargar_progreso()
-        if not progreso.guardar_config(p, meta_min=datos.get("meta_min"), persistir=False):
+        if not progreso.guardar_config(p, meta_min=datos.get("meta_min")):
             return jsonify(ok=False, mensaje="Esa meta no existe."), 400
         _guardar_progreso(p)
         return jsonify(ok=True, estado=_estado())
