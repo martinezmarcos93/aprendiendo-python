@@ -14,6 +14,34 @@
   </div>
 </section>
 
+{% if nivel0 %}
+<section class="nivel-mapa n0">
+  <h2><span class="etiqueta-nivel">NIVEL 0 — ALFABETIZACIÓN DIGITAL</span>
+    <span class="tenue">{{ nivel0|selectattr('completado')|list|length }}/{{ nivel0|length }} completadas</span></h2>
+  <div class="fichas">
+    {% for f in nivel0 %}
+      {% set clase = 'perfecto' if f.perfecto else ('bien' if f.completado else '') %}
+      {% if f.abierto %}
+      <a class="ficha {{ clase }}" href="{{ url_for('leccion', leccion_id=f.leccion) }}">
+      {% else %}
+      <span class="ficha bloqueada" title="Completá las lecciones anteriores para desbloquear esta">
+      {% endif %}
+        <span class="ficha-num">#{{ f.numero }}</span>
+        <span class="ficha-nombre">{{ f.nombre }}</span>
+        {% if f.completado %}
+          <span class="ficha-estrellas">{{ '⭐' * 3 if f.perfecto else '⭐☆☆' }}</span>
+          <span class="tenue ficha-xp">+{{ f.xp }} XP</span>
+        {% elif f.abierto %}
+          <span class="ficha-estrellas">▶ ¡Te toca!</span>
+        {% else %}
+          <span class="ficha-estrellas">🔒</span>
+        {% endif %}
+      {% if f.abierto %}</a>{% else %}</span>{% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
 {% for nivel, fichas in niveles.items() %}
 <section class="nivel-mapa n{{ nivel }}">
   <h2><span class="etiqueta-nivel">NIVEL {{ nivel }} — {{ nombres.get(nivel, '')|upper }}</span>

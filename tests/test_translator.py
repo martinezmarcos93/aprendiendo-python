@@ -81,6 +81,10 @@ class TestTraduccionCodigo(unittest.TestCase):
         codigo = 'x es 1\n\n# comentario\nsi x es 1:\n    mostrar "uno"'
         self.assertEqual(len(t.traducir_codigo(codigo).split("\n")), 5)
 
+    def test_comando_mostrar_acepta_indice_despues_de_lista(self):
+        t = TraductorTortuScript()
+        self.assertEqual(t.traducir_linea("mostrar [1, 2][0]"), "print([1, 2][0])")
+
     def test_linea_incompleta_no_rompe(self):
         t = TraductorTortuScript()
         self.assertEqual(t.traducir_linea('mostrar "sin cerrar'), 'mostrar "sin cerrar')

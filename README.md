@@ -1,6 +1,8 @@
-# 🐢 TortuScript → Python
+# 🐢 TortuScript
 
-Una aplicación para que chicos de 10 a 14 años aprendan a programar en Python usando **TortuScript**, un pseudolenguaje en español que se traduce solo a Python real. Se usa en el navegador, **corre en tu compu** (sin internet, sin cuentas y sin anuncios) y se parece a las apps de lecciones cortas: explicación, práctica, feedback al instante, racha, logros y una liga de amigos.
+TortuScript es el núcleo de una futura plataforma progresiva de aprendizaje tecnológico para niños y adolescentes. La V1 actual se concentra en programación con Python y está evolucionando hacia un itinerario que incluye alfabetización tecnológica, Web esencial (HTML/CSS/JS), SQL y proyectos integradores. La edad exacta de cada itinerario sigue siendo una decisión curricular pendiente de validación.
+
+El producto local actual enseña Python usando **TortuScript**, un pseudolenguaje en español que se traduce solo a Python real. Se usa en el navegador, **corre en tu compu** (sin internet, sin cuentas y sin anuncios) y se parece a las apps de lecciones cortas: explicación, práctica, feedback al instante, racha, logros y una liga de amigos.
 
 ```
 # TortuScript               →     Python
@@ -144,7 +146,7 @@ proyecto/
 
 - **El contenido es dato, no código.** Los cursos están en `contenido/cursos/*.json` y los revisa un **validador automático** que corre cada respuesta, cada fragmento y cada salida esperada: nunca llega a la pantalla un ejercicio roto. Guía completa en [`docs/CONTENIDO.md`](docs/CONTENIDO.md).
 - **Un solo servidor local.** Flask escucha solo en `127.0.0.1`; toda la API exige un token secreto de la sesión (una página ajena abierta en el navegador no puede usarla) y se rechazan `Host` que no sean locales.
-- **El código del chico nunca corre dentro del servidor.** Va a un subproceso con límite de tiempo y de memoria (512 MB: `resource` en Linux/macOS, un Job Object en Windows; el de CPU es solo Linux/macOS), validación previa con AST (sin `import` ni nombres que empiecen con `_`), builtins limitados, tope de 50.000 pasos y de 20.000 caracteres de salida. **No es un sandbox para código hostil**: protege al chico de errores y de copiar/pegar cosas peligrosas.
+- **El código del alumno nunca se ejecuta dentro del proceso Flask.** En el modo local educativo se ejecuta en un proceso hijo controlado con límite de tiempo y de memoria (512 MB: `resource` en Linux/macOS, un Job Object en Windows; el de CPU es solo Linux/macOS), validación previa con AST (sin `import` ni nombres que empiecen con `_`), builtins limitados, tope de 50.000 pasos y de 20.000 caracteres de salida. **No es un sandbox para código hostil**: protege al chico de errores y de copiar/pegar cosas peligrosas.
 - **`preguntar()`** se resuelve re-ejecutando el programa con las respuestas acumuladas; la tortuga es un registro de órdenes que el navegador anima en un `<canvas>`.
 - **Todo offline**: CodeMirror, confeti y las fuentes están en `web/static/`; no se pide nada a internet.
 - **Cabeceras de seguridad en toda respuesta**: una CSP que solo deja correr scripts propios (nada inline ni de afuera) y no deja enmarcar la app, más `nosniff`, `no-referrer` y `Permissions-Policy` (`web/app.py`, `CABECERAS_SEGURIDAD`).
@@ -167,7 +169,7 @@ Los logs de errores internos van a `logs/tortuscript.log` y nunca se muestran al
 ## Para quien mantiene el proyecto
 
 ```bash
-python -m unittest discover tests            # tests (438; los de JavaScript se saltean si no hay Node)
+python -m unittest discover tests            # tests Python; los de JavaScript se saltean si no hay Node
 python herramientas/validar_contenido.py     # valida todos los cursos
 python herramientas/crear_paquete.py         # arma dist/TortuScript-<fecha>.zip para instalar en otra compu
 ```
@@ -193,6 +195,6 @@ python herramientas/simular_chicos.py --informe docs/validacion/simulacion-<fech
                                              # prueba SIMULADA: 8 perfiles juegan y se equivocan (servidor sin --todo-desbloqueado)
 ```
 
-La rama principal es `main`. Cambios recientes: [`CHANGELOG.md`](CHANGELOG.md). Roadmap: [`docs/ROADMAP_MIMO_KIDS.md`](docs/ROADMAP_MIMO_KIDS.md).
+La rama principal es `main`. El roadmap de finalización V1 hasta el 31/12/2026 está en `docs/ROADMAP_V1_2026-12-31.md`; la definición de producto está en `docs/PRODUCTO_V1.md`. Cambios recientes: [`CHANGELOG.md`](CHANGELOG.md). Roadmap: [`docs/ROADMAP_MIMO_KIDS.md`](docs/ROADMAP_MIMO_KIDS.md).
 
 *Hecho con 🐢 y mucho amor para aprender a programar de a poco.*

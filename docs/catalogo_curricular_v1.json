@@ -1,0 +1,440 @@
+{
+  "version": 1,
+  "descripcion": "Esquema inicial conceptual del catálogo de TortuScript. No reemplaza todavía el formato operativo de contenido/cursos.",
+  "estados_acceso": [
+    "gratuito",
+    "premium",
+    "prueba",
+    "bloqueado_por_prerrequisito",
+    "no_publicado"
+  ],
+  "campos_unidad": [
+    "id",
+    "titulo",
+    "franja_edad",
+    "nivel",
+    "dificultad",
+    "competencias",
+    "prerrequisitos",
+    "duracion_estimada",
+    "lenguaje",
+    "tipo_actividad",
+    "proyecto",
+    "fuente_curricular",
+    "modulo_fuente",
+    "estado_acceso"
+  ],
+  "itinerarios": [
+    {
+      "id": "alfabetizacion-tecnologica",
+      "profundidad": "introductoria",
+      "disponibilidad_comercial": "por_definir",
+      "unidades": [
+        {
+          "id": "nivel0-programa",
+          "titulo": "¿Qué es un programa?",
+          "competencias": [
+            "reconocer_programas"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-lenguaje",
+          "titulo": "Los idiomas de las computadoras",
+          "competencias": [
+            "reconocer_lenguajes_programacion"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-codigo",
+          "titulo": "El código",
+          "competencias": [
+            "reconocer_codigo"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-navegador",
+          "titulo": "El navegador",
+          "competencias": [
+            "comprender_navegador"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-internet",
+          "titulo": "Internet y las redes",
+          "competencias": [
+            "comprender_redes_internet"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-servidor",
+          "titulo": "El servidor",
+          "competencias": [
+            "comprender_servidores"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-frontend",
+          "titulo": "Frontend: lo que ves",
+          "competencias": [
+            "reconocer_frontend"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-backend",
+          "titulo": "Backend: lo que trabaja detrás",
+          "competencias": [
+            "reconocer_backend"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "media"
+        },
+        {
+          "id": "nivel0-datos",
+          "titulo": "Los datos",
+          "competencias": [
+            "reconocer_datos"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "baja"
+        },
+        {
+          "id": "nivel0-base-datos",
+          "titulo": "La base de datos",
+          "competencias": [
+            "comprender_bases_datos"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "media"
+        },
+        {
+          "id": "nivel0-api",
+          "titulo": "La API",
+          "competencias": [
+            "comprender_api"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "media"
+        },
+        {
+          "id": "nivel0-seguridad",
+          "titulo": "Seguridad digital",
+          "competencias": [
+            "reconocer_riesgos_digitales"
+          ],
+          "franja_edad": [
+            "exploradores",
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "media"
+        },
+        {
+          "id": "nivel0-integracion",
+          "titulo": "Una app por dentro",
+          "competencias": [
+            "explicar_flujo_aplicacion"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "introduccion",
+          "dificultad": "media"
+        }
+      ]
+    },
+    {
+      "id": "python-fundamentos",
+      "profundidad": "principal",
+      "disponibilidad_comercial": "por_definir",
+      "unidades": [
+        {
+          "id": "python-puente",
+          "titulo": "De TortuScript a Python",
+          "competencias": [
+            "reconocer_entrada_salida",
+            "usar_variables"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "fuente_curricular": "python-real:py-print,py-input"
+        },
+        {
+          "id": "python-control",
+          "titulo": "Decisiones y repetición",
+          "competencias": [
+            "construir_condicionales",
+            "usar_repeticion"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "fuente_curricular": "python-real:py-if,py-for"
+        },
+        {
+          "id": "python-funciones",
+          "titulo": "Funciones",
+          "competencias": [
+            "definir_funciones"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "fuente_curricular": "python-real:py-def"
+        },
+        {
+          "id": "python-programa",
+          "titulo": "Primer programa",
+          "competencias": [
+            "depurar_programas",
+            "resolver_problemas"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "alta",
+          "fuente_curricular": "python-real:py-final"
+        },
+        {
+          "id": "python-datos",
+          "titulo": "Datos y tipos",
+          "competencias": [
+            "comprender_tipos_datos"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "fuente_curricular": "python-real:py-datos"
+        },
+        {
+          "id": "python-listas",
+          "titulo": "Listas",
+          "competencias": [
+            "usar_estructuras_de_datos"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "fuente_curricular": "python-real:py-listas"
+        },
+        {
+          "id": "python-problemas",
+          "titulo": "Resolver problemas",
+          "competencias": [
+            "resolver_problemas",
+            "depurar_programas"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "fundamentos",
+          "dificultad": "alta",
+          "fuente_curricular": "python-real:py-problemas"
+        }
+      ]
+    },
+    {
+      "id": "web-esencial",
+      "profundidad": "introductoria",
+      "disponibilidad_comercial": "por_definir"
+    },
+    {
+      "id": "sql-fundamentos",
+      "profundidad": "intermedia",
+      "disponibilidad_comercial": "por_definir"
+    },
+    {
+      "id": "proyecto-integrador",
+      "profundidad": "integradora",
+      "disponibilidad_comercial": "por_definir"
+    },
+    {
+      "id": "nivel-avanzado",
+      "profundidad": "avanzada",
+      "fuentes": [
+        "curso-python-datos",
+        "curso-desarrollo-aplicaciones",
+        "curso-orquestacion-streaming-llm"
+      ],
+      "disponibilidad_comercial": "por_definir"
+    }
+  ],
+  "reglas_acceso": [
+    "Los estados gratuito/premium/prueba/bloqueado_por_prerrequisito/no_publicado representan disponibilidad conceptual.",
+    "La disponibilidad comercial concreta no se fija por itinerario completo en V1.",
+    "Una unidad puede cambiar de estado sin modificar su contenido ni su evaluación.",
+    "bloqueado_por_prerrequisito expresa una dependencia curricular, no una decisión comercial.",
+    "por_definir es un estado documental interno del catálogo V1 y no es un estado de acceso del motor."
+  ],
+  "franjas_edad": [
+    {
+      "id": "exploradores",
+      "nombre": "Exploradores",
+      "edad_aproximada": "8-10",
+      "estado": "hipotesis"
+    },
+    {
+      "id": "constructores",
+      "nombre": "Constructores",
+      "edad_aproximada": "10-12",
+      "estado": "hipotesis"
+    },
+    {
+      "id": "creadores",
+      "nombre": "Creadores",
+      "edad_aproximada": "12-14",
+      "estado": "hipotesis"
+    },
+    {
+      "id": "desarrolladores",
+      "nombre": "Desarrolladores",
+      "edad_aproximada": "14-17",
+      "estado": "hipotesis"
+    }
+  ],
+  "competencias_base": [
+    "reconocer_entrada_salida",
+    "usar_variables",
+    "construir_condicionales",
+    "usar_repeticion",
+    "definir_funciones",
+    "usar_estructuras_de_datos",
+    "depurar_programas",
+    "leer_html",
+    "modificar_css",
+    "responder_a_eventos_js",
+    "consultar_datos_sql",
+    "relacionar_tablas",
+    "integrar_interfaz_logica_datos",
+    "reconocer_programas",
+    "reconocer_lenguajes_programacion",
+    "reconocer_codigo",
+    "comprender_navegador",
+    "comprender_redes_internet",
+    "comprender_servidores",
+    "reconocer_frontend",
+    "reconocer_backend",
+    "reconocer_datos",
+    "comprender_bases_datos",
+    "comprender_api",
+    "reconocer_riesgos_digitales",
+    "explicar_flujo_aplicacion",
+    "comprender_tipos_datos",
+    "resolver_problemas"
+  ],
+  "reglas_modelo": [
+    "La edad, el nivel y la dificultad son dimensiones independientes.",
+    "Las competencias tienen identidad propia y no incorporan una edad.",
+    "Los prerrequisitos pueden referir a unidades o competencias.",
+    "Las fuentes curriculares externas se registran como trazabilidad y no como dependencias de ejecución.",
+    "El catálogo debe poder representar actividades que el motor actual todavía no soporte.",
+    "Las franjas de edad son hipótesis operativas y no límites psicológicos rígidos.",
+    "Python V1 profundiza sobre el puente TortuScript→Python sin reemplazar el contenido histórico ni exigir una migración destructiva del progreso."
+  ]
+}

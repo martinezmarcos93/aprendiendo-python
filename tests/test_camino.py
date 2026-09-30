@@ -189,18 +189,19 @@ class TestWebCamino(Base):
         self.post("/api/onboarding", {"meta_min": 10})
         html = self.c.get("/").get_data(as_text=True)
         self.assertIn("Camino de lecciones", html)
-        self.assertEqual(html.count('class="parada'), 30)
+        self.assertEqual(html.count('class="parada'), 43)
         self.assertIn("¡Te toca!", html)
         self.assertIn('href="/leccion/hola-mundo"', html)
-        self.assertIn("0/69", html)
+        self.assertIn("0/82", html)
 
     def test_aprender_lleva_a_la_leccion_actual(self):
         self.post("/api/onboarding", {"meta_min": 10})
         r = self.c.get("/aprender")
-        self.assertTrue(r.headers["Location"].endswith("/leccion/hola-mundo"))
+        self.assertTrue(r.headers["Location"].endswith("/leccion/nivel0-programa"))
         p = progreso.cargar_progreso()
-        progreso.registrar_ejercicio(p, 0, 3, 30)
-        self.assertTrue(self.c.get("/aprender").headers["Location"].endswith("/leccion/texto-o-cuenta"))
+        for i in range(4):
+            progreso.registrar_paso_leccion(p, "nivel0-programa", i, 1, True, 4)
+        self.assertTrue(self.c.get("/aprender").headers["Location"].endswith("/leccion/nivel0-lenguaje"))
 
     # ── curso de la tortuga ──
     def _terminar_hasta(self, leccion_id):
@@ -307,7 +308,7 @@ class TestWebCamino(Base):
         self.assertEqual(estado["lecciones_hechas"], 0)
         html = self.c.get("/").get_data(as_text=True)
         self.assertIn("la salteaste: hacela cuando quieras", html)
-        self.assertIn('href="/leccion/tu-primera-variable">▶ Empezar', html)
+        self.assertIn('href="/leccion/tu-primera-variable"', html)
         self.assertEqual(self.c.get("/leccion/hola-mundo").status_code, 200)            # se puede hacer después
 
     def test_hacer_despues_una_salteada_la_convierte_en_hecha(self):

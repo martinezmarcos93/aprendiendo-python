@@ -326,6 +326,13 @@ class TestWeb(unittest.TestCase):
         self.assertIn("¡Te toca!", html)                 # el siguiente pendiente
         self.assertIn('href="/leccion/', html)              # las fichas abren la lección
 
+    def test_mapa_muestra_nivel_0(self):
+        html = self.c.get("/mapa").get_data(as_text=True)
+        self.assertIn("NIVEL 0 — ALFABETIZACIÓN DIGITAL", html)
+        self.assertIn("¿Qué es un programa?", html)
+        self.assertIn('href="/leccion/nivel0-programa"', html)
+
+
     def test_resumen_hoy(self):
         html = self.c.get("/resumen").get_data(as_text=True)
         self.assertIn("Todavía no completaste ningún ejercicio hoy", html)

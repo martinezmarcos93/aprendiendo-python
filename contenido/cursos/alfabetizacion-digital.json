@@ -1,0 +1,582 @@
+{
+  "id": "alfabetizacion-digital",
+  "titulo": "El mundo digital por dentro",
+  "icono": "🌐",
+  "descripcion": "Entendé qué pasa cuando usás una app, una web o un juego: programas, redes, datos y seguridad.",
+  "version": 2,
+  "secciones": [
+    {
+      "id": "mundo-digital",
+      "nivel": 1,
+      "titulo": "Las piezas del mundo digital",
+      "lecciones": [
+        {
+          "id": "nivel0-programa",
+          "titulo": "1. ¿Qué es un programa?",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Un programa es una lista de instrucciones que una computadora puede seguir para hacer una tarea. Un juego, una calculadora y una app son programas."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuál de estos es un programa?",
+              "opciones": [
+                "Una app que calcula gastos",
+                "Una silla",
+                "Una hoja de papel"
+              ],
+              "correcta": 0,
+              "pista": "Un programa contiene instrucciones que una computadora puede ejecutar."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué describe mejor a un programa?",
+              "opciones": [
+                "Un conjunto de instrucciones para una tarea",
+                "Una red de computadoras",
+                "Un dispositivo físico"
+              ],
+              "correcta": 0,
+              "pista": "Antes de calcular, la app necesita saber qué número recibió."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué necesita un programa para realizar una tarea?",
+              "opciones": [
+                "Un conjunto de instrucciones para una tarea",
+                "Una red de computadoras",
+                "Un dispositivo físico"
+              ],
+              "correcta": 0,
+              "pista": "Primero llegan los datos, después se calcula y al final se muestra el resultado."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-lenguaje",
+          "titulo": "2. Los idiomas de las computadoras",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Un lenguaje de programación permite escribir instrucciones de una forma que una computadora puede procesar. Python, JavaScript y Kotlin son lenguajes."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Para qué sirve un lenguaje de programación?",
+              "opciones": [
+                "Para escribir instrucciones para programas",
+                "Para conectar un monitor a la pared",
+                "Para guardar fotos en una carpeta"
+              ],
+              "correcta": 0,
+              "pista": "El lenguaje permite expresar las instrucciones del programa."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuál es un lenguaje de programación?",
+              "opciones": [
+                "Python",
+                "Internet",
+                "Chrome"
+              ],
+              "correcta": 0,
+              "pista": "Python es un lenguaje; Internet es una red y Chrome es un navegador."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué describe mejor a un lenguaje de programación?",
+              "opciones": [
+                "Un medio para escribir instrucciones",
+                "Un navegador",
+                "Una base de datos"
+              ],
+              "correcta": 0,
+              "pista": "Python es el idioma con el que se escribieron sus instrucciones."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-codigo",
+          "titulo": "3. El código",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "El código es el texto que contiene las instrucciones de un programa. Leer código es parecido a leer una receta: importa qué dice y en qué orden."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué es el código de un programa?",
+              "opciones": [
+                "Las instrucciones escritas del programa",
+                "La carcasa de la computadora",
+                "La señal de Wi-Fi"
+              ],
+              "correcta": 0,
+              "pista": "El código describe qué debe hacer el programa."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué describe mejor al código?",
+              "opciones": [
+                "Las instrucciones escritas de un programa",
+                "El monitor",
+                "La conexión Wi-Fi"
+              ],
+              "correcta": 0,
+              "pista": "Cambiar una instrucción puede cambiar el resultado."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Por qué importa el orden de las instrucciones?",
+              "opciones": [
+                "Porque una instrucción puede necesitar que otra ocurra antes",
+                "Porque las computadoras leen de derecha a izquierda",
+                "Porque el orden cambia el tamaño del monitor"
+              ],
+              "correcta": 0,
+              "pista": "Muchas instrucciones usan datos o resultados producidos antes."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-navegador",
+          "titulo": "4. El navegador",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "El navegador es el programa que usás para visitar sitios web. Chrome, Firefox y Edge son navegadores. El navegador pide y muestra recursos de una web."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuál de estos es un navegador?",
+              "opciones": [
+                "Firefox",
+                "Python",
+                "SQL"
+              ],
+              "correcta": 0,
+              "pista": "Firefox es un programa para navegar por la Web."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué hace principalmente un navegador?",
+              "opciones": [
+                "Pedir y mostrar recursos de sitios web",
+                "Guardar toda la Internet",
+                "Crear hardware"
+              ],
+              "correcta": 0,
+              "pista": "El navegador solicita recursos y los presenta en pantalla."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué ocurre cuando un navegador visita un sitio?",
+              "opciones": [
+                "Pedir y mostrar recursos de sitios web",
+                "Guardar toda la Internet",
+                "Crear hardware"
+              ],
+              "correcta": 0,
+              "pista": "Primero indicás qué querés visitar; después el navegador pide lo necesario."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-internet",
+          "titulo": "5. Internet y las redes",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Una red conecta dispositivos para que puedan comunicarse. Internet es una enorme red de redes. Tu computadora puede usar una red para comunicarse con otros equipos."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué es Internet?",
+              "opciones": [
+                "Una red de redes que conecta dispositivos",
+                "El navegador que usás",
+                "Un único servidor gigante"
+              ],
+              "correcta": 0,
+              "pista": "Internet conecta muchas redes y dispositivos entre sí."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Para qué sirve una red?",
+              "opciones": [
+                "Para permitir que dispositivos se comuniquen",
+                "Para convertir código en Python",
+                "Para reemplazar el teclado"
+              ],
+              "correcta": 0,
+              "pista": "Una red permite intercambiar información entre dispositivos."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué describe mejor a Internet?",
+              "opciones": [
+                "Una red de redes",
+                "Un único servidor",
+                "Un lenguaje"
+              ],
+              "correcta": 0,
+              "pista": "La función principal de una red es permitir comunicación entre dispositivos."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-servidor",
+          "titulo": "6. El servidor",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Un servidor es un programa o computadora que ofrece un servicio a otros programas o dispositivos. Una web puede pedirle datos a un servidor."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué hace un servidor en una web?",
+              "opciones": [
+                "Ofrece recursos o datos que otros pueden pedir",
+                "Es el mouse del usuario",
+                "Es el nombre del navegador"
+              ],
+              "correcta": 0,
+              "pista": "Servidor viene de servir: responde pedidos y ofrece recursos."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué puede hacer un servidor?",
+              "opciones": [
+                "Recibir pedidos y ofrecer recursos o datos",
+                "Ser el navegador",
+                "Ser una contraseña"
+              ],
+              "correcta": 0,
+              "pista": "El servidor responde al pedido con los datos o recursos disponibles."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Por qué un servidor necesita recibir pedidos?",
+              "opciones": [
+                "Recibir pedidos y ofrecer recursos o datos",
+                "Ser el navegador",
+                "Ser una contraseña"
+              ],
+              "correcta": 0,
+              "pista": "La respuesta del servidor llega después del pedido."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-frontend",
+          "titulo": "7. Frontend: lo que ves",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Frontend es la parte de una aplicación con la que interactuás directamente. En una web incluye la interfaz que ves en el navegador."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuál es un ejemplo de frontend?",
+              "opciones": [
+                "Un botón que tocás en una página",
+                "Una base de datos guardada lejos",
+                "Un cable de red"
+              ],
+              "correcta": 0,
+              "pista": "El frontend es la parte visible e interactiva para el usuario."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué pertenece al frontend?",
+              "opciones": [
+                "La parte de la interfaz con la que interactuás",
+                "La base de datos",
+                "El cable de red"
+              ],
+              "correcta": 0,
+              "pista": "El botón forma parte de la interfaz con la que interactuás."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuál describe mejor al frontend?",
+              "opciones": [
+                "La interfaz con la que interactúa la persona",
+                "Todo lo que ocurre dentro de una base de datos",
+                "La red mundial completa"
+              ],
+              "correcta": 0,
+              "pista": "Frontend se refiere a la parte con la que interactúa directamente el usuario."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-backend",
+          "titulo": "8. Backend: lo que trabaja detrás",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Backend es la parte que trabaja detrás de la interfaz. Puede procesar reglas, consultar datos y responder pedidos. No tiene que ser visible para el usuario."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuál es una tarea típica del backend?",
+              "opciones": [
+                "Procesar una compra y consultar sus datos",
+                "Dibujar físicamente el monitor",
+                "Cambiar el color de una pared"
+              ],
+              "correcta": 0,
+              "pista": "El backend puede ejecutar lógica y trabajar con datos."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué pertenece al backend?",
+              "opciones": [
+                "La parte que procesa lógica o datos detrás de la interfaz",
+                "El botón visible",
+                "El teclado"
+              ],
+              "correcta": 0,
+              "pista": "El backend puede aplicar lógica y consultar datos antes de responder."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Frontend y backend son lo mismo?",
+              "opciones": [
+                "No: cumplen funciones distintas y pueden comunicarse",
+                "Sí: son dos nombres para el navegador",
+                "Sí: uno reemplaza al otro"
+              ],
+              "correcta": 0,
+              "pista": "Uno se ocupa de la interfaz; el otro puede encargarse de lógica, datos y servicios."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "datos-y-servicios",
+      "nivel": 2,
+      "titulo": "Datos, servicios y seguridad",
+      "lecciones": [
+        {
+          "id": "nivel0-datos",
+          "titulo": "9. Los datos",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Un dato es una pieza de información que un programa puede guardar, procesar o mostrar: un nombre, una edad, un precio o una imagen."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuál es un dato?",
+              "opciones": [
+                "El precio de un producto: $500",
+                "El botón como objeto físico",
+                "El cable de alimentación"
+              ],
+              "correcta": 0,
+              "pista": "Un precio es información que un programa puede guardar y procesar."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué es un dato?",
+              "opciones": [
+                "Información que un programa puede guardar o procesar",
+                "Una red",
+                "Un navegador"
+              ],
+              "correcta": 0,
+              "pista": "\"Ana\" es información de texto."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Por qué importan los datos?",
+              "opciones": [
+                "Porque permiten que los programas trabajen con información",
+                "Porque reemplazan todos los programas",
+                "Porque hacen innecesaria la red"
+              ],
+              "correcta": 0,
+              "pista": "Los programas usan datos para mostrar, calcular, decidir y recordar información."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-base-datos",
+          "titulo": "10. La base de datos",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Una base de datos organiza información para poder guardarla, buscarla y relacionarla. Una tienda puede tener productos, precios y stock en una base de datos."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Para qué sirve una base de datos?",
+              "opciones": [
+                "Para guardar y consultar información organizada",
+                "Para reemplazar el navegador",
+                "Para conectar el monitor al teclado"
+              ],
+              "correcta": 0,
+              "pista": "Una base de datos está pensada para almacenar y consultar información."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué tipo de información puede guardar una base de datos?",
+              "opciones": [
+                "Información organizada que se puede guardar y consultar",
+                "Una pantalla",
+                "Un lenguaje"
+              ],
+              "correcta": 0,
+              "pista": "La base de datos puede almacenar y devolver el precio."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué ocurre cuando un programa consulta una base de datos?",
+              "opciones": [
+                "Información organizada que se puede guardar y consultar",
+                "Una pantalla",
+                "Un lenguaje"
+              ],
+              "correcta": 0,
+              "pista": "Primero se hace el pedido y después se consulta la información."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-api",
+          "titulo": "11. La API",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Una API es una forma definida para que un programa pida algo a otro programa o servicio. Es como un mostrador con pedidos que tienen reglas conocidas."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Para qué puede servir una API?",
+              "opciones": [
+                "Para que dos programas se comuniquen mediante reglas acordadas",
+                "Para limpiar la pantalla",
+                "Para convertir una PC en un servidor automáticamente"
+              ],
+              "correcta": 0,
+              "pista": "Una API define cómo pedir y recibir cosas entre programas."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué permite una API?",
+              "opciones": [
+                "Una forma definida para que programas se comuniquen",
+                "Una base de datos",
+                "Un monitor"
+              ],
+              "correcta": 0,
+              "pista": "La API permite pedir datos y recibir una respuesta del servicio."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Una API es necesariamente una base de datos?",
+              "opciones": [
+                "No: es una forma de comunicación entre programas",
+                "Sí: toda API es una tabla",
+                "Sí: API significa base de datos"
+              ],
+              "correcta": 0,
+              "pista": "Una API puede consultar una base de datos, pero no es la base de datos."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-seguridad",
+          "titulo": "12. Seguridad digital",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "La seguridad digital busca proteger dispositivos, cuentas y datos. Contraseñas únicas, actualizaciones y cuidado con enlaces sospechosos son prácticas básicas."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cuál es una buena práctica?",
+              "opciones": [
+                "Usar contraseñas distintas y difíciles de adivinar",
+                "Compartir tu contraseña con cualquiera",
+                "Abrir todos los archivos desconocidos"
+              ],
+              "correcta": 0,
+              "pista": "Una contraseña única y difícil de adivinar reduce riesgos."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "Recibís un mensaje que pide tu contraseña con un enlace extraño. ¿Qué conviene hacer?",
+              "opciones": [
+                "No entregar la contraseña y verificar el mensaje por otra vía",
+                "Pasar la contraseña rápido",
+                "Publicar la contraseña para preguntar si es real"
+              ],
+              "correcta": 0,
+              "pista": "Los mensajes inesperados que piden credenciales deben verificarse antes de actuar."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué busca la seguridad digital?",
+              "opciones": [
+                "Prácticas para proteger cuentas, dispositivos y datos",
+                "Un lenguaje",
+                "Un navegador"
+              ],
+              "correcta": 0,
+              "pista": "La seguridad busca reducir accesos indebidos y proteger información."
+            }
+          ]
+        },
+        {
+          "id": "nivel0-integracion",
+          "titulo": "13. Una app por dentro",
+          "pasos": [
+            {
+              "tipo": "explicacion",
+              "texto": "Ahora juntá las piezas: una persona usa el frontend, el frontend puede hablar con un backend, el backend puede consultar datos y devolver una respuesta."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué idea ayuda a entender una aplicación por dentro?",
+              "opciones": [
+                "Separar y conectar responsabilidades entre interfaz, lógica y datos",
+                "Usar solo el frontend",
+                "Eliminar los datos"
+              ],
+              "correcta": 0,
+              "pista": "La interfaz inicia el pedido; detrás se consultan los datos y después vuelve la respuesta."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Cómo se relacionan la interfaz, la lógica y los datos?",
+              "opciones": [
+                "Separar y conectar responsabilidades entre interfaz, lógica y datos",
+                "Usar solo el frontend",
+                "Eliminar los datos"
+              ],
+              "correcta": 0,
+              "pista": "La gracia de una arquitectura es separar responsabilidades."
+            },
+            {
+              "tipo": "elegir",
+              "pregunta": "¿Qué recorrido puede seguir una acción dentro de una aplicación?",
+              "opciones": [
+                "Programas, lenguajes, navegador, redes, servidores, frontend, backend, datos, bases, API y seguridad",
+                "Solo nombres de navegadores",
+                "Solo cómo escribir Python"
+              ],
+              "correcta": 0,
+              "pista": "Este nivel construye el mapa mental que vas a usar antes de profundizar en programación."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
