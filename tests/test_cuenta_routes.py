@@ -17,6 +17,7 @@ class CuentaRoutesTests(unittest.TestCase):
             TESTING=True,
             ACCOUNT_DB=self.tmp / "cuentas.sqlite3",
             ACCOUNT_COOKIE_SECURE=False,
+            PROGRESS_DIR=self.tmp / "progreso_perfiles",
         )
         self.client = self.app.test_client()
 
@@ -84,6 +85,46 @@ class CuentaRoutesTests(unittest.TestCase):
 
         me3 = self.client.get("/cuenta/me")
         self.assertEqual(me3.json["perfil_activo"], created.json["perfil"]["id"])
+
+        progress = {
+            "contract_version": 1,
+            "profile_id": created.json["perfil"]["id"],
+            "updated_at": "2026-09-30T12:00:00+00:00",
+            "data": {"xp_total": 25},
+        }
+        saved = self.client.put(
+            "/cuenta/progreso",
+            json=progress,
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(saved.status_code, 200)
+
+        loaded = self.client.get("/cuenta/progreso")
+        self.assertEqual(loaded.status_code, 200)
+        self.assertEqual(loaded.json["progreso"]["data"]["xp_total"], 25)
+
+        acceso = self.client.get("/cuenta/acceso?producto=tortuscript-premium")
+        self.assertEqual(acceso.status_code, 200)
+        self.assertFalse(acceso.json["permitido"])
+
+        repo.establecer_entitlement(cuenta.id, "tortuscript-premium", True, "payment")
+        acceso2 = self.client.get("/cuenta/acceso?producto=tortuscript-premium")
+        self.assertTrue(acceso2.json["permitido"])
+
+        # Un snapshot de otro perfil no puede escribirse sobre el perfil activo.
+        otro = self.client.post(
+            "/cuenta/perfiles",
+            json={"nombre": "Beto"},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(otro.status_code, 201)
+        bad_progress = dict(progress, profile_id=otro.json["perfil"]["id"])
+        rejected = self.client.put(
+            "/cuenta/progreso",
+            json=bad_progress,
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(rejected.status_code, 400)
 
         logout = self.client.post("/cuenta/logout", headers={"X-Tortu-CSRF": csrf})
         self.assertEqual(logout.status_code, 200)
