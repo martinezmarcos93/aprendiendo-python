@@ -7,8 +7,12 @@ from pathlib import Path
 
 from flask import Blueprint, current_app, jsonify, make_response, request
 
+from tortuscript.acceso import AccesoProducto
 from tortuscript.auth import AuthError, AuthRepository
 from tortuscript.cuentas import CuentaError, CuentaRepository
+from tortuscript.perfil_educativo import ContextoEducativoError, PerfilEducativoService
+from tortuscript.progreso_childprofile import ProgresoChildProfile
+from tortuscript.progreso_contrato import importar_snapshot
 
 bp = Blueprint("cuenta", __name__, url_prefix="/cuenta")
 
@@ -20,6 +24,14 @@ def _repos():
     auth = AuthRepository(path)
     auth.ensure_schema()
     return cuentas, auth
+
+
+def _educativo():
+    cuentas, auth = _repos()
+    progreso_dir = Path(current_app.config.get("PROGRESS_DIR", Path(current_app.instance_path) / "progreso_perfiles"))
+    store = ProgresoChildProfile(progreso_dir)
+    acceso = AccesoProducto(cuentas)
+    return PerfilEducativoService(cuentas, auth, store, acceso)
 
 
 def _cookie_config():
@@ -166,3 +178,60 @@ def seleccionar_perfil():
     except AuthError as exc:
         return jsonify(ok=False, mensaje=str(exc)), 403
     return jsonify(ok=True, perfil_activo=profile_id)
+
+
+@bp.get("/progreso")
+def obtener_progreso():
+    raw = request.cookies.get("tortu_session")
+    try:
+        service = _educativo()
+        contexto = service.contexto(raw)
+        snapshot = service.cargar_progreso(raw)
+    except ContextoEducativoError as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 401
+    return jsonify(
+        ok=True,
+        perfil={"id": contexto.perfil.id, "nombre": contexto.perfil.display_name},
+        progreso=None if snapshot is None else {
+            "contract_version": snapshot.schema_version,
+            "profile_id": snapshot.profile_id,
+            "updated_at": snapshot.updated_at,
+            "data": snapshot.data,
+        },
+    )
+
+
+@bp.put("/progreso")
+def guardar_progreso():
+    raw = request.cookies.get("tortu_session")
+    resultado = _require_session()
+    if not resultado:
+        return jsonify(ok=False, mensaje="Sesión requerida."), 401
+    _, auth, _ = resultado
+    if not _require_csrf(auth, raw):
+        return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
+    documento = request.get_json(silent=True)
+    try:
+        snapshot = importar_snapshot(documento)
+        _educativo().guardar_progreso(raw, snapshot)
+    except (ContextoEducativoError, ValueError) as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 400
+    return jsonify(ok=True, profile_id=snapshot.profile_id, updated_at=snapshot.updated_at)
+
+
+@bp.get("/acceso")
+def acceso_producto():
+    raw = request.cookies.get("tortu_session")
+    producto = request.args.get("producto", "")
+    try:
+        service = _educativo()
+        contexto = service.contexto(raw)
+        acceso = service.resumen_acceso(raw, [producto])
+    except ContextoEducativoError as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 401
+    return jsonify(
+        ok=True,
+        perfil_id=contexto.perfil.id,
+        producto=producto,
+        permitido=acceso.get(producto, False),
+    )
