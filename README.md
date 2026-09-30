@@ -18,6 +18,14 @@ funcion saludar(n):         →     def saludar(n):
 
 ---
 
+
+## Acceso administrativo local
+
+Para pruebas de la futura capa comercial existe un bootstrap de desarrollo que
+no contiene ninguna contraseña en el código. Ejecutá \`python herramientas/crear_admin.py\`
+y cargá la contraseña cuando la solicite. La cuenta queda verificada, con rol
+\`admin\` y bypass comercial. Detalles en [docs/ADMIN_LOCAL.md](docs/ADMIN_LOCAL.md).
+
 ## Cómo se usa
 
 ### Para una familia (sin instalar Python)
