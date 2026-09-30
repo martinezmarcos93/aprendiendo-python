@@ -50,6 +50,7 @@ class RuntimeEducativo:
         from copy import deepcopy
         from tortuscript import progreso as legado
         data = deepcopy(snapshot.data if snapshot is not None else legado.PROGRESO_INICIAL)
+        data = legado._migrar(data)
         data["_perfil"] = contexto.perfil.id
         resultado = operacion(data)
         payload = {k: deepcopy(v) for k, v in data.items() if not k.startswith("_")}
