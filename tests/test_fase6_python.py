@@ -32,6 +32,11 @@ class TestPythonV1(unittest.TestCase):
         self.assertIn("lista", por_id["py-listas"]["pasos"][0]["texto"].lower())
         self.assertIn("problema", por_id["py-problemas"]["pasos"][0]["texto"].lower())
 
+    def test_nuevas_unidades_validan_sin_errores_detallados(self):
+        from tortuscript.validacion import ERROR, validar_curso
+        errores = [h for h in validar_curso(self.curso) if h.nivel == ERROR]
+        self.assertEqual(errores, [], "\n".join(str(h) for h in errores))
+
     def test_ejercicios_python_declarados_como_python(self):
         for leccion in self.lecciones:
             for paso in leccion["pasos"]:
