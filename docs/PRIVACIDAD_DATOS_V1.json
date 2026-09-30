@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "estado": "diseno",
+  "jurisdiccion_inicial": "Argentina",
+  "principios": ["minimizacion", "finalidad", "seguridad", "transparencia", "autonomia_progresiva"],
+  "datos": [
+    {"categoria":"cuenta_adulta","ejemplos":["identificador_de_cuenta"],"necesidad":"operacion","retencion":"mientras_cuenta_activa_y_periodo_legal","menor":false},
+    {"categoria":"perfil_educativo","ejemplos":["id_tecnico","alias","franja_edad","ajustes"],"necesidad":"pedagogia","retencion":"mientras_perfil_activo_y_periodo_definido","menor":true},
+    {"categoria":"progreso","ejemplos":["unidades","competencias","resultados_minimos"],"necesidad":"pedagogia","retencion":"mientras_perfil_activo_y_periodo_definido","menor":true},
+    {"categoria":"consentimiento","ejemplos":["version","fecha","estado"],"necesidad":"cumplimiento","retencion":"segun_obligacion_legal","menor":false},
+    {"categoria":"logs","ejemplos":["errores_tecnicos","eventos_operativos_minimos"],"necesidad":"seguridad","retencion":"corta","menor":true}
+  ],
+  "prohibidos_por_defecto":["geolocalizacion","biometria","salud","contactos","fotografias","publicidad_comportamental"],
+  "operaciones":["acceso","rectificacion","supresion","exportacion","revocacion_cuando_corresponda"],
+  "terceros_requieren_registro":true
+}
