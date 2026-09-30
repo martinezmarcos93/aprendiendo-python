@@ -23,14 +23,18 @@ class Fase10ProductoTests(unittest.TestCase):
         self.assertEqual(segmentos["premium"]["itinerarios"], [])
         self.assertEqual(catalogo_producto.ESTADO_COMERCIAL_POR_DEFINIR, "por_definir")
 
-    def test_nivel_avanzado_no_publicado(self):
+    def test_comercial_no_fija_premium(self):
         self.assertEqual(
             catalogo_producto.estado_acceso("python-datos", self.p),
             "por_definir",
         )
         self.assertEqual(
             catalogo_producto.estado_acceso("python-puente", self.p),
-            "por_definir",
+            "bloqueado_por_prerrequisito",
+        )
+        self.assertEqual(
+            catalogo_producto.estado_acceso("integrador-ficha-criatura", self.p),
+            "bloqueado_por_prerrequisito",
         )
 
     def test_unidad_puede_pasar_de_pendiente_a_completada(self):
