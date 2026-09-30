@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titulo %}Elegí tu recorrido{% endblock %}
+{% block contenido %}
+<section class="tarjeta">
+  <div class="mascota gran centrado">🐢</div>
+  <h1 class="centrado">¿Qué querés aprender primero?</h1>
+  <p class="centrado tenue">Terminaste el Nivel 0. Ahora elegí el recorrido que más te interese.</p>
+
+  <div class="fichas">
+    <form method="post" class="tarjeta">
+      <input type="hidden" name="recorrido" value="web">
+      <h2>🌐 HTML + CSS + JavaScript</h2>
+      <p>Aprendé cómo se construyen las páginas, cómo se ven y cómo responden a lo que hace el usuario.</p>
+      <button class="boton verde grande" type="submit">
+        {% if recorrido_actual == 'web' %}Continuar con Web{% else %}Empezar Web{% endif %}
+      </button>
+    </form>
+
+    <form method="post" class="tarjeta">
+      <input type="hidden" name="recorrido" value="python">
+      <h2>🐍 Python</h2>
+      <p>Pasá de los conceptos que ya conocés a Python real y empezá a construir programas.</p>
+      <button class="boton verde grande" type="submit">
+        {% if recorrido_actual == 'python' %}Continuar con Python{% else %}Empezar Python{% endif %}
+      </button>
+    </form>
+
+    <div class="tarjeta">
+      <h2>🗃️ SQL</h2>
+      {% if sql_desbloqueado %}
+        <p>SQL se habilitó porque ya completaste uno de los recorridos iniciales.</p>
+        <p class="tenue">El contenido de este recorrido todavía está en preparación.</p>
+      {% else %}
+        <p>SQL se desbloquea cuando completes <b>Python</b> o <b>HTML + CSS + JavaScript</b>.</p>
+        <p class="tenue">Por ahora permanece bloqueado.</p>
+      {% endif %}
+      <button class="boton" type="button" disabled>🔒 SQL</button>
+    </div>
+  </div>
+
+  <div class="acciones">
+    <a class="boton" href="{{ url_for('mapa') }}">Volver al mapa</a>
+  </div>
+</section>
+{% endblock %}
