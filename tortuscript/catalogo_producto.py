@@ -199,6 +199,9 @@ def estado_acceso(unidad_id, progreso, _indice=None):
     declarado = unidad.get("estado_acceso")
     if declarado:
         return declarado
+    for segmento in SEGMENTOS_PRODUCTO.values():
+        if unidad["itinerario"] in segmento["itinerarios"]:
+            return segmento["estado_acceso"]
     # La decisión comercial queda deliberadamente fuera del motor.
     return ESTADO_COMERCIAL_POR_DEFINIR
 
