@@ -7,27 +7,27 @@ validación local.
 
 Desde la raíz del repositorio:
 
-\`\`\`bash
+```bash
 python herramientas/crear_admin.py
-\`\`\`
+```
 
 El script solicita el correo y la contraseña mediante entrada interactiva. La
 contraseña no se acepta como argumento, no se imprime y no se escribe en ningún
 archivo del repositorio. En SQLite se almacena solamente mediante el hash de
-contraseña que utiliza \`AuthRepository\`.
+contraseña que utiliza `AuthRepository`.
 
 Por defecto, la cuenta es:
 
-\`\`\`
+```
 admin@tortuscript.local
-\`\`\`
+```
 
-La cuenta queda verificada, recibe el rol \`admin\` y se crea un perfil infantil
-\`Admin\` si todavía no tiene perfiles.
+La cuenta queda verificada, recibe el rol `admin` y se crea un perfil infantil
+`Admin` si todavía no tiene perfiles.
 
 ## Alcance del rol Admin
 
-El rol \`admin\` tiene bypass explícito de la autorización comercial: puede
+El rol `admin` tiene bypass explícito de la autorización comercial: puede
 consultar productos aunque no exista un entitlement de pago. Esto permite probar
 TortuScript Premium, Croco-Script y productos futuros sin fabricar pagos.
 
