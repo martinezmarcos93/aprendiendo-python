@@ -3,7 +3,7 @@
   "titulo": "El mundo digital por dentro",
   "icono": "🌐",
   "descripcion": "Entendé qué pasa cuando usás una app, una web o un juego: programas, redes, datos y seguridad.",
-  "version": 1,
+  "version": 2,
   "secciones": [
     {
       "id": "mundo-digital",
@@ -42,7 +42,7 @@
             },
             {
               "tipo": "elegir",
-              "pregunta": "¿Qué describe mejor a un programa?",
+              "pregunta": "¿Qué necesita un programa para realizar una tarea?",
               "opciones": [
                 "Un conjunto de instrucciones para una tarea",
                 "Una red de computadoras",
@@ -171,7 +171,7 @@
             },
             {
               "tipo": "elegir",
-              "pregunta": "¿Qué hace principalmente un navegador?",
+              "pregunta": "¿Qué ocurre cuando un navegador visita un sitio?",
               "opciones": [
                 "Pedir y mostrar recursos de sitios web",
                 "Guardar toda la Internet",
@@ -257,7 +257,7 @@
             },
             {
               "tipo": "elegir",
-              "pregunta": "¿Qué puede hacer un servidor?",
+              "pregunta": "¿Por qué un servidor necesita recibir pedidos?",
               "opciones": [
                 "Recibir pedidos y ofrecer recursos o datos",
                 "Ser el navegador",
@@ -425,7 +425,7 @@
             },
             {
               "tipo": "elegir",
-              "pregunta": "¿Qué hace una base de datos?",
+              "pregunta": "¿Qué tipo de información puede guardar una base de datos?",
               "opciones": [
                 "Información organizada que se puede guardar y consultar",
                 "Una pantalla",
@@ -436,7 +436,7 @@
             },
             {
               "tipo": "elegir",
-              "pregunta": "¿Qué hace una base de datos?",
+              "pregunta": "¿Qué ocurre cuando un programa consulta una base de datos?",
               "opciones": [
                 "Información organizada que se puede guardar y consultar",
                 "Una pantalla",
@@ -554,7 +554,7 @@
             },
             {
               "tipo": "elegir",
-              "pregunta": "¿Qué idea ayuda a entender una aplicación por dentro?",
+              "pregunta": "¿Cómo se relacionan la interfaz, la lógica y los datos?",
               "opciones": [
                 "Separar y conectar responsabilidades entre interfaz, lógica y datos",
                 "Usar solo el frontend",
@@ -565,7 +565,7 @@
             },
             {
               "tipo": "elegir",
-              "pregunta": "¿Qué aprendiste a reconocer?",
+              "pregunta": "¿Qué recorrido puede seguir una acción dentro de una aplicación?",
               "opciones": [
                 "Programas, lenguajes, navegador, redes, servidores, frontend, backend, datos, bases, API y seguridad",
                 "Solo nombres de navegadores",
