@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}Proyectos integradores{% endblock %}
+{% block contenido %}
+<div class="columna-ancha">
+  <section class="tarjeta">
+    <div class="fila">
+      <div>
+        <h1>🧩 Proyectos integradores</h1>
+        <p class="tenue">Elegí algo para construir. Cada proyecto combina al menos dos áreas que ya aprendiste.</p>
+      </div>
+      <span class="espacio"></span>
+      <a class="boton chico" href="{{ url_for('mapa') }}">🗺️ Volver al mapa</a>
+    </div>
+  </section>
+
+  <section class="proyectos-integradores-grid">
+    {% for p in proyectos %}
+    <article class="tarjeta proyecto-integrador-card {% if not p.desbloqueado %}bloqueado{% endif %}">
+      <div class="proyecto-integrador-icono" aria-hidden="true">{{ p.icono }}</div>
+      <h2>{{ p.titulo }}</h2>
+      <p>{{ p.descripcion }}</p>
+      <p class="tenue"><b>Integra:</b> {{ p.bloques|join(" + ")|upper }}</p>
+      {% if p.completado %}
+        <div class="veredicto bien"><b>✓ Proyecto completado</b><br>Ya cumple todas sus etapas.</div>
+        <a class="boton verde" href="{{ url_for('proyecto_integrador', proyecto_id=p.id) }}">▶ Abrir proyecto</a>
+      {% elif p.iniciado %}
+        <a class="boton violeta" href="{{ url_for('proyecto_integrador', proyecto_id=p.id) }}">▶ Continuar</a>
+      {% elif p.desbloqueado %}
+        <button class="boton violeta" type="button" data-iniciar-proyecto="{{ p.id }}">🚀 Empezar</button>
+      {% else %}
+        <p class="tenue">🔒 Necesitás completar al menos dos de estos bloques: {{ p.bloques|join(" + ") }}.</p>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/proyectos_integradores.js') }}"></script>{% endblock %}
