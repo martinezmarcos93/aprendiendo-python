@@ -9,6 +9,7 @@ Revisa TODO lo que un chico va a ver, sin abrir la app:
 
 Uso: validar_curso(curso) -> list[Hallazgo];  herramientas/validar_contenido.py lo imprime.
 """
+import ast
 import itertools
 import re
 from dataclasses import dataclass
@@ -349,6 +350,20 @@ def validar_curso(curso):
             _revisar_texto(texto, donde, hallazgos)
 
         if paso.get("lenguaje") == "web-conceptual":
+            continue
+        if paso.get("lenguaje") == "python":
+            codigo_python = paso.get("codigo") or paso.get("solucion") or ""
+            if paso.get("tipo") == "completar":
+                codigo_python = paso["codigo"]
+                for r in paso.get("respuesta", []):
+                    codigo_python = codigo_python.replace(HUECO, r, 1)
+            elif paso.get("tipo") == "ordenar":
+                codigo_python = "\n".join(paso.get("lineas", []))
+            if codigo_python.strip():
+                try:
+                    ast.parse(codigo_python)
+                except SyntaxError as e:
+                    hallazgos.append(Hallazgo(ERROR, donde, f"código Python con sintaxis inválida: {e.msg}"))
             continue
         if paso.get("lenguaje") in {"html", "css", "javascript"}:
             _validar_paso(paso, donde, hallazgos)
