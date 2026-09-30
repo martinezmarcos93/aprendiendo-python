@@ -34,7 +34,11 @@
         <p>SQL se desbloquea cuando completes <b>Python</b> o <b>HTML + CSS + JavaScript</b>.</p>
         <p class="tenue">Por ahora permanece bloqueado.</p>
       {% endif %}
+      {% if sql_desbloqueado %}
+      <button class="boton" type="button" disabled>🗃️ SQL — contenido próximamente</button>
+      {% else %}
       <button class="boton" type="button" disabled>🔒 SQL</button>
+      {% endif %}
     </div>
   </div>
 
