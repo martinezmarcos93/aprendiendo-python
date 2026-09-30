@@ -284,5 +284,24 @@ class CuentaRoutesTests(unittest.TestCase):
         })
         self.assertEqual(reused.status_code, 400)
 
+
+    def test_login_aplica_rate_limit_y_devuelve_retry_after(self):
+        self.client.post("/cuenta/registro", json={
+            "email": "limit@example.com",
+            "password": "una-clave-larga-123",
+        })
+        for _ in range(10):
+            respuesta = self.client.post("/cuenta/login", json={
+                "email": "limit@example.com",
+                "password": "incorrecta-larga",
+            })
+            self.assertEqual(respuesta.status_code, 401)
+        bloqueado = self.client.post("/cuenta/login", json={
+            "email": "limit@example.com",
+            "password": "incorrecta-larga",
+        })
+        self.assertEqual(bloqueado.status_code, 429)
+        self.assertIn("Retry-After", bloqueado.headers)
+
 if __name__ == "__main__":
     unittest.main()
