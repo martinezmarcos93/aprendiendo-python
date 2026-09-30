@@ -410,6 +410,15 @@ def resumen_de_palabras(cursos):
             for lec in seccion["lecciones"]:
                 nuevas, usadas = [], set()
                 for paso in lec["pasos"]:
+                    if paso.get("lenguaje") == "sql":
+                        codigo = str(paso.get("codigo") or paso.get("solucion") or "").upper()
+                        for palabra in ("SELECT", "FROM", "WHERE", "ORDER BY", "LIMIT", "COUNT", "GROUP BY", "JOIN", "ON", "INSERT", "UPDATE", "DELETE"):
+                            if palabra in codigo:
+                                if palabra not in vistas:
+                                    vistas.add(palabra)
+                                    nuevas.append(palabra)
+                                usadas.add(palabra)
+                        continue
                     if paso.get("lenguaje") in {"html", "css", "javascript"}:
                         for palabra in paso.get("palabras_pista") or []:
                             if palabra not in vistas:
