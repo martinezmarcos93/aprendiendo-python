@@ -142,6 +142,36 @@ def _validar_paso(paso, donde, hallazgos):
     tipo = paso.get("tipo")
     entradas = paso.get("entradas_prueba")
     usadas = set()
+    if paso.get("lenguaje") == "sql":
+        from .sql_evaluacion import evaluar, ejecutar
+        dataset = paso.get("sql_dataset")
+        if tipo == "explicacion" and paso.get("codigo"):
+            r = ejecutar(paso["codigo"], dataset)
+            if not r["ok"]:
+                hallazgos.append(Hallazgo(ERROR, donde, f"la consulta SQL de ejemplo no corre: {r['mensaje']}"))
+        elif tipo == "predecir":
+            r = ejecutar(paso.get("codigo", ""), dataset)
+            if not r["ok"]:
+                hallazgos.append(Hallazgo(ERROR, donde, f"la consulta SQL no corre: {r['mensaje']}"))
+            elif str(paso["opciones"][paso["correcta"]]) != r["salida"]:
+                hallazgos.append(Hallazgo(ERROR, donde, f"la opción correcta dice {paso['opciones'][paso['correcta']]!r} pero la consulta devuelve {r['salida']!r}"))
+        elif tipo == "completar":
+            codigo = paso["codigo"]
+            for respuesta in paso.get("respuesta", []):
+                codigo = codigo.replace(HUECO, respuesta, 1)
+            r = ejecutar(codigo, dataset)
+            if not r["ok"]:
+                hallazgos.append(Hallazgo(ERROR, donde, f"el completado SQL no corre: {r['mensaje']}"))
+        elif tipo == "ordenar":
+            r = ejecutar("\n".join(paso.get("lineas", [])), dataset)
+            if not r["ok"]:
+                hallazgos.append(Hallazgo(ERROR, donde, f"el orden correcto SQL no corre: {r['mensaje']}"))
+        elif tipo == "escribir":
+            r = evaluar(paso["solucion"], paso["solucion"], dataset)
+            if r["estado"] != "correcto":
+                hallazgos.append(Hallazgo(ERROR, donde, f"la solución SQL no es válida: {r.get('mensaje', 'error desconocido')}"))
+        return set()
+
     if paso.get("lenguaje") in {"html", "css", "javascript", "web-conceptual"}:
         from .web_evaluacion import validar_codigo
         reglas = paso.get("web") or {}
