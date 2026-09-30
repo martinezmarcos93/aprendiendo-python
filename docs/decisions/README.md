@@ -49,6 +49,7 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 | [ADR-035](ADR-035-tortu-llm-como-asistente-pedagogico.md) | Tortu-LLM como asistente pedagógico | **Aceptada** |
 | [ADR-036](ADR-036-croco-script-como-producto-avanzado.md) | Croco-Script como producto avanzado separado | **Aceptada** |
 | [ADR-037](ADR-037-integracion-tortuscript-croco-script.md) | Integración entre TortuScript y Croco-Script | **Aceptada** |
+| [ADR-038](ADR-038-persistencia-cuenta-familiar.md) | Persistencia de cuenta familiar y perfiles | **Aceptada** |
 
 ## Documentos de producto
 
