@@ -36,6 +36,7 @@ from tortuscript.proceso import correr  # noqa: E402
 from tortuscript.referencia import cargar_referencia  # noqa: E402
 from tortuscript.repaso import MODOS, cola_repaso, contar  # noqa: E402
 from tortuscript.translator import TraductorTortuScript, detectar_tipo  # noqa: E402
+from web.cuenta_routes import bp as cuenta_bp  # noqa: E402
 
 logger = logging.getLogger("tortuscript.web")
 HOSTS_PERMITIDOS = {"127.0.0.1", "localhost"}
@@ -92,6 +93,10 @@ def create_app(token=None):
     app = Flask(__name__)
     app.config["TOKEN"] = token or secrets.token_urlsafe(24)
     app.config["JSON_AS_ASCII"] = False
+    app.config["ACCOUNT_DB"] = Path(app.instance_path) / "cuentas.sqlite3"
+    app.config["ACCOUNT_COOKIE_SECURE"] = False
+    app.config["ACCOUNT_COOKIE_SAMESITE"] = "Lax"
+    app.register_blueprint(cuenta_bp)
     # Pistas vistas por (perfil, lección, paso): se reinician al abrir el ejercicio o la lección.
     pistas_vistas = {}
     INDICES_POR_LECCION = {}
