@@ -59,6 +59,13 @@ class TestPythonV1(unittest.TestCase):
         salida, error, _ = _correr(codigo)
         self.assertEqual(error, "", error)
         self.assertEqual(salida.strip(), "False")
+        from tortuscript import contenido
+        cargado = contenido.cargar_curso("python-real")
+        py_datos = next(l for sec in cargado["secciones"] for l in sec["lecciones"] if l["id"] == "py-datos")
+        self.assertEqual(py_datos["pasos"][0]["codigo"], self.lecciones[[l["id"] for l in self.lecciones].index("py-datos")]["pasos"][0]["codigo"])
+        from tortuscript.validacion import validar_curso
+        errores = [h for h in validar_curso(cargado) if h.nivel == "error"]
+        self.assertEqual(errores, [], "\n".join(str(h) for h in errores))
 
     def test_nuevos_retos_tienen_soluciones_completas(self):
         for lesson_id in ("py-datos", "py-listas", "py-problemas"):
