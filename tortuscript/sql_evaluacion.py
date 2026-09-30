@@ -15,16 +15,16 @@ MAX_FILAS = 100
 MAX_CELDAS = 1000
 MAX_OPS = 100_000
 
-_RE_INICIO = re.compile(r"^\\s*(?:--[^\\n]*\\n|/\\*.*?\\*/\\s*)*(SELECT|WITH)\\b", re.I | re.S)
+_RE_INICIO = re.compile(r"^\s*(?:--[^\\n]*\\n|/\\*.*?\\*/\s*)*(SELECT|WITH)\\b", re.I | re.S)
 _BLOQUEADOS = re.compile(
-    r"\\b(?:INSERT|UPDATE|DELETE|REPLACE|UPSERT|DROP|ALTER|CREATE|ATTACH|DETACH|VACUUM|"
+    r"\b(?:INSERT|UPDATE|DELETE|REPLACE|UPSERT|DROP|ALTER|CREATE|ATTACH|DETACH|VACUUM|"
     r"PRAGMA|REINDEX|ANALYZE|SAVEPOINT|RELEASE|ROLLBACK|COMMIT)\\b|"
-    r"load_extension\\s*\\(|readfile\\s*\\(|writefile\\s*\\(",
+    r"load_extension\s*\(|readfile\s*\(|writefile\s*\(",
     re.I,
 )
 
 def _normalizar(codigo):
-    return str(codigo or "").replace("\\r\\n", "\\n").replace("\\r", "\\n").strip()
+    return str(codigo or "").replace("\r\n", "\n").replace("\r", "\n").strip()
 
 def _dataset(datos):
     datos = datos or {}
@@ -107,7 +107,7 @@ def ejecutar(codigo, datos=None):
             return {"ok": False, "mensaje": "La consulta devuelve demasiadas filas.", "columnas": [], "filas": [], "salida": ""}
         columnas = [d[0] for d in cur.description or []]
         con.close()
-        salida = "\\n".join(" | ".join("" if v is None else str(v) for v in fila) for fila in filas)
+        salida = "\n".join(" | ".join("" if v is None else str(v) for v in fila) for fila in filas)
         return {"ok": True, "mensaje": None, "columnas": columnas, "filas": [list(f) for f in filas], "salida": salida}
     except sqlite3.Error as e:
         return {"ok": False, "mensaje": f"Consulta no válida: {e}", "columnas": [], "filas": [], "salida": ""}
