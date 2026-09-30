@@ -141,6 +141,16 @@ def _validar_paso(paso, donde, hallazgos):
     tipo = paso.get("tipo")
     entradas = paso.get("entradas_prueba")
     usadas = set()
+    if paso.get("lenguaje") in {"html", "css", "javascript"}:
+        from .web_evaluacion import validar_codigo
+        reglas = paso.get("web") or {}
+        codigo = paso.get("codigo") or paso.get("solucion") or ""
+        if paso.get("lineas"):
+            codigo = "\n".join(paso["lineas"])
+        ok, mensaje = validar_codigo(codigo, paso["lenguaje"], reglas)
+        if not ok:
+            hallazgos.append(Hallazgo(ERROR, donde, f"el código Web no es válido: {mensaje}"))
+        return set()
     for campo in ("laberinto", "usar"):
         if campo in paso and tipo != "escribir":
             hallazgos.append(Hallazgo(ERROR, donde, f"«{campo}» solo sirve en pasos «escribir»"))
