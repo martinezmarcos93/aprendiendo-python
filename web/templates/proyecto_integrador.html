@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block titulo %}{{ proyecto.titulo }}{% endblock %}
+{% block contenido %}
+<div class="columna-ancha proyecto-integrador">
+  <section class="tarjeta">
+    <div class="fila">
+      <div>
+        <h1>{{ proyecto.icono }} {{ proyecto.titulo }}</h1>
+        <p class="tenue">{{ proyecto.descripcion }}</p>
+      </div>
+      <span class="espacio"></span>
+      {% if proyecto.completado %}<span class="etiqueta">✓ COMPLETADO</span>{% endif %}
+    </div>
+    <p><b>Objetivo:</b> {{ proyecto.objetivo }}</p>
+    <p class="tenue"><b>Bloques:</b> {{ proyecto.bloques|join(" + ")|upper }} · Nivel {{ proyecto.contexto.nivel }}</p>
+  </section>
+
+  <section class="tarjeta">
+    <h2>🧭 Etapas</h2>
+    <div class="integrador-etapas">
+      {% for etapa in proyecto.etapas %}
+      <div class="integrador-etapa {% if etapa.completada %}hecha{% elif loop.index0 == proyecto.etapa_actual %}actual{% else %}bloqueada{% endif %}">
+        <span class="integrador-etapa-num">{{ etapa.numero }}</span>
+        <div>
+          <b>{{ etapa.titulo }}</b>
+          <div class="tenue">{{ etapa.objetivo }}</div>
+        </div>
+        <span class="espacio"></span>
+        {% if etapa.completada %}<span class="verde-t">✓</span>
+        {% elif loop.index0 == proyecto.etapa_actual %}<button class="boton chico verde" type="button" data-validar-etapa="{{ etapa.id }}">Comprobar</button>
+        {% else %}<span class="tenue">🔒</span>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div id="integrador-mensaje" class="resultado" role="status"></div>
+  </section>
+
+  <section class="tarjeta">
+    <div class="fila">
+      <h2>📁 Archivos</h2><span class="espacio"></span>
+      <button class="boton chico" type="button" id="btn-exportar-integrador" {% if not proyecto.exportable %}disabled{% endif %}>⬇ Descargar proyecto</button>
+    </div>
+    <p class="tenue">Escribí vos el código. Guardá cada archivo y comprobá la etapa cuando creas que funciona.</p>
+    <div class="integrador-archivos">
+      {% for nombre, codigo in proyecto.archivos.items() %}
+      <article class="integrador-archivo" data-archivo="{{ nombre }}">
+        <div class="fila"><h3>{{ nombre }}</h3><span class="espacio"></span><button class="boton chico verde" type="button" data-guardar-archivo="{{ nombre }}">💾 Guardar</button></div>
+        <textarea class="campo-codigo" spellcheck="false" data-editor="{{ nombre }}">{{ codigo }}</textarea>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="tarjeta">
+    <h2>💡 Ayudas desbloqueables</h2>
+    <p class="tenue">Las ayudas aparecen según tu progreso. Usarlas no reemplaza construir el proyecto.</p>
+    <div class="ayudas-integrador">
+      {% for ayuda in ayudas %}
+      <article class="ayuda-integrador {% if not ayuda.desbloqueada %}bloqueada{% endif %}">
+        <div class="fila"><b>{{ ayuda.titulo }}</b><span class="espacio"></span>
+        {% if ayuda.desbloqueada %}<button class="boton chico" type="button" data-ayuda="{{ ayuda.id }}">{{ "Ver de nuevo" if ayuda.vista else "Desbloqueada" }}</button>
+        {% else %}<span class="tenue">🔒 Nv.{{ ayuda.min_nivel }}</span>{% endif %}</div>
+        <p class="tenue" data-ayuda-texto="{{ ayuda.id }}" hidden></p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+<script type="application/json" id="datos-proyecto">{{ {"id": proyecto.id, "exportable": proyecto.exportable}|tojson }}</script>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/proyecto_integrador.js') }}"></script>{% endblock %}
