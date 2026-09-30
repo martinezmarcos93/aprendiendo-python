@@ -58,11 +58,11 @@ class TestProyectosIntegradores(unittest.TestCase):
         self.completar("python", "web")
         pid = proyectos_integradores.iniciar(self.p, "ficha-criatura", hoy="2026-09-29")
         estado = proyectos_integradores.estado(self.p, pid)
-        self.assertIn("index.html", estado["archivos"])
+        self.assertIn("templates/index.html", estado["archivos"])
         self.assertFalse(estado["completado"])
-        proyectos_integradores.guardar_archivo(self.p, pid, "index.html", "<h1>Mi criatura</h1>")
+        proyectos_integradores.guardar_archivo(self.p, pid, "templates/index.html", "<h1>Mi criatura</h1>")
         proyectos_integradores.iniciar(self.p, pid)
-        self.assertEqual(self.p["proyectos_integradores"][pid]["archivos"]["index.html"], "<h1>Mi criatura</h1>")
+        self.assertEqual(self.p["proyectos_integradores"][pid]["archivos"]["templates/index.html"], "<h1>Mi criatura</h1>")
 
     def test_etapas_exigen_criterios_y_el_final_habilita_exportacion(self):
         self.completar("python", "web")
@@ -77,7 +77,7 @@ class TestProyectosIntegradores(unittest.TestCase):
         self.assertFalse(estado["exportable"])
 
         archivos = self.p["proyectos_integradores"][pid]["archivos"]
-        archivos["index.html"] += '<button id="accion">Interactuar</button><p id="estado"></p><script src="app.js"></script>'
+        archivos["templates/index.html"] += '<button id="accion">Interactuar</button><p id="estado"></p><script src="app.js"></script>'
         archivos["style.css"] += "main { color: white; }"
         archivos["app.js"] = "document.querySelector('#accion').addEventListener('click', () => { document.querySelector('#estado').textContent = 'ok'; });"
         archivos["app.py"] = "def descripcion(nombre):\n    return nombre\n"
@@ -87,7 +87,7 @@ class TestProyectosIntegradores(unittest.TestCase):
         datos, nombre = proyectos_integradores.exportar(self.p, pid)
         self.assertEqual(nombre, "ficha-criatura.zip")
         with zipfile.ZipFile(io.BytesIO(datos)) as z:
-            self.assertIn("index.html", z.namelist())
+            self.assertIn("templates/index.html", z.namelist())
             self.assertIn("app.py", z.namelist())
 
     def test_ayudas_se_desbloquean_por_nivel(self):
@@ -97,7 +97,7 @@ class TestProyectosIntegradores(unittest.TestCase):
         self.assertTrue(proyectos_integradores.ayudas(self.p, pid)[0]["desbloqueada"])
         self.p["xp_total"] = 100
         self.assertTrue(proyectos_integradores.ayudas(self.p, pid)[0]["desbloqueada"])
-        texto = proyectos_integradores.ver_ayuda(self.p, pid, "estructura-html")
+        texto = proyectos_integradores.ver_ayuda(self.p, pid, "estructura-python")
         self.assertIn("HTML", texto)
 
 
@@ -142,7 +142,7 @@ class TestWebProyectosIntegradores(unittest.TestCase):
         self.assertTrue(r.get_json()["ok"])
         self.assertEqual(self.c.get("/proyectos-integradores/ficha-criatura").status_code, 200)
         self.post("/api/proyectos-integradores/ficha-criatura/archivo", {
-            "nombre": "index.html",
+            "nombre": "templates/index.html",
             "codigo": '<h1>Mi criatura</h1><p id="estado"></p><button id="accion">x</button><script src="app.js"></script>'
         })
         r = self.post("/api/proyectos-integradores/ficha-criatura/etapas/estructura")
