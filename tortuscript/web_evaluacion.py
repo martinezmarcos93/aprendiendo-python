@@ -7,8 +7,8 @@ import re
 
 MAX_CODIGO_WEB = 12000
 BLOQUEADOS = (
-    r"<iframe\\b", r"<object\\b", r"<embed\\b", r"<form\\b",
-    r"javascript\\s*:", r"<script[^>]+src\\s*=", r"@import\\s+url\\s*\\(",
+    r"<iframe\b", r"<object\b", r"<embed\b", r"<form\b",
+    r"javascript\s*:", r"<script[^>]+src\s*=", r"@import\s+url\s*\(",
 )
 
 def _normalizar(codigo):
@@ -32,7 +32,7 @@ def validar_codigo(codigo, lenguaje, reglas=None):
         if "{" not in codigo or "}" not in codigo:
             return False, "El CSS necesita una regla con llaves."
     elif lenguaje == "javascript":
-        if not re.search(r"\\b(function|const|let|var)\\b", codigo):
+        if not re.search(r"\b(function|const|let|var)\b", codigo):
             return False, "Escribí al menos una variable o función de JavaScript."
     requeridos = reglas.get("contiene", [])
     for texto in requeridos:
