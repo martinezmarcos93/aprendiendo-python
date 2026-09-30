@@ -8,7 +8,7 @@ import unittest
 import zipfile
 from pathlib import Path
 
-from tortuscript import progreso, proyectos_integradores
+from tortuscript import persistencia_local, progreso, proyectos_integradores
 
 
 class TestProyectosIntegradores(unittest.TestCase):
@@ -108,20 +108,20 @@ except ImportError:
 class TestWebProyectosIntegradores(unittest.TestCase):
     def setUp(self):
         self._dir = Path(tempfile.mkdtemp())
-        self._orig = (progreso.DIRECTORIO, progreso.PERFIL_ACTUAL)
-        progreso.DIRECTORIO = self._dir
-        progreso.PERFIL_ACTUAL = "default"
+        self._orig = (persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL)
+        persistencia_local.DIRECTORIO = self._dir
+        persistencia_local.PERFIL_ACTUAL = "default"
         from web.app import create_app
         self.c = create_app(token="t").test_client()
         self.h = {"X-Tortu-Token": "t"}
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         p["config"]["onboarding"] = True
         for i in ("py-print", "web-html-estructura"):
             p["lecciones"][i] = {"pasos": {}, "completada": True, "perfecta": True}
-        progreso.guardar_progreso(p)
+        persistencia_local.guardar_progreso(p)
 
     def tearDown(self):
-        progreso.DIRECTORIO, progreso.PERFIL_ACTUAL = self._orig
+        persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
         shutil.rmtree(self._dir)
 
     def post(self, ruta, datos=None):
