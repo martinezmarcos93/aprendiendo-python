@@ -72,56 +72,6 @@ def _migrar(data):
     return data
 
 
-def cargar_progreso(perfil=None):
-    perfil = perfil or PERFIL_ACTUAL
-    archivo = get_archivo_progreso(perfil)
-    data = None
-    if archivo.exists():
-        try:
-            data = _leer(archivo)
-        except (OSError, ValueError) as e:
-            marca = datetime.now().strftime("%Y%m%d-%H%M%S")
-            apartado = archivo.with_name(f"{archivo.name}.corrupto-{marca}")
-            logger.error("Progreso dañado en %s: %s — se aparta como %s", archivo, e, apartado.name)
-            try:
-                os.replace(archivo, apartado)
-            except OSError as e2:
-                logger.error("No se pudo apartar el progreso dañado: %s", e2, exc_info=True)
-            respaldo = archivo.with_name(archivo.name + ".bak")
-            if respaldo.exists():
-                try:
-                    data = _leer(respaldo)
-                    logger.warning("Progreso recuperado desde %s", respaldo.name)
-                except (OSError, ValueError) as e3:
-                    logger.error("El respaldo también está dañado: %s", e3)
-    data = _migrar(data) if data is not None else copy.deepcopy(PROGRESO_INICIAL)
-    data["_perfil"] = perfil
-    return data
-
-
-def guardar_progreso(progreso):
-    """Guarda de forma atómica. Devuelve True si pudo guardar."""
-    perfil = progreso.get("_perfil") or PERFIL_ACTUAL
-    archivo = get_archivo_progreso(perfil)
-    datos = {k: v for k, v in progreso.items() if not k.startswith("_")}
-    tmp = None
-    try:
-        archivo.parent.mkdir(parents=True, exist_ok=True)
-        fd, tmp = tempfile.mkstemp(prefix=".progreso_", suffix=".tmp", dir=str(archivo.parent))
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            json.dump(datos, f, ensure_ascii=False, indent=2)
-            f.flush()
-            os.fsync(f.fileno())
-        if archivo.exists():
-            shutil.copy2(archivo, archivo.with_name(archivo.name + ".bak"))
-        os.replace(tmp, archivo)
-        return True
-    except OSError as e:
-        logger.error("No se pudo guardar el progreso en %s: %s", archivo, e, exc_info=True)
-        if tmp and os.path.exists(tmp):
-            os.remove(tmp)
-        return False
-
 
 # ─────────────────────────────────────────
 # CONFIGURACIÓN, XP Y META DIARIA
