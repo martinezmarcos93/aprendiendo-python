@@ -26,7 +26,7 @@ from tortuscript import contenido, evaluacion, leccion as motor, liga, logros, p
 from tortuscript import web_evaluacion, sql_evaluacion  # noqa: E402
 from tortuscript import practica as espaciado  # noqa: E402
 from tortuscript import proyectos as mis_proyectos  # noqa: E402
-from tortuscript import proyectos_integradores  # noqa: E402
+from tortuscript import proyectos_integradores, catalogo_producto  # noqa: E402
 from tortuscript import diagnostico, intereses, respaldo  # noqa: E402
 from tortuscript.juego_ast import arbol_del_juego  # noqa: E402
 from tortuscript.executor import CodigoNoPermitido  # noqa: E402
@@ -1068,6 +1068,11 @@ def create_app(token=None):
             return jsonify(ok=False, mensaje=str(e)), 400
         progreso.guardar_progreso(p)
         return jsonify(ok=True)
+
+    @app.get("/api/catalogo-producto")
+    def api_catalogo_producto():
+        """Catálogo curricular, competencias y acceso para la UI de producto V1."""
+        return jsonify(catalogo_producto.progreso_para_mostrar(progreso.cargar_progreso()))
 
     @app.get("/api/estado")
     def api_estado():
