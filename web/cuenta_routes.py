@@ -158,9 +158,11 @@ def seleccionar_perfil():
     _, auth, row = resultado
     if not _require_csrf(auth, raw):
         return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
-    # La persistencia del perfil activo requiere el siguiente paso de migración del esquema de sesiones.
-    # No se acepta todavía un cambio silencioso mediante cookie/client storage.
     profile_id = (request.get_json(silent=True) or {}).get("perfil_id")
     if not profile_id:
         return jsonify(ok=False, mensaje="Falta perfil_id."), 400
-    return jsonify(ok=False, mensaje="La selección persistente de perfil se habilitará con la migración de sesiones."), 501
+    try:
+        auth.select_profile(raw, profile_id)
+    except AuthError as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 403
+    return jsonify(ok=True, perfil_activo=profile_id)
