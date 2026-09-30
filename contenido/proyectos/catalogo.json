@@ -1,0 +1,244 @@
+{
+  "version": 1,
+  "descripcion": "Catálogo V1 de proyectos integradores adaptativos. Los proyectos son datos curriculares independientes del motor.",
+  "proyectos": [
+    {
+      "id": "ficha-criatura",
+      "titulo": "Ficha interactiva de una criatura",
+      "icono": "🐉",
+      "descripcion": "Construí una pequeña aplicación que muestra una criatura y responde a una acción del usuario.",
+      "bloques": [
+        "web",
+        "python"
+      ],
+      "franjas_edad": [
+        "constructores",
+        "creadores",
+        "desarrolladores"
+      ],
+      "nivel": "integrador",
+      "dificultad": "media",
+      "objetivo": "La aplicación debe mostrar una criatura y cambiar su estado cuando la persona interactúa con ella.",
+      "archivos_iniciales": {
+        "index.html": "<!doctype html>\\n<html lang=\"es\">\\n<head><meta charset=\"utf-8\"><title>Mi criatura</title><link rel=\"stylesheet\" href=\"style.css\"></head>\\n<body>\\n  <main>\\n    <h1 id=\"nombre\">Mi criatura</h1>\\n    <p id=\"estado\">Esperando una acción...</p>\\n    <button id=\"accion\">Interactuar</button>\\n  </main>\\n  <script src=\"app.js\"></script>\\n</body>\\n</html>\\n",
+        "style.css": "body { font-family: sans-serif; }\\nmain { max-width: 32rem; margin: 3rem auto; }\\n",
+        "app.js": "const boton = document.querySelector('#accion');\\nconst estado = document.querySelector('#estado');\\n\\nboton.addEventListener('click', () => {\\n  estado.textContent = 'La criatura respondió.';\\n});\\n",
+        "app.py": "def descripcion(nombre):\\n    return f'Criatura: {nombre}'\\n\\nprint(descripcion('Tortu'))\\n"
+      },
+      "etapas": [
+        {
+          "id": "estructura",
+          "titulo": "1. La estructura",
+          "objetivo": "La página tiene título, estado y botón.",
+          "criterios": [
+            {
+              "archivo": "index.html",
+              "contiene": [
+                "<h1",
+                "id=\"estado\"",
+                "<button"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "estilo",
+          "titulo": "2. La apariencia",
+          "objetivo": "La interfaz tiene una presentación propia.",
+          "criterios": [
+            {
+              "archivo": "style.css",
+              "min_caracteres": 40
+            }
+          ]
+        },
+        {
+          "id": "interaccion",
+          "titulo": "3. El comportamiento",
+          "objetivo": "El botón cambia el estado mediante un evento JavaScript.",
+          "criterios": [
+            {
+              "archivo": "app.js",
+              "contiene": [
+                "addEventListener",
+                "textContent"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "python",
+          "titulo": "4. La lógica",
+          "objetivo": "Python contiene una función que produce un dato para la aplicación.",
+          "criterios": [
+            {
+              "archivo": "app.py",
+              "contiene": [
+                "def ",
+                "return"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "funciona",
+          "titulo": "5. Comprobación funcional",
+          "objetivo": "Todos los archivos necesarios existen y los criterios anteriores están completos.",
+          "criterios": [
+            {
+              "archivo": "index.html",
+              "contiene": [
+                "<script"
+              ]
+            },
+            {
+              "archivo": "app.js",
+              "contiene": [
+                "addEventListener"
+              ]
+            },
+            {
+              "archivo": "app.py",
+              "contiene": [
+                "def ",
+                "return"
+              ]
+            }
+          ]
+        }
+      ],
+      "ayudas": [
+        {
+          "id": "estructura-html",
+          "titulo": "Pista sobre HTML",
+          "min_nivel": 1,
+          "texto": "HTML organiza el contenido. Primero asegurate de tener una estructura y después agregá los elementos que necesita tu interfaz."
+        },
+        {
+          "id": "evento-js",
+          "titulo": "Pista sobre eventos",
+          "min_nivel": 2,
+          "texto": "Un evento conecta una acción de la persona con una función. Buscá addEventListener y fijate qué código ejecuta cuando se hace clic."
+        },
+        {
+          "id": "funcion-python",
+          "titulo": "Pista sobre funciones",
+          "min_nivel": 3,
+          "texto": "Una función agrupa instrucciones que podés reutilizar. Se define con def y puede devolver un resultado con return."
+        }
+      ]
+    },
+    {
+      "id": "inventario-fantasia",
+      "titulo": "Inventario de aventura",
+      "icono": "🎒",
+      "descripcion": "Construí un pequeño inventario donde se puedan consultar y modificar objetos de una aventura.",
+      "bloques": [
+        "python",
+        "sql"
+      ],
+      "franjas_edad": [
+        "creadores",
+        "desarrolladores"
+      ],
+      "nivel": "integrador",
+      "dificultad": "alta",
+      "objetivo": "La aplicación debe representar objetos, consultar datos y permitir cambios controlados en el inventario.",
+      "archivos_iniciales": {
+        "app.py": "import sqlite3\\n\\nDB = sqlite3.connect(':memory:')\\n\\n# Completá la aplicación.\\n",
+        "README.md": "# Inventario de aventura\\n\\nCompletá el proyecto y comprobá que las operaciones del inventario funcionan.\\n"
+      },
+      "etapas": [
+        {
+          "id": "consulta",
+          "titulo": "1. Consultar objetos",
+          "objetivo": "El programa realiza una consulta SELECT.",
+          "criterios": [
+            {
+              "archivo": "app.py",
+              "contiene": [
+                "SELECT"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "agregar",
+          "titulo": "2. Agregar objetos",
+          "objetivo": "El programa puede insertar un objeto de forma controlada.",
+          "criterios": [
+            {
+              "archivo": "app.py",
+              "contiene": [
+                "INSERT"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "modificar",
+          "titulo": "3. Modificar objetos",
+          "objetivo": "El programa puede actualizar un objeto.",
+          "criterios": [
+            {
+              "archivo": "app.py",
+              "contiene": [
+                "UPDATE"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "eliminar",
+          "titulo": "4. Retirar objetos",
+          "objetivo": "El programa puede eliminar un objeto.",
+          "criterios": [
+            {
+              "archivo": "app.py",
+              "contiene": [
+                "DELETE"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "funciona",
+          "titulo": "5. Comprobación funcional",
+          "objetivo": "Las cuatro operaciones están presentes y la conexión SQLite está declarada.",
+          "criterios": [
+            {
+              "archivo": "app.py",
+              "contiene": [
+                "sqlite3",
+                "SELECT",
+                "INSERT",
+                "UPDATE",
+                "DELETE"
+              ]
+            }
+          ]
+        }
+      ],
+      "ayudas": [
+        {
+          "id": "select",
+          "titulo": "Pista sobre SELECT",
+          "min_nivel": 1,
+          "texto": "SELECT sirve para consultar filas. Empezá pensando qué columnas y qué tabla necesitás leer."
+        },
+        {
+          "id": "escritura",
+          "titulo": "Pista sobre escritura",
+          "min_nivel": 2,
+          "texto": "INSERT agrega, UPDATE modifica y DELETE elimina. En un proyecto real conviene controlar siempre los datos que llegan a estas operaciones."
+        },
+        {
+          "id": "sqlite",
+          "titulo": "Pista sobre SQLite",
+          "min_nivel": 3,
+          "texto": "sqlite3 permite abrir una base SQLite. En este proyecto la base inicial es local para que puedas experimentar sin una cuenta ni un servidor externo."
+        }
+      ]
+    }
+  ]
+}
