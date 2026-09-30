@@ -104,7 +104,7 @@ def me():
         autenticado=True,
         cuenta={"id": cuenta.id, "email": cuenta.email},
         perfiles=[{"id": p.id, "nombre": p.display_name} for p in perfiles],
-        perfil_activo=row["active_profile_id"],
+        perfil_activo=row["active_profile_id"] if "active_profile_id" in row.keys() else None,
     )
 
 
