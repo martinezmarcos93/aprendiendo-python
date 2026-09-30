@@ -46,7 +46,7 @@ class TestCursosReales(unittest.TestCase):
             "nivel0-integracion", "nivel0-json", "nivel0-git", "nivel0-github",
         }
         self.assertEqual(set(ids), esperadas)
-        self.assertEqual(len(ids), 13)
+        self.assertEqual(len(ids), 16)
         for _, lec in contenido.lecciones(curso):
             self.assertGreaterEqual(len(lec["pasos"]), 3)
             self.assertEqual(lec["pasos"][0]["tipo"], "explicacion")
