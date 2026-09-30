@@ -222,6 +222,48 @@
           ],
           "nivel": "introduccion",
           "dificultad": "media"
+        },
+        {
+          "id": "nivel0-json",
+          "titulo": "JSON: datos con estructura",
+          "competencias": [
+            "comprender_json"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "herramientas",
+          "dificultad": "media"
+        },
+        {
+          "id": "nivel0-git",
+          "titulo": "Git: guardar la historia del código",
+          "competencias": [
+            "comprender_git"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "herramientas",
+          "dificultad": "media"
+        },
+        {
+          "id": "nivel0-github",
+          "titulo": "GitHub: compartir repositorios",
+          "competencias": [
+            "comprender_github"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
+          "nivel": "herramientas",
+          "dificultad": "media"
         }
       ]
     },
@@ -347,41 +389,87 @@
         {
           "id": "web-html-estructura",
           "titulo": "HTML: la estructura",
-          "competencias": ["leer_html"],
-          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "competencias": [
+            "leer_html"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "fundamentos",
           "dificultad": "media",
           "lenguaje": "html",
-          "tipo_actividad": ["explicar", "reconocer", "predecir", "construir", "depurar"]
+          "tipo_actividad": [
+            "explicar",
+            "reconocer",
+            "predecir",
+            "construir",
+            "depurar"
+          ]
         },
         {
           "id": "web-css-apariencia",
           "titulo": "CSS: la apariencia",
-          "competencias": ["modificar_css"],
-          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "competencias": [
+            "modificar_css"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "fundamentos",
           "dificultad": "media",
           "lenguaje": "css",
-          "tipo_actividad": ["explicar", "reconocer", "predecir", "construir", "depurar"]
+          "tipo_actividad": [
+            "explicar",
+            "reconocer",
+            "predecir",
+            "construir",
+            "depurar"
+          ]
         },
         {
           "id": "web-js-comportamiento",
           "titulo": "JavaScript: comportamiento",
-          "competencias": ["responder_a_eventos_js"],
-          "franja_edad": ["creadores", "desarrolladores"],
+          "competencias": [
+            "responder_a_eventos_js"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "fundamentos",
           "dificultad": "media",
           "lenguaje": "javascript",
-          "tipo_actividad": ["explicar", "reconocer", "predecir", "construir", "depurar"]
+          "tipo_actividad": [
+            "explicar",
+            "reconocer",
+            "predecir",
+            "construir",
+            "depurar"
+          ]
         },
         {
           "id": "web-mini-productos",
           "titulo": "Mini productos",
-          "competencias": ["leer_html", "modificar_css", "responder_a_eventos_js"],
-          "franja_edad": ["creadores", "desarrolladores"],
+          "competencias": [
+            "leer_html",
+            "modificar_css",
+            "responder_a_eventos_js"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "aplicacion",
           "dificultad": "alta",
-          "tipo_actividad": ["integrar", "depurar", "construir"]
+          "tipo_actividad": [
+            "integrar",
+            "depurar",
+            "construir"
+          ]
         }
       ]
     },
@@ -393,8 +481,14 @@
         {
           "id": "sql-tablas",
           "titulo": "Tablas, filas y columnas",
-          "competencias": ["comprender_tablas_sql"],
-          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "competencias": [
+            "comprender_tablas_sql"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "fundamentos",
           "dificultad": "media",
           "lenguaje": "sql"
@@ -402,8 +496,14 @@
         {
           "id": "sql-select",
           "titulo": "SELECT: elegir datos",
-          "competencias": ["consultar_datos_sql"],
-          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "competencias": [
+            "consultar_datos_sql"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "fundamentos",
           "dificultad": "media",
           "lenguaje": "sql"
@@ -411,8 +511,14 @@
         {
           "id": "sql-where",
           "titulo": "WHERE: filtrar datos",
-          "competencias": ["filtrar_datos_sql"],
-          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "competencias": [
+            "filtrar_datos_sql"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "fundamentos",
           "dificultad": "media",
           "lenguaje": "sql"
@@ -420,8 +526,14 @@
         {
           "id": "sql-order",
           "titulo": "ORDER BY y LIMIT",
-          "competencias": ["ordenar_datos_sql"],
-          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "competencias": [
+            "ordenar_datos_sql"
+          ],
+          "franja_edad": [
+            "constructores",
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "fundamentos",
           "dificultad": "media",
           "lenguaje": "sql"
@@ -429,8 +541,13 @@
         {
           "id": "sql-agregaciones",
           "titulo": "Contar y resumir datos",
-          "competencias": ["resumir_datos_sql"],
-          "franja_edad": ["creadores", "desarrolladores"],
+          "competencias": [
+            "resumir_datos_sql"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "fundamentos",
           "dificultad": "media",
           "lenguaje": "sql"
@@ -438,8 +555,13 @@
         {
           "id": "sql-group",
           "titulo": "GROUP BY: resumir por grupos",
-          "competencias": ["agrupar_datos_sql"],
-          "franja_edad": ["creadores", "desarrolladores"],
+          "competencias": [
+            "agrupar_datos_sql"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "fundamentos",
           "dificultad": "alta",
           "lenguaje": "sql"
@@ -447,8 +569,13 @@
         {
           "id": "sql-join",
           "titulo": "JOIN: relacionar tablas",
-          "competencias": ["relacionar_tablas"],
-          "franja_edad": ["creadores", "desarrolladores"],
+          "competencias": [
+            "relacionar_tablas"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "fundamentos",
           "dificultad": "alta",
           "lenguaje": "sql"
@@ -456,8 +583,13 @@
         {
           "id": "sql-seguridad",
           "titulo": "Seguridad y consultas responsables",
-          "competencias": ["practicar_seguridad_sql"],
-          "franja_edad": ["creadores", "desarrolladores"],
+          "competencias": [
+            "practicar_seguridad_sql"
+          ],
+          "franja_edad": [
+            "creadores",
+            "desarrolladores"
+          ],
           "nivel": "aplicacion",
           "dificultad": "alta",
           "lenguaje": "sql"
@@ -541,7 +673,10 @@
     "reconocer_riesgos_digitales",
     "explicar_flujo_aplicacion",
     "comprender_tipos_datos",
-    "resolver_problemas"
+    "resolver_problemas",
+    "comprender_json",
+    "comprender_git",
+    "comprender_github"
   ],
   "reglas_modelo": [
     "La edad, el nivel y la dificultad son dimensiones independientes.",
