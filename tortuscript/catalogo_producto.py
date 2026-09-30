@@ -122,21 +122,40 @@ def _evidencia_proyecto(progreso, unidad_id):
     }
 
 
-def _cumple_prerrequisitos(unidad, progreso, indice):
-    for requisito in unidad.get("prerrequisitos") or []:
+def _itinerario_completo(itinerario_id, progreso, indice):
+    unidades = [u for u in indice.values() if u["itinerario"] == itinerario_id]
+    return bool(unidades) and all(
+        estado_unidad(u["id"], progreso, _indice=indice)["completada"] for u in unidades
+    )
+
+
+def _cumple_prerrequisito(requisito, progreso, indice):
+    if isinstance(requisito, str):
         if requisito in indice:
-            if not estado_unidad(requisito, progreso, _indice=indice)["completada"]:
-                return False
-        elif requisito in {c for u in indice.values() for c in u.get("competencias", [])}:
-            if not any(
+            return estado_unidad(requisito, progreso, _indice=indice)["completada"]
+        competencias_ids = {c for u in indice.values() for c in u.get("competencias", [])}
+        if requisito in competencias_ids:
+            return any(
                 requisito in u.get("competencias", [])
                 and estado_unidad(u["id"], progreso, _indice=indice)["completada"]
                 for u in indice.values()
-            ):
-                return False
-        else:
-            raise ValueError(f"prerrequisito desconocido: {requisito}")
-    return True
+            )
+        raise ValueError(f"prerrequisito desconocido: {requisito}")
+    if isinstance(requisito, dict):
+        if "itinerario" in requisito:
+            return _itinerario_completo(requisito["itinerario"], progreso, indice)
+        if "uno_de_itinerarios" in requisito:
+            opciones = requisito["uno_de_itinerarios"]
+            return any(_itinerario_completo(i, progreso, indice) for i in opciones)
+        raise ValueError("prerrequisito estructurado desconocido")
+    raise ValueError("prerrequisito inválido")
+
+
+def _cumple_prerrequisitos(unidad, progreso, indice):
+    return all(
+        _cumple_prerrequisito(r, progreso, indice)
+        for r in unidad.get("prerrequisitos") or []
+    )
 
 
 def estado_unidad(unidad_id, progreso, _indice=None):
