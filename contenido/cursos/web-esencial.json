@@ -1,0 +1,170 @@
+{
+  "id": "web-esencial",
+  "titulo": "Web esencial: construí y repará páginas",
+  "icono": "🌐",
+  "descripcion": "HTML, CSS y JavaScript para entender, modificar y depurar interfaces pequeñas.",
+  "version": 1,
+  "requiere": {"curso": "python-real"},
+  "secciones": [
+    {
+      "id": "html",
+      "nivel": 2,
+      "titulo": "HTML: la estructura",
+      "lecciones": [
+        {
+          "id": "web-html-estructura",
+          "titulo": "1. HTML: la estructura de una página",
+          "pasos": [
+            {"tipo":"explicacion","texto":"HTML describe la estructura y el contenido de una página. Un elemento suele tener una etiqueta de apertura, contenido y una etiqueta de cierre.","codigo":"<h1>Mi criatura</h1>"},
+            {"tipo":"elegir","pregunta":"¿Qué parte describe mejor a HTML?","opciones":["La estructura y el contenido de una página","El color de una página","Las consultas de una base de datos"],"correcta":0,"pista":"HTML organiza lo que hay dentro de una página."},
+            {"tipo":"completar","consigna":"Completá el elemento que muestra un título.","codigo":"<___>Dragón</___>","fichas":["h1","css","button"],"respuesta":["h1","h1"],"pista":"h1 representa un título principal."},
+            {"tipo":"predecir","pregunta":"¿Qué texto aparece como título?","codigo":"<h1>Dragón</h1>","opciones":["Dragón","h1","Nada"],"correcta":0,"pista":"El navegador interpreta la etiqueta y muestra su contenido."},
+            {"tipo":"escribir","consigna":"Creá un título HTML que diga «El Bastión».","solucion":"<h1>El Bastión</h1>","lenguaje":"html","web":{"contiene":["<h1>","El Bastión","</h1>"]},"palabras_pista":["h1","El Bastión"]}
+          ]
+        },
+        {
+          "id":"web-html-contenido",
+          "titulo":"2. HTML: contenido y atributos",
+          "pasos":[
+            {"tipo":"explicacion","texto":"Los elementos pueden tener atributos. Un enlace usa href para indicar a dónde apunta.","codigo":"<a href="#mapa">Ver mapa</a>"},
+            {"tipo":"elegir","pregunta":"¿Para qué sirve href en un enlace?","opciones":["Indica su destino","Cambia el color","Ejecuta Python"],"correcta":0,"pista":"href guarda la dirección o destino del enlace."},
+            {"tipo":"completar","consigna":"Completá el atributo del enlace.","codigo":"<a ___="#mapa">Mapa</a>","fichas":["href","color","src"],"respuesta":["href"],"pista":"El atributo de destino de un enlace se llama href."},
+            {"tipo":"predecir","pregunta":"¿Qué palabra verá la persona?","codigo":"<a href="#mapa">Mapa</a>","opciones":["Mapa","#mapa","href"],"correcta":0,"pista":"El atributo contiene información para el navegador; el texto visible es Mapa."},
+            {"tipo":"escribir","consigna":"Creá un enlace que diga «Mapa» y apunte a #mapa.","solucion":"<a href="#mapa">Mapa</a>","lenguaje":"html","web":{"contiene":["<a","href="#mapa"","Mapa"]},"palabras_pista":["a","href"]}
+          ]
+        },
+        {
+          "id":"web-html-reparar",
+          "titulo":"3. Repará una página HTML",
+          "pasos":[
+            {"tipo":"explicacion","texto":"Depurar también es leer. Cuando una página está rota, buscá qué etiqueta o atributo no coincide con lo que se quiere mostrar."},
+            {"tipo":"elegir","pregunta":"¿Qué ayuda primero a reparar HTML?","opciones":["Leer la estructura y buscar etiquetas mal cerradas","Cambiar todo el código","Borrar los textos"],"correcta":0,"pista":"Primero localizá la parte que no coincide."},
+            {"tipo":"completar","consigna":"Cerrá correctamente el título.","codigo":"<h1>Bestiario</___>","fichas":["h1","p","a"],"respuesta":["h1"],"pista":"La etiqueta de cierre debe corresponder con la de apertura."},
+            {"tipo":"ordenar","consigna":"Ordená la estructura mínima de una página.","lineas":["<h1>Bestiario</h1>","<body>","</body>"],"pista":"El contenido va dentro de body."},
+            {"tipo":"escribir","consigna":"Escribí un título HTML para una ficha de criatura que diga «Gólem».","solucion":"<h1>Gólem</h1>","lenguaje":"html","web":{"contiene":["<h1>","Gólem"]},"palabras_pista":["h1","Gólem"]}
+          ]
+        }
+      ]
+    },
+    {
+      "id":"web-css",
+      "nivel":2,
+      "titulo":"CSS: la apariencia",
+      "lecciones":[
+        {
+          "id":"web-css-selectores",
+          "titulo":"4. CSS: seleccionar y cambiar",
+          "pasos":[
+            {"tipo":"explicacion","texto":"CSS cambia la apariencia de elementos HTML. Un selector indica qué elemento queremos modificar.","codigo":"h1 { font-size: 32px; }"},
+            {"tipo":"elegir","pregunta":"¿Qué hace CSS?","opciones":["Define la apariencia","Guarda datos","Reemplaza HTML"],"correcta":0,"pista":"HTML estructura; CSS da apariencia."},
+            {"tipo":"completar","consigna":"Completá la propiedad que cambia el tamaño del texto.","codigo":"h1 { ___: 32px; }","fichas":["font-size","href","onclick"],"respuesta":["font-size"],"pista":"font-size controla el tamaño de la letra."},
+            {"tipo":"predecir","pregunta":"¿Qué selector modifica los títulos h1?","codigo":"h1 { color: red; }","opciones":["h1","color","red"],"correcta":0,"pista":"El selector aparece antes de las llaves."},
+            {"tipo":"escribir","consigna":"Hacé que los títulos h1 tengan 32px.","solucion":"h1 { font-size: 32px; }","lenguaje":"css","web":{"contiene":["h1","font-size","32px"]},"palabras_pista":["selector","font-size"]}
+          ]
+        },
+        {
+          "id":"web-css-clases",
+          "titulo":"5. CSS: clases y espacio",
+          "pasos":[
+            {"tipo":"explicacion","texto":"Una clase permite aplicar el mismo estilo a varios elementos. En CSS una clase se escribe con un punto delante.","codigo":".criatura { margin: 12px; }"},
+            {"tipo":"elegir","pregunta":"¿Cómo se selecciona la clase criatura en CSS?","opciones":[".criatura","criatura","#criatura"],"correcta":0,"pista":"Las clases empiezan con punto."},
+            {"tipo":"completar","consigna":"Completá el selector de clase.","codigo":"___.criatura { margin: 12px; }","fichas":[".","#","@"],"respuesta":["."],"pista":"Una clase se selecciona con punto."},
+            {"tipo":"ordenar","consigna":"Ordená la regla CSS.","lineas":[".criatura {","margin: 12px;","}"],"pista":"La propiedad debe quedar dentro de las llaves."},
+            {"tipo":"escribir","consigna":"Creá una clase .criatura con 12px de margen.","solucion":".criatura { margin: 12px; }","lenguaje":"css","web":{"contiene":[".criatura","margin","12px"]},"palabras_pista":[".criatura","margin"]}
+          ]
+        },
+        {
+          "id":"web-css-reparar",
+          "titulo":"6. Repará el estilo",
+          "pasos":[
+            {"tipo":"explicacion","texto":"Un error CSS puede ser pequeño: una propiedad mal escrita, una llave faltante o un selector equivocado."},
+            {"tipo":"elegir","pregunta":"¿Qué conviene revisar primero ante un estilo que no aparece?","opciones":["Selector, llaves y propiedad","La base de datos","El nombre del navegador"],"correcta":0,"pista":"CSS depende de una regla bien formada y de que el selector coincida."},
+            {"tipo":"completar","consigna":"Repará la propiedad del color.","codigo":"h1 { ___: red; }","fichas":["color","href","src"],"respuesta":["color"],"pista":"color es una propiedad de CSS."},
+            {"tipo":"predecir","pregunta":"¿Qué propiedad cambia el color?","codigo":".enemigo { color: red; }","opciones":["color","enemigo","red"],"correcta":0,"pista":"color es la propiedad; red es su valor."},
+            {"tipo":"escribir","consigna":"Creá una regla para que .enemigo tenga color rojo.","solucion":".enemigo { color: red; }","lenguaje":"css","web":{"contiene":[".enemigo","color","red"]},"palabras_pista":["color","red"]}
+          ]
+        }
+      ]
+    },
+    {
+      "id":"web-js",
+      "nivel":2,
+      "titulo":"JavaScript: comportamiento",
+      "lecciones":[
+        {
+          "id":"web-js-variables",
+          "titulo":"7. JavaScript: variables",
+          "pasos":[
+            {"tipo":"explicacion","texto":"JavaScript agrega comportamiento. Una variable puede guardar un valor que luego usa el programa.","codigo":"const vida = 100;"},
+            {"tipo":"elegir","pregunta":"¿Qué guarda vida en este ejemplo?","opciones":["100","const","JavaScript"],"correcta":0,"pista":"El valor guardado está después del signo igual."},
+            {"tipo":"completar","consigna":"Completá la declaración.","codigo":"const vida ___ 100;","fichas":["=","es","=="],"respuesta":["="],"pista":"JavaScript usa = para asignar un valor."},
+            {"tipo":"predecir","pregunta":"¿Qué valor tiene vida?","codigo":"const vida = 80;","opciones":["80","vida","0"],"correcta":0,"pista":"La variable recibe 80."},
+            {"tipo":"escribir","consigna":"Creá una variable vida con valor 100.","solucion":"const vida = 100;","lenguaje":"javascript","web":{"contiene":["const","vida","100"]},"palabras_pista":["const","vida"]}
+          ]
+        },
+        {
+          "id":"web-js-eventos",
+          "titulo":"8. JavaScript: eventos",
+          "pasos":[
+            {"tipo":"explicacion","texto":"Un evento conecta una acción con una respuesta. Un botón puede reaccionar cuando alguien hace clic.","codigo":"boton.addEventListener("click", saludar);"},
+            {"tipo":"elegir","pregunta":"¿Qué evento representa un clic?","opciones":["click","load-data","hover-db"],"correcta":0,"pista":"click es el evento del mouse que estamos usando."},
+            {"tipo":"completar","consigna":"Completá el nombre del evento.","codigo":"boton.addEventListener("___", saludar);","fichas":["click","SELECT","href"],"respuesta":["click"],"pista":"El evento ocurre cuando se hace clic."},
+            {"tipo":"predecir","pregunta":"¿Qué evento escucha este código?","codigo":"boton.addEventListener("click", saludar);","opciones":["click","saludar","boton"],"correcta":0,"pista":"El primer argumento de addEventListener es el evento."},
+            {"tipo":"escribir","consigna":"Escribí un listener que escuche el evento click en boton y llame a saludar.","solucion":"boton.addEventListener("click", saludar);","lenguaje":"javascript","web":{"contiene":["addEventListener","click","saludar"]},"palabras_pista":["addEventListener","click"]}
+          ]
+        },
+        {
+          "id":"web-js-dom",
+          "titulo":"9. JavaScript: cambiar la página",
+          "pasos":[
+            {"tipo":"explicacion","texto":"El DOM representa los elementos de la página. JavaScript puede encontrar un elemento y cambiar su contenido.","codigo":"titulo.textContent = "Victoria";"},
+            {"tipo":"elegir","pregunta":"¿Qué propiedad cambia el texto de un elemento?","opciones":["textContent","font-size","href"],"correcta":0,"pista":"textContent representa el texto contenido."},
+            {"tipo":"completar","consigna":"Completá la propiedad que cambia el texto.","codigo":"titulo.___ = "Victoria";","fichas":["textContent","color","click"],"respuesta":["textContent"],"pista":"Usá textContent para cambiar el texto."},
+            {"tipo":"predecir","pregunta":"¿Qué texto quedará en titulo?","codigo":"titulo.textContent = "Victoria";","opciones":["Victoria","titulo","textContent"],"correcta":0,"pista":"El valor asignado es Victoria."},
+            {"tipo":"escribir","consigna":"Cambiá el texto de titulo a «Victoria».","solucion":"titulo.textContent = "Victoria";","lenguaje":"javascript","web":{"contiene":["titulo","textContent","Victoria"]},"palabras_pista":["textContent","Victoria"]}
+          ]
+        }
+      ]
+    },
+    {
+      "id":"web-integracion",
+      "nivel":2,
+      "titulo":"Mini productos",
+      "lecciones":[
+        {
+          "id":"web-mini-producto",
+          "titulo":"10. Ficha de criatura",
+          "pasos":[
+            {"tipo":"explicacion","texto":"Ahora juntamos las piezas: HTML estructura, CSS cambia la apariencia y JavaScript agrega comportamiento."},
+            {"tipo":"elegir","pregunta":"¿Qué combinación describe mejor una interfaz web?","opciones":["HTML estructura, CSS apariencia, JavaScript comportamiento","HTML datos, CSS servidor, JavaScript base de datos","HTML reemplaza todo"],"correcta":0,"pista":"Cada tecnología cumple un papel distinto."},
+            {"tipo":"completar","consigna":"Elegí la tecnología que corresponde.","codigo":"La estructura de una ficha → ___","fichas":["HTML","CSS","JavaScript"],"respuesta":["HTML"],"pista":"La estructura pertenece a HTML."},
+            {"tipo":"ordenar","consigna":"Ordená las tres capas conceptuales.","lineas":["HTML: estructura","CSS: apariencia","JavaScript: comportamiento"],"pista":"Primero se estructura, después se presenta y finalmente se agrega comportamiento."},
+            {"tipo":"escribir","consigna":"Creá una ficha HTML sencilla con un título «Dragón» y un párrafo «Vida: 100».","solucion":"<section><h2>Dragón</h2><p>Vida: 100</p></section>","lenguaje":"html","web":{"contiene":["<section>","<h2>Dragón</h2>","<p>Vida: 100</p>"]},"palabras_pista":["section","h2","p"]}
+          ]
+        },
+        {
+          "id":"web-mini-interactivo",
+          "titulo":"11. Botón interactivo",
+          "pasos":[
+            {"tipo":"explicacion","texto":"Una interfaz pequeña puede responder a una acción. Un botón y un evento son suficientes para empezar."},
+            {"tipo":"elegir","pregunta":"¿Qué pieza hace que un botón responda al clic?","opciones":["JavaScript","HTML solamente","CSS solamente"],"correcta":0,"pista":"El comportamiento lo agrega JavaScript."},
+            {"tipo":"completar","consigna":"Completá el evento del botón.","codigo":"boton.addEventListener("___", cambiar);","fichas":["click","color","href"],"respuesta":["click"],"pista":"El evento elegido es click."},
+            {"tipo":"predecir","pregunta":"¿Qué función se llama al hacer clic?","codigo":"boton.addEventListener("click", cambiar);","opciones":["cambiar","boton","click"],"correcta":0,"pista":"El segundo argumento es la función que se ejecutará."},
+            {"tipo":"escribir","consigna":"Escribí el listener para que boton llame a cambiar cuando recibe un click.","solucion":"boton.addEventListener("click", cambiar);","lenguaje":"javascript","web":{"contiene":["boton","click","cambiar"]},"palabras_pista":["click","cambiar"]}
+          ]
+        },
+        {
+          "id":"web-reto-final",
+          "titulo":"12. Reto: reparar una interfaz",
+          "pasos":[
+            {"tipo":"explicacion","texto":"El último reto mezcla lectura y reparación. No necesitás escribir mucho: necesitás encontrar qué pieza no cumple su función."},
+            {"tipo":"elegir","pregunta":"Si un botón se ve bien pero no responde, ¿dónde mirarías primero?","opciones":["JavaScript y su evento","El color de fondo","El texto del título"],"correcta":0,"pista":"Si la apariencia está bien pero no hay respuesta, revisá el comportamiento."},
+            {"tipo":"completar","consigna":"Completá la propiedad que cambia el texto.","codigo":"mensaje.textContent = "___";","fichas":["Listo","color","click"],"respuesta":["Listo"],"pista":"El ejercicio pide mostrar la palabra Listo."},
+            {"tipo":"ordenar","consigna":"Ordená una interacción mínima.","lineas":["const mensaje = document.querySelector("#mensaje");","mensaje.textContent = "Listo";"],"pista":"Primero obtenemos el elemento; después cambiamos su texto."},
+            {"tipo":"escribir","consigna":"Escribí código JavaScript que cambie el texto de mensaje a «Listo».","solucion":"mensaje.textContent = "Listo";","lenguaje":"javascript","web":{"contiene":["mensaje","textContent","Listo"]},"palabras_pista":["textContent","Listo"]}
+          ]
+        }
+      ]
+    }
+  ]
+}
