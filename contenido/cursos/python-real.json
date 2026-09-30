@@ -21,13 +21,15 @@
               "tipo": "explicacion",
               "texto": "Python es el lenguaje de verdad, y se parece mucho a TortuScript. mostrar se escribe print, y los paréntesis son obligatorios.",
               "tortu": "mostrar \"Hola mundo\"",
-              "codigo": "print(\"Hola mundo\")"
+              "codigo": "print(\"Hola mundo\")",
+              "lenguaje": "python"
             },
             {
               "tipo": "explicacion",
               "texto": "es se escribe = para guardar en una variable. Lo demás queda igual.",
               "tortu": "nombre es \"Ana\"\nmostrar nombre",
-              "codigo": "nombre = \"Ana\"\nprint(nombre)"
+              "codigo": "nombre = \"Ana\"\nprint(nombre)",
+              "lenguaje": "python"
             },
             {
               "tipo": "elegir",
@@ -38,7 +40,8 @@
                 "print \"Hola\""
               ],
               "correcta": 0,
-              "pista": "En Python, lo que se muestra va entre paréntesis después de print."
+              "pista": "En Python, lo que se muestra va entre paréntesis después de print.",
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -49,7 +52,8 @@
                 "edad = 12"
               ],
               "correcta": 0,
-              "pista": "print(edad) muestra lo que guarda edad, no la palabra edad."
+              "pista": "print(edad) muestra lo que guarda edad, no la palabra edad.",
+              "lenguaje": "python"
             },
             {
               "tipo": "completar",
@@ -64,7 +68,8 @@
                 "print"
               ],
               "salida": "Hola",
-              "pista": "En Python, mostrar se escribe en inglés."
+              "pista": "En Python, mostrar se escribe en inglés.",
+              "lenguaje": "python"
             },
             {
               "tipo": "completar",
@@ -79,7 +84,8 @@
                 "="
               ],
               "salida": "Leo",
-              "pista": "En Python, para guardar se usa un solo signo igual."
+              "pista": "En Python, para guardar se usa un solo signo igual.",
+              "lenguaje": "python"
             },
             {
               "tipo": "escribir",
@@ -105,7 +111,8 @@
               "codigo": "nombre = input(\"¿Cómo te llamás? \")\nprint(\"Hola \" + nombre)",
               "entradas_prueba": [
                 "Ana"
-              ]
+              ],
+              "lenguaje": "python"
             },
             {
               "tipo": "elegir",
@@ -116,7 +123,8 @@
                 "Guarda un número"
               ],
               "correcta": 0,
-              "pista": "input es el preguntar de Python."
+              "pista": "input es el preguntar de Python.",
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -131,7 +139,8 @@
               "entradas_prueba": [
                 "Leo"
               ],
-              "pista": "nombre guarda lo que escribió la persona, y el + lo pega después de Hola."
+              "pista": "nombre guarda lo que escribió la persona, y el + lo pega después de Hola.",
+              "lenguaje": "python"
             },
             {
               "tipo": "explicacion",
@@ -140,7 +149,8 @@
               "codigo": "edad = int(input(\"¿Cuántos años tenés? \"))\nprint(edad + 1)",
               "entradas_prueba": [
                 "11"
-              ]
+              ],
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -155,7 +165,8 @@
               "entradas_prueba": [
                 "4"
               ],
-              "pista": "int convierte lo que se escribió en un número, así que se puede sumar."
+              "pista": "int convierte lo que se escribió en un número, así que se puede sumar.",
+              "lenguaje": "python"
             },
             {
               "tipo": "completar",
@@ -173,7 +184,8 @@
               "entradas_prueba": [
                 "rojo"
               ],
-              "pista": "En Python, preguntar se escribe input."
+              "pista": "En Python, preguntar se escribe input.",
+              "lenguaje": "python"
             },
             {
               "tipo": "escribir",
@@ -200,13 +212,15 @@
               "tipo": "explicacion",
               "texto": "si se escribe if y sino se escribe else. Igual que antes, lo de adentro va corrido 4 espacios y las líneas terminan en dos puntos.",
               "tortu": "edad es 12\nsi edad > 10:\n    mostrar \"Grande\"\nsino:\n    mostrar \"Chico\"",
-              "codigo": "edad = 12\nif edad > 10:\n    print(\"Grande\")\nelse:\n    print(\"Chico\")"
+              "codigo": "edad = 12\nif edad > 10:\n    print(\"Grande\")\nelse:\n    print(\"Chico\")",
+              "lenguaje": "python"
             },
             {
               "tipo": "explicacion",
               "texto": "Para una tercera opción, sino si se escribe elif.",
               "tortu": "n es 5\nsi n > 10:\n    mostrar \"Grande\"\nsino si n > 3:\n    mostrar \"Mediano\"\nsino:\n    mostrar \"Chico\"",
-              "codigo": "n = 5\nif n > 10:\n    print(\"Grande\")\nelif n > 3:\n    print(\"Mediano\")\nelse:\n    print(\"Chico\")"
+              "codigo": "n = 5\nif n > 10:\n    print(\"Grande\")\nelif n > 3:\n    print(\"Mediano\")\nelse:\n    print(\"Chico\")",
+              "lenguaje": "python"
             },
             {
               "tipo": "elegir",
@@ -217,7 +231,8 @@
                 "otherwise"
               ],
               "correcta": 0,
-              "pista": "sino en inglés es else."
+              "pista": "sino en inglés es else.",
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -228,7 +243,8 @@
                 "7"
               ],
               "correcta": 0,
-              "pista": "7 dividido 2 sobra 1: no es par, así que se hace lo del else."
+              "pista": "7 dividido 2 sobra 1: no es par, así que se hace lo del else.",
+              "lenguaje": "python"
             },
             {
               "tipo": "completar",
@@ -243,7 +259,8 @@
                 "if"
               ],
               "salida": "Menor",
-              "pista": "En Python, si se escribe if."
+              "pista": "En Python, si se escribe if.",
+              "lenguaje": "python"
             },
             {
               "tipo": "ordenar",
@@ -255,7 +272,8 @@
                 "else:",
                 "    print(\"Menor\")"
               ],
-              "pista": "Primero n. Después if con su parte corrida y else con la suya."
+              "pista": "Primero n. Después if con su parte corrida y else con la suya.",
+              "lenguaje": "python"
             },
             {
               "tipo": "escribir",
@@ -287,19 +305,22 @@
               "tipo": "explicacion",
               "texto": "repetir 3 veces se escribe for _ in range(3). El guion bajo es un nombre que no vamos a usar.",
               "tortu": "repetir 3 veces:\n    mostrar \"Hola\"",
-              "codigo": "for _ in range(3):\n    print(\"Hola\")"
+              "codigo": "for _ in range(3):\n    print(\"Hola\")",
+              "lenguaje": "python"
             },
             {
               "tipo": "explicacion",
               "texto": "para x en lista se escribe for x in lista: recorre la lista de a un elemento. Y mientras se escribe while.",
               "tortu": "para x en [1, 2, 3]:\n    mostrar x",
-              "codigo": "for x in [1, 2, 3]:\n    print(x)"
+              "codigo": "for x in [1, 2, 3]:\n    print(x)",
+              "lenguaje": "python"
             },
             {
               "tipo": "explicacion",
               "texto": "while repite mientras la condición se cumpla, igual que mientras.",
               "tortu": "n es 1\nmientras n <= 3:\n    mostrar n\n    n es n + 1",
-              "codigo": "n = 1\nwhile n <= 3:\n    print(n)\n    n = n + 1"
+              "codigo": "n = 1\nwhile n <= 3:\n    print(n)\n    n = n + 1",
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -310,7 +331,8 @@
                 "JaJa"
               ],
               "correcta": 0,
-              "pista": "range(2) repite dos veces, y cada print va en su propia línea."
+              "pista": "range(2) repite dos veces, y cada print va en su propia línea.",
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -321,7 +343,8 @@
                 "x\nx"
               ],
               "correcta": 0,
-              "pista": "x toma cada número de la lista, en orden, y se muestra uno por línea."
+              "pista": "x toma cada número de la lista, en orden, y se muestra uno por línea.",
+              "lenguaje": "python"
             },
             {
               "tipo": "completar",
@@ -336,7 +359,8 @@
                 "range"
               ],
               "salida": "Hola\nHola\nHola\nHola",
-              "pista": "El repetir de Python es for con range y el número de veces."
+              "pista": "El repetir de Python es for con range y el número de veces.",
+              "lenguaje": "python"
             },
             {
               "tipo": "escribir",
@@ -359,13 +383,15 @@
               "tipo": "explicacion",
               "texto": "La palabra \"funcion\" se escribe def. Se define igual y se llama igual.",
               "tortu": "funcion saludar(nombre):\n    mostrar \"Hola \" + nombre\n\nsaludar(\"Ana\")",
-              "codigo": "def saludar(nombre):\n    print(\"Hola \" + nombre)\n\nsaludar(\"Ana\")"
+              "codigo": "def saludar(nombre):\n    print(\"Hola \" + nombre)\n\nsaludar(\"Ana\")",
+              "lenguaje": "python"
             },
             {
               "tipo": "explicacion",
               "texto": "devolver se escribe return.",
               "tortu": "funcion doble(n):\n    devolver n * 2\n\nmostrar doble(5)",
-              "codigo": "def doble(n):\n    return n * 2\n\nprint(doble(5))"
+              "codigo": "def doble(n):\n    return n * 2\n\nprint(doble(5))",
+              "lenguaje": "python"
             },
             {
               "tipo": "elegir",
@@ -376,7 +402,8 @@
                 "back"
               ],
               "correcta": 0,
-              "pista": "devolver en inglés es return."
+              "pista": "devolver en inglés es return.",
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -387,7 +414,8 @@
                 "34"
               ],
               "correcta": 0,
-              "pista": "triple(4) devuelve 4 * 3."
+              "pista": "triple(4) devuelve 4 * 3.",
+              "lenguaje": "python"
             },
             {
               "tipo": "completar",
@@ -402,7 +430,8 @@
                 "def"
               ],
               "salida": "5",
-              "pista": "En Python, la palabra función se escribe def."
+              "pista": "En Python, la palabra función se escribe def.",
+              "lenguaje": "python"
             },
             {
               "tipo": "escribir",
@@ -429,7 +458,8 @@
               "codigo": "n = int(input(\"Número: \"))\nif n % 2 == 0:\n    print(\"Par\")\nelse:\n    print(\"Impar\")",
               "entradas_prueba": [
                 "7"
-              ]
+              ],
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -440,7 +470,8 @@
                 "3"
               ],
               "correcta": 0,
-              "pista": "Va sumando: 0 + 1, después + 2, después + 3."
+              "pista": "Va sumando: 0 + 1, después + 2, después + 3.",
+              "lenguaje": "python"
             },
             {
               "tipo": "ordenar",
@@ -453,7 +484,8 @@
               "entradas_prueba": [
                 "4"
               ],
-              "pista": "Primero se pide el número, después se calcula el doble y al final se muestra."
+              "pista": "Primero se pide el número, después se calcula el doble y al final se muestra.",
+              "lenguaje": "python"
             },
             {
               "tipo": "escribir",
@@ -473,7 +505,8 @@
             {
               "tipo": "explicacion",
               "texto": "¡Ya escribís Python real! Probá lo que quieras en Experimentar: ahí también corre Python directo.",
-              "codigo": "print(\"¡Hola, Python!\")"
+              "codigo": "print(\"¡Hola, Python!\")",
+              "lenguaje": "python"
             }
           ]
         },
@@ -484,7 +517,8 @@
             {
               "tipo": "explicacion",
               "texto": "En Python, cada dato tiene un tipo de dato. Los números sirven para calcular, los textos para palabras y los booleanos para responder verdadero o falso.",
-              "codigo": "edad = 12\\nnombre = \"Luna\"\\nes_mayor = edad >= 18\\nprint(es_mayor)"
+              "codigo": "edad = 12\\nnombre = \"Luna\"\\nes_mayor = edad >= 18\\nprint(es_mayor)",
+              "lenguaje": "python"
             },
             {
               "tipo": "elegir",
@@ -495,7 +529,8 @@
                 "booleano"
               ],
               "correcta": 0,
-              "pista": "Está entre comillas, así que es texto."
+              "pista": "Está entre comillas, así que es texto.",
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -506,7 +541,8 @@
                 "18"
               ],
               "correcta": 0,
-              "pista": "12 no llega a 18, por eso la comparación es falsa."
+              "pista": "12 no llega a 18, por eso la comparación es falsa.",
+              "lenguaje": "python"
             },
             {
               "tipo": "completar",
@@ -521,7 +557,8 @@
                 "n"
               ],
               "salida": "14",
-              "pista": "El doble se calcula usando el dato que guardaste en n."
+              "pista": "El doble se calcula usando el dato que guardaste en n.",
+              "lenguaje": "python"
             },
             {
               "tipo": "ordenar",
@@ -531,7 +568,8 @@
                 "es_mayor = edad >= 18",
                 "print(es_mayor)"
               ],
-              "pista": "Primero necesitás el dato; después podés calcular y mostrar."
+              "pista": "Primero necesitás el dato; después podés calcular y mostrar.",
+              "lenguaje": "python"
             },
             {
               "tipo": "escribir",
@@ -552,7 +590,8 @@
             {
               "tipo": "explicacion",
               "texto": "Una lista guarda varios datos en un mismo lugar. Las posiciones empiezan en 0: el primer elemento está en la posición 0.",
-              "codigo": "frutas = [\"manzana\", \"pera\", \"banana\"]\\nprint(frutas[0])"
+              "codigo": "frutas = [\"manzana\", \"pera\", \"banana\"]\\nprint(frutas[0])",
+              "lenguaje": "python"
             },
             {
               "tipo": "elegir",
@@ -563,7 +602,8 @@
                 "banana"
               ],
               "correcta": 1,
-              "pista": "La primera posición es 0; la segunda es 1."
+              "pista": "La primera posición es 0; la segunda es 1.",
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -574,7 +614,8 @@
                 "30"
               ],
               "correcta": 2,
-              "pista": "Contá las posiciones desde cero: 0, 1, 2."
+              "pista": "Contá las posiciones desde cero: 0, 1, 2.",
+              "lenguaje": "python"
             },
             {
               "tipo": "completar",
@@ -589,7 +630,8 @@
                 "1"
               ],
               "salida": "orco",
-              "pista": "Segundo significa posición 1 porque la cuenta empieza en cero."
+              "pista": "Segundo significa posición 1 porque la cuenta empieza en cero.",
+              "lenguaje": "python"
             },
             {
               "tipo": "ordenar",
@@ -599,7 +641,8 @@
                 "objeto = objetos[2]",
                 "print(objeto)"
               ],
-              "pista": "Primero existe la lista; después podés acceder a una posición."
+              "pista": "Primero existe la lista; después podés acceder a una posición.",
+              "lenguaje": "python"
             },
             {
               "tipo": "escribir",
@@ -620,7 +663,8 @@
             {
               "tipo": "explicacion",
               "texto": "Programar no es solo conocer instrucciones. También hay que separar un problema en datos, decisiones y pasos. Vamos a combinar variables, condiciones, listas y repetición.",
-              "codigo": "numeros = [3, 8, 5]\\nmayores = 0\\nfor n in numeros:\\n    if n >= 5:\\n        mayores = mayores + 1\\nprint(mayores)"
+              "codigo": "numeros = [3, 8, 5]\\nmayores = 0\\nfor n in numeros:\\n    if n >= 5:\\n        mayores = mayores + 1\\nprint(mayores)",
+              "lenguaje": "python"
             },
             {
               "tipo": "predecir",
@@ -631,7 +675,8 @@
                 "3"
               ],
               "correcta": 1,
-              "pista": "Solo 6 y 9 cumplen la condición."
+              "pista": "Solo 6 y 9 cumplen la condición.",
+              "lenguaje": "python"
             },
             {
               "tipo": "elegir",
@@ -642,7 +687,8 @@
                 "Cuántas líneas tendrá exactamente"
               ],
               "correcta": 0,
-              "pista": "Antes de escribir, necesitás entender la entrada y el objetivo."
+              "pista": "Antes de escribir, necesitás entender la entrada y el objetivo.",
+              "lenguaje": "python"
             },
             {
               "tipo": "completar",
@@ -657,7 +703,8 @@
                 "1"
               ],
               "salida": "2",
-              "pista": "Cada número que cumple la condición agrega un punto."
+              "pista": "Cada número que cumple la condición agrega un punto.",
+              "lenguaje": "python"
             },
             {
               "tipo": "escribir",
@@ -673,7 +720,8 @@
             {
               "tipo": "explicacion",
               "texto": "Este tipo de problema es la base de muchos programas reales: recibir datos, procesarlos con reglas y producir un resultado. A partir de acá, los proyectos pueden combinar estas piezas en programas cada vez más grandes.",
-              "codigo": "datos = [4, 12, 7]\\nresultado = 0\\nfor dato in datos:\\n    if dato >= 10:\\n        resultado = resultado + dato\\nprint(resultado)"
+              "codigo": "datos = [4, 12, 7]\\nresultado = 0\\nfor dato in datos:\\n    if dato >= 10:\\n        resultado = resultado + dato\\nprint(resultado)",
+              "lenguaje": "python"
             }
           ]
         }
