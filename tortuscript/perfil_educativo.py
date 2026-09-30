@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from tortuscript.acceso import AccesoProducto
+from tortuscript.acceso import AccesoError, AccesoProducto
 from tortuscript.auth import AuthRepository
 from tortuscript.cuentas import Account, ChildProfile, CuentaRepository
 from tortuscript.progreso_childprofile import ProgresoChildProfile
@@ -68,7 +68,7 @@ class PerfilEducativoService:
         contexto = self.contexto(raw_session)
         try:
             self.acceso.exigir_acceso(contexto.perfil.id, product)
-        except Exception as exc:
+        except AccesoError as exc:
             raise ContextoEducativoError("El perfil no tiene acceso al producto solicitado.") from exc
         return contexto
 
