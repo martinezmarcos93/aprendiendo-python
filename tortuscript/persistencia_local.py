@@ -23,7 +23,7 @@ PERFIL_ACTUAL = "default"
 
 
 # ─────────────────────────────────────────
-# PERFILES LOCALES LOCALES
+# PERFILES LOCALES
 # ─────────────────────────────────────────
 # ─────────────────────────────────────────
 # PERFILES
@@ -105,6 +105,7 @@ def _leer(archivo):
 
 def _migrar(data):
     return progreso._migrar(data)
+
 
 def cargar_progreso(perfil=None):
     perfil = perfil or PERFIL_ACTUAL
