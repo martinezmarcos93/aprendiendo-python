@@ -37,6 +37,10 @@ class Fase10ProductoTests(unittest.TestCase):
             "bloqueado_por_prerrequisito",
         )
 
+    def test_nivel0_es_gratuito_y_python_sigue_por_definir(self):
+        self.assertEqual(catalogo_producto.estado_acceso("nivel0-programa", self.p), "gratuito")
+        self.assertEqual(catalogo_producto.estado_acceso("python-datos", self.p), "por_definir")
+
     def test_unidad_puede_pasar_de_pendiente_a_completada(self):
         self.assertEqual(catalogo_producto.estado_unidad("nivel0-programa", self.p)["estado"], "pendiente")
         self.p["lecciones"]["nivel0-programa"] = {"completada": True}
