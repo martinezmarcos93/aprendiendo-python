@@ -32,67 +32,6 @@ VERSION_ESQUEMA = 11
 PERFIL_ACTUAL = "default"
 
 
-# ─────────────────────────────────────────
-# PERFILES
-# ─────────────────────────────────────────
-def sanitizar_perfil(nombre):
-    """Minúsculas, solo letras/números/_/- (con tildes y ñ), máximo 30 caracteres."""
-    nombre = (nombre or "").strip().lower().replace(" ", "_")
-    return re.sub(r"[^a-z0-9ñáéíóúü_-]", "", nombre)[:30]
-
-
-def set_perfil(nombre):
-    global PERFIL_ACTUAL
-    limpio = sanitizar_perfil(nombre)
-    if limpio:
-        PERFIL_ACTUAL = limpio
-    return PERFIL_ACTUAL
-
-
-def _archivo_config():
-    return DIRECTORIO / "config_tortuscript.json"
-
-
-def recordar_perfil(nombre):
-    """Guarda cuál fue el último perfil usado, para abrir con ese la próxima vez."""
-    try:
-        _archivo_config().write_text(json.dumps({"ultimo_perfil": nombre}), encoding="utf-8")
-    except OSError as e:
-        logger.error("No se pudo recordar el perfil: %s", e, exc_info=True)
-
-
-def perfil_recordado():
-    try:
-        nombre = json.loads(_archivo_config().read_text(encoding="utf-8")).get("ultimo_perfil")
-    except (OSError, ValueError, AttributeError):
-        return "default"
-    return sanitizar_perfil(nombre) or "default"
-
-
-def get_archivo_progreso(perfil=None):
-    return DIRECTORIO / f"progreso_{perfil or PERFIL_ACTUAL}.json"
-
-
-def obtener_perfiles():
-    perfiles = {p.name[len("progreso_"):-len(".json")] for p in DIRECTORIO.glob("progreso_*.json")}
-    perfiles.add("default")
-    return sorted(perfiles)
-
-
-def leer_otros_perfiles(actual=None):
-    """{nombre que se ve: XP por día} de los demás perfiles de esta PC (solo lectura; sirve a la liga)."""
-    actual = actual or PERFIL_ACTUAL
-    salida = {}
-    for nombre in obtener_perfiles():
-        if nombre == actual:
-            continue
-        try:
-            datos = _leer(get_archivo_progreso(nombre))
-        except (OSError, ValueError):
-            continue                                    # perfil sin archivo o dañado: no participa
-        visible = (datos.get("config") or {}).get("nombre") or nombre
-        salida[visible] = datos.get("xp_por_dia") or {}
-    return salida
 
 
 PROGRESO_INICIAL = {
