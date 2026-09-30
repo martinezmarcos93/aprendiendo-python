@@ -388,7 +388,81 @@
     {
       "id": "sql-fundamentos",
       "profundidad": "intermedia",
-      "disponibilidad_comercial": "por_definir"
+      "disponibilidad_comercial": "por_definir",
+      "unidades": [
+        {
+          "id": "sql-tablas",
+          "titulo": "Tablas, filas y columnas",
+          "competencias": ["comprender_tablas_sql"],
+          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "lenguaje": "sql"
+        },
+        {
+          "id": "sql-select",
+          "titulo": "SELECT: elegir datos",
+          "competencias": ["consultar_datos_sql"],
+          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "lenguaje": "sql"
+        },
+        {
+          "id": "sql-where",
+          "titulo": "WHERE: filtrar datos",
+          "competencias": ["filtrar_datos_sql"],
+          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "lenguaje": "sql"
+        },
+        {
+          "id": "sql-order",
+          "titulo": "ORDER BY y LIMIT",
+          "competencias": ["ordenar_datos_sql"],
+          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "lenguaje": "sql"
+        },
+        {
+          "id": "sql-agregaciones",
+          "titulo": "Contar y resumir datos",
+          "competencias": ["resumir_datos_sql"],
+          "franja_edad": ["creadores", "desarrolladores"],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "lenguaje": "sql"
+        },
+        {
+          "id": "sql-group",
+          "titulo": "GROUP BY: resumir por grupos",
+          "competencias": ["agrupar_datos_sql"],
+          "franja_edad": ["creadores", "desarrolladores"],
+          "nivel": "fundamentos",
+          "dificultad": "alta",
+          "lenguaje": "sql"
+        },
+        {
+          "id": "sql-join",
+          "titulo": "JOIN: relacionar tablas",
+          "competencias": ["relacionar_tablas"],
+          "franja_edad": ["creadores", "desarrolladores"],
+          "nivel": "fundamentos",
+          "dificultad": "alta",
+          "lenguaje": "sql"
+        },
+        {
+          "id": "sql-seguridad",
+          "titulo": "Seguridad y consultas responsables",
+          "competencias": ["practicar_seguridad_sql"],
+          "franja_edad": ["creadores", "desarrolladores"],
+          "nivel": "aplicacion",
+          "dificultad": "alta",
+          "lenguaje": "sql"
+        }
+      ]
     },
     {
       "id": "proyecto-integrador",
