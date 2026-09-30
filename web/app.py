@@ -7,6 +7,7 @@ Seguridad de una app local:
   una página web ajena abierta en el navegador no puede mandarlo (no hay CORS).
 - El código del chico nunca corre en este proceso: va a tortuscript.proceso.
 """
+import base64
 import logging
 import secrets
 import sys
@@ -25,6 +26,7 @@ from tortuscript import contenido, evaluacion, leccion as motor, liga, logros, p
 from tortuscript import web_evaluacion, sql_evaluacion  # noqa: E402
 from tortuscript import practica as espaciado  # noqa: E402
 from tortuscript import proyectos as mis_proyectos  # noqa: E402
+from tortuscript import proyectos_integradores  # noqa: E402
 from tortuscript import diagnostico, intereses, respaldo  # noqa: E402
 from tortuscript.juego_ast import arbol_del_juego  # noqa: E402
 from tortuscript.executor import CodigoNoPermitido  # noqa: E402
@@ -616,6 +618,20 @@ def create_app(token=None):
     def proyectos():
         return render_template("proyectos.html", proyectos=mis_proyectos.listar(progreso.cargar_progreso()),
                                maximo=mis_proyectos.MAX_PROYECTOS)
+    @app.get("/proyectos-integradores")
+    def proyectos_integradores_pagina():
+        return render_template("proyectos_integradores.html",
+                               proyectos=proyectos_integradores.resumen_catalogo(progreso.cargar_progreso()))
+
+    @app.get("/proyectos-integradores/<proyecto_id>")
+    def proyecto_integrador(proyecto_id):
+        p = progreso.cargar_progreso()
+        estado = proyectos_integradores.estado(p, proyecto_id)
+        if estado is None:
+            return redirect(url_for("proyectos_integradores_pagina"))
+        return render_template("proyecto_integrador.html", proyecto=estado,
+                               ayudas=proyectos_integradores.ayudas(p, proyecto_id))
+
 
     # ─────────────── API ───────────────
     @app.post("/api/traducir")
@@ -892,6 +908,59 @@ def create_app(token=None):
     @app.post("/api/proyectos/<proyecto_id>/borrar")
     def api_proyecto_borrar(proyecto_id):
         return _con_proyectos(lambda p: mis_proyectos.borrar(p, proyecto_id))
+    @app.post("/api/proyectos-integradores/<proyecto_id>")
+    def api_proyecto_integrador_iniciar(proyecto_id):
+        p = progreso.cargar_progreso()
+        try:
+            proyectos_integradores.iniciar(p, proyecto_id)
+            progreso.guardar_progreso(p)
+        except proyectos_integradores.ErrorProyectoIntegrador as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        return jsonify(ok=True, url=url_for("proyecto_integrador", proyecto_id=proyecto_id),
+                       estado=proyectos_integradores.estado(p, proyecto_id))
+
+    @app.post("/api/proyectos-integradores/<proyecto_id>/archivo")
+    def api_proyecto_integrador_archivo(proyecto_id):
+        d = request.get_json(silent=True) or {}
+        p = progreso.cargar_progreso()
+        try:
+            proyectos_integradores.guardar_archivo(p, proyecto_id, d.get("nombre"), d.get("codigo"))
+            progreso.guardar_progreso(p)
+        except proyectos_integradores.ErrorProyectoIntegrador as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        return jsonify(ok=True)
+
+    @app.post("/api/proyectos-integradores/<proyecto_id>/etapas/<etapa_id>")
+    def api_proyecto_integrador_etapa(proyecto_id, etapa_id):
+        p = progreso.cargar_progreso()
+        try:
+            resultado = proyectos_integradores.validar_etapa(p, proyecto_id, etapa_id)
+            if not resultado["ok"]:
+                return jsonify(ok=False, mensaje=resultado["mensaje"]), 400
+            progreso.guardar_progreso(p)
+        except proyectos_integradores.ErrorProyectoIntegrador as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        return jsonify(ok=True, completado=resultado["completado"])
+
+    @app.post("/api/proyectos-integradores/<proyecto_id>/ayudas/<ayuda_id>")
+    def api_proyecto_integrador_ayuda(proyecto_id, ayuda_id):
+        p = progreso.cargar_progreso()
+        try:
+            texto = proyectos_integradores.ver_ayuda(p, proyecto_id, ayuda_id)
+            progreso.guardar_progreso(p)
+        except proyectos_integradores.ErrorProyectoIntegrador as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        return jsonify(ok=True, texto=texto)
+
+    @app.post("/api/proyectos-integradores/<proyecto_id>/exportar")
+    def api_proyecto_integrador_exportar(proyecto_id):
+        p = progreso.cargar_progreso()
+        try:
+            datos, nombre = proyectos_integradores.exportar(p, proyecto_id)
+        except proyectos_integradores.ErrorProyectoIntegrador as e:
+            return jsonify(ok=False, mensaje=str(e)), 400
+        return jsonify(ok=True, nombre=nombre, archivo=base64.b64encode(datos).decode("ascii"))
+
 
     @app.post("/api/onboarding")
     def api_onboarding():
