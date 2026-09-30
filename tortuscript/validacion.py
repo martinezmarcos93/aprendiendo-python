@@ -147,6 +147,8 @@ def _validar_paso(paso, donde, hallazgos):
         codigo = paso.get("codigo") or paso.get("solucion") or ""
         if paso.get("lineas"):
             codigo = "\n".join(paso["lineas"])
+        if not codigo.strip():
+            return set()
         ok, mensaje = validar_codigo(codigo, paso["lenguaje"], reglas)
         if not ok:
             hallazgos.append(Hallazgo(ERROR, donde, f"el código Web no es válido: {mensaje}"))
