@@ -253,3 +253,23 @@ def resumen_catalogo(progreso):
         }
         for p in cargar_catalogo()
     ]
+
+
+def exportar(progreso, proyecto_id):
+    """Genera el ZIP del proyecto terminado en memoria. No ejecuta ninguno de sus archivos."""
+    import io
+    import zipfile
+    proyecto = obtener_proyecto(proyecto_id)
+    datos = (progreso.get("proyectos_integradores") or {}).get(proyecto_id)
+    if not proyecto or not datos:
+        raise ErrorProyectoIntegrador("Primero abrí el proyecto.")
+    if not datos.get("completado"):
+        raise ErrorProyectoIntegrador("Terminá todas las etapas antes de descargar el proyecto.")
+    salida = io.BytesIO()
+    with zipfile.ZipFile(salida, "w", compression=zipfile.ZIP_DEFLATED) as z:
+        for nombre, codigo in (datos.get("archivos") or {}).items():
+            z.writestr(nombre, codigo)
+        z.writestr("TORTUSCRIPT_PROYECTO.txt",
+                   "Proyecto creado con TortuScript.\n"
+                   "Abrilo en una carpeta y seguí las instrucciones de README.md si existe.\n")
+    return salida.getvalue(), proyecto["id"] + ".zip"
