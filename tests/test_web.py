@@ -34,6 +34,48 @@ class TestWeb(unittest.TestCase):
     def post(self, ruta, datos=None, **kw):
         return self.c.post(ruta, json=datos or {}, headers=self.h, **kw)
 
+    # ── recorridos curriculares ──
+    def _completar_curso(self, curso_id):
+        from tortuscript import contenido
+        curso = contenido.cargar_curso(curso_id)
+        p = progreso.cargar_progreso()
+        for _, lec in contenido.lecciones(curso):
+            for i in range(len(lec["pasos"])):
+                progreso.registrar_paso_leccion(p, lec["id"], i, 0, True, len(lec["pasos"]))
+        progreso.guardar_progreso(p)
+
+    def test_mapa_muestra_todos_los_recorridos_y_sql_bloqueado(self):
+        html = self.c.get("/mapa").get_data(as_text=True)
+        for texto in ("De TortuScript a Python real", "Web esencial: construí y repará páginas", "SQL: datos y consultas"):
+            self.assertIn(texto, html)
+        self.assertIn("🔒 Se desbloquea cuando", html)
+        self.assertNotIn("Elegí qué aprender primero", html)
+
+    def test_al_terminar_nivel_0_aparece_la_eleccion(self):
+        self._completar_curso("alfabetizacion-digital")
+        html = self.c.get("/elegir-recorrido").get_data(as_text=True)
+        self.assertIn("¿Qué querés aprender primero?", html)
+        self.assertIn("HTML + CSS + JavaScript", html)
+        self.assertIn("Python", html)
+        self.assertIn("SQL", html)
+        self.assertIn("permanece bloqueado", html)
+        mapa = self.c.get("/mapa").get_data(as_text=True)
+        self.assertIn("Elegir qué aprender", mapa)
+
+    def test_elegir_python_guarda_recorrido_y_abre_python(self):
+        self._completar_curso("alfabetizacion-digital")
+        r = self.c.post("/elegir-recorrido", data={"recorrido": "python"})
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(r.headers["Location"].endswith("/leccion/py-print"))
+        self.assertEqual(progreso.cargar_progreso()["recorrido_inicial"], "python")
+
+    def test_sql_se_desbloquea_al_completar_web(self):
+        self._completar_curso("alfabetizacion-digital")
+        self._completar_curso("web-esencial")
+        html = self.c.get("/elegir-recorrido").get_data(as_text=True)
+        self.assertNotIn("Por ahora permanece bloqueado.", html)
+        self.assertIn("El contenido de este recorrido todavía está en preparación.", html)
+
     # ── seguridad ──
     def test_api_sin_token_rechazada(self):
         self.assertEqual(self.c.post("/api/ejecutar", json={"codigo": "mostrar 1"}).status_code, 403)
