@@ -383,8 +383,94 @@
     pintar();
   }
 
+  function escribirWeb(paso) {
+    cont.appendChild(el("h2", "", "🌐 Construí y probá"));
+    cont.appendChild(el("p", "texto-grande", paso.consigna));
+    const zona = el("div", "columna-editor");
+    const area = el("textarea"); area.id = "editor-paso";
+    zona.appendChild(area);
+    const preview = document.createElement("iframe");
+    preview.className = "web-preview";
+    preview.title = "Vista previa aislada";
+    preview.setAttribute("sandbox", "allow-scripts");
+    preview.setAttribute("referrerpolicy", "no-referrer");
+    const duo = el("div", "duo-tortuga");
+    const derecha = el("div", "columna-lienzos");
+    derecha.appendChild(el("div", "rotulo-zona", "Vista previa aislada:"));
+    derecha.appendChild(preview);
+    duo.append(zona, derecha);
+    cont.appendChild(duo);
+
+    editor = CodeMirror.fromTextArea(area, {
+      mode: "text/plain", lineNumbers: true, indentUnit: 2, tabSize: 2,
+      autofocus: true,
+      extraKeys: { "Ctrl-Enter": () => ejecutar(), "Cmd-Enter": () => ejecutar(),
+                   Esc: () => run.focus() },
+    });
+    editor.setSize(null, 220);
+
+    const acciones = el("div", "acciones");
+    const run = el("button", "boton verde", "▶ Probar"); run.type = "button";
+    const pista = el("button", "boton amarillo", "💡 Pista (1/3)"); pista.type = "button";
+    acciones.append(run, pista); zona.appendChild(acciones);
+    zona.appendChild(el("p", "tenue ayuda-teclado", "Con el teclado: Ctrl+Enter prueba el código · Esc sale del editor."));
+    const cajaPista = el("div", "pista-caja"); cont.appendChild(cajaPista);
+    ocultarPie();
+
+    function escaparScript(texto) {
+      return String(texto).replace(/<\\/script/gi, "<\\\\/script");
+    }
+    function documentoPreview(codigo) {
+      const lenguaje = (paso.web && paso.web.lenguaje) || paso.lenguaje || "html";
+      const seguro = escaparScript(codigo);
+      const csp = '<meta http-equiv="Content-Security-Policy" content="default-src \\'none\\'; script-src \\'unsafe-inline\\'; style-src \\'unsafe-inline\\'; img-src data:; connect-src \\'none\\'; object-src \\'none\\'; base-uri \\'none\\'; form-action \\'none\\'">';
+      if (lenguaje === "css") return `<!doctype html><html><head>${csp}<style>${seguro}</style></head><body><h2 class="criatura">Vista de ejemplo</h2><p class="enemigo">Probá tus estilos.</p></body></html>`;
+      if (lenguaje === "javascript") return `<!doctype html><html><head>${csp}</head><body><button id="boton">Probar</button><p id="mensaje">Esperando…</p><script>${seguro}<\\/script></body></html>`;
+      return `<!doctype html><html><head>${csp}</head><body>${seguro}</body></html>`;
+    }
+    function actualizarPreview() {
+      preview.srcdoc = documentoPreview(editor.getValue());
+    }
+    async function ejecutar() {
+      if (run.disabled) return;
+      run.disabled = true; ocultarPie(); actualizarPreview();
+      try {
+        const r = await Tortu.api(rutaPaso(paso.indice, "evaluar"), {codigo: editor.getValue()});
+        if (r.evaluacion && r.evaluacion.estado === "correcto") {
+          const p = r.premio || {};
+          hechos += 1; if (p.estrellas === 3) perfectos += 1;
+          xpTotal += p.mejora ? p.xp : 0; resultadoFinal = r.leccion || resultadoFinal;
+          pintarProgreso(); editor.setOption("readOnly", true); run.disabled = true; pista.disabled = true;
+          Tortu.tocar(p.sube_nivel ? "level_up" : "success");
+          mostrarPie("bien", ["✅ ¡Correcto!", `${"⭐".repeat(p.estrellas)}${"☆".repeat(3 - p.estrellas)}  +${p.xp} XP`],
+            actual + 1 < pasos.length ? "Continuar" : "Terminar", siguientePaso, false);
+          return;
+        }
+        Tortu.tocar("error");
+        mostrarPie("mal", ["🤔 Todavía no cumple la consigna.", (r.evaluacion && r.evaluacion.mensaje) || "Revisá el código y probalo otra vez."],
+          "Reintentar", () => { ocultarPie(); editor.focus(); }, false);
+      } catch (e) {
+        mostrarPie("mal", ["😵 No pude comunicarme con TortuScript.", String(e)], "Reintentar", () => ocultarPie(), false);
+      } finally {
+        if (!editor.getOption("readOnly")) run.disabled = false;
+      }
+    }
+    run.addEventListener("click", ejecutar);
+    pista.addEventListener("click", async () => {
+      const r = await Tortu.api(rutaPaso(paso.indice, "pista"), {});
+      cajaPista.textContent = "";
+      const caja = el("div", "veredicto info");
+      caja.appendChild(el("h3", "", `💡 Pista ${r.nivel}: ${r.titulo}`));
+      if (r.texto) caja.appendChild(el("div", "", r.texto));
+      if (r.codigo) caja.appendChild(el("pre", "", r.codigo));
+      pista.textContent = r.nivel >= 3 ? "💡 Pista (vista)" : `💡 Pista (${r.nivel + 1}/3)`;
+      if (r.nivel >= 3) pista.disabled = true;
+    });
+    actualizarPreview();
+  }
+
   function escribir(paso) {
-    const dibuja = Boolean(paso.tortuga);
+    if (paso.web) return escribirWeb(paso);\n    const dibuja = Boolean(paso.tortuga);
     const esJuego = Boolean(paso.juego);                  // TortuGame: se evalúa comparando el registro del juego
     const python = paso.lenguaje === "python";
     cont.appendChild(el("h2", "", "⌨️ Escribí"));
