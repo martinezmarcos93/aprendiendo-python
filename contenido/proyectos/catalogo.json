@@ -20,19 +20,29 @@
       "dificultad": "media",
       "objetivo": "La aplicación debe mostrar una criatura y cambiar su estado cuando la persona interactúa con ella.",
       "archivos_iniciales": {
-        "index.html": "<!doctype html>\\n<html lang=\"es\">\\n<head><meta charset=\"utf-8\"><title>Mi criatura</title><link rel=\"stylesheet\" href=\"style.css\"></head>\\n<body>\\n  <main>\\n    <h1 id=\"nombre\">Mi criatura</h1>\\n    <p id=\"estado\">Esperando una acción...</p>\\n    <button id=\"accion\">Interactuar</button>\\n  </main>\\n  <script src=\"app.js\"></script>\\n</body>\\n</html>\\n",
-        "style.css": "body { font-family: sans-serif; }\\nmain { max-width: 32rem; margin: 3rem auto; }\\n",
-        "app.js": "const boton = document.querySelector('#accion');\\nconst estado = document.querySelector('#estado');\\n\\nboton.addEventListener('click', () => {\\n  estado.textContent = 'La criatura respondió.';\\n});\\n",
-        "app.py": "def descripcion(nombre):\\n    return f'Criatura: {nombre}'\\n\\nprint(descripcion('Tortu'))\\n"
+        "app.py": "from flask import Flask, jsonify, render_template\\n\\napp = Flask(__name__)\\n\\n@app.get('/')\\ndef inicio():\\n    return render_template('index.html')\\n\\n@app.get('/api/estado')\\ndef estado():\\n    return jsonify({'estado': 'Esperando una acción...'})\\n\\nif __name__ == '__main__':\\n    app.run(debug=False)\\n",
+        "templates/index.html": "<!doctype html>\\n<html lang=\"es\">\\n<head><meta charset=\"utf-8\"><title>Mi criatura</title><link rel=\"stylesheet\" href=\"{{ url_for('static', filename='style.css') }}\"></head>\\n<body>\\n  <main>\\n    <h1 id=\"nombre\">Mi criatura</h1>\\n    <p id=\"estado\">Esperando...</p>\\n    <button id=\"accion\">Interactuar</button>\\n  </main>\\n  <script src=\"{{ url_for('static', filename='app.js') }}\"></script>\\n</body>\\n</html>\\n",
+        "static/style.css": "body { font-family: sans-serif; }\\nmain { max-width: 32rem; margin: 3rem auto; }\\n",
+        "static/app.js": "const boton = document.querySelector('#accion');\\nconst estado = document.querySelector('#estado');\\n\\nboton.addEventListener('click', async () => {\\n  const respuesta = await fetch('/api/estado');\\n  const datos = await respuesta.json();\\n  estado.textContent = datos.estado;\\n});\\n",
+        "requirements.txt": "Flask\\n",
+        "README.md": "# Mi criatura\\n\\nInstalá Python y Flask, abrí esta carpeta en VS Code y ejecutá `python app.py`.\\nDespués abrí http://127.0.0.1:5000 en el navegador.\\n"
       },
       "etapas": [
         {
           "id": "estructura",
           "titulo": "1. La estructura",
-          "objetivo": "La página tiene título, estado y botón.",
+          "objetivo": "La aplicación tiene una página HTML servida por Python.",
           "criterios": [
             {
-              "archivo": "index.html",
+              "archivo": "app.py",
+              "contiene": [
+                "from flask import",
+                "Flask(__name__)",
+                "@app.get('/')"
+              ]
+            },
+            {
+              "archivo": "templates/index.html",
               "contiene": [
                 "<h1",
                 "id=\"estado\"",
@@ -47,7 +57,7 @@
           "objetivo": "La interfaz tiene una presentación propia.",
           "criterios": [
             {
-              "archivo": "style.css",
+              "archivo": "static/style.css",
               "min_caracteres": 40
             }
           ]
@@ -55,12 +65,13 @@
         {
           "id": "interaccion",
           "titulo": "3. El comportamiento",
-          "objetivo": "El botón cambia el estado mediante un evento JavaScript.",
+          "objetivo": "JavaScript escucha el clic, pide datos y actualiza la interfaz.",
           "criterios": [
             {
-              "archivo": "app.js",
+              "archivo": "static/app.js",
               "contiene": [
                 "addEventListener",
+                "fetch(",
                 "textContent"
               ]
             }
@@ -69,13 +80,14 @@
         {
           "id": "python",
           "titulo": "4. La lógica",
-          "objetivo": "Python contiene una función que produce un dato para la aplicación.",
+          "objetivo": "Python ofrece un dato mediante una ruta de la aplicación.",
           "criterios": [
             {
               "archivo": "app.py",
               "contiene": [
-                "def ",
-                "return"
+                "@app.get('/api/estado')",
+                "jsonify",
+                "def estado"
               ]
             }
           ]
@@ -83,25 +95,30 @@
         {
           "id": "funciona",
           "titulo": "5. Comprobación funcional",
-          "objetivo": "Todos los archivos necesarios existen y los criterios anteriores están completos.",
+          "objetivo": "La aplicación tiene servidor, interfaz, JavaScript y recursos necesarios para ejecutarse localmente.",
           "criterios": [
-            {
-              "archivo": "index.html",
-              "contiene": [
-                "<script"
-              ]
-            },
-            {
-              "archivo": "app.js",
-              "contiene": [
-                "addEventListener"
-              ]
-            },
             {
               "archivo": "app.py",
               "contiene": [
-                "def ",
-                "return"
+                "app.run"
+              ]
+            },
+            {
+              "archivo": "templates/index.html",
+              "contiene": [
+                "url_for('static'"
+              ]
+            },
+            {
+              "archivo": "static/app.js",
+              "contiene": [
+                "fetch('/api/estado')"
+              ]
+            },
+            {
+              "archivo": "requirements.txt",
+              "contiene": [
+                "Flask"
               ]
             }
           ]
@@ -109,22 +126,22 @@
       ],
       "ayudas": [
         {
-          "id": "estructura-html",
-          "titulo": "Pista sobre HTML",
+          "id": "estructura-python",
+          "titulo": "Pista sobre Flask",
           "min_nivel": 1,
-          "texto": "HTML organiza el contenido. Primero asegurate de tener una estructura y después agregá los elementos que necesita tu interfaz."
+          "texto": "Flask conecta una ruta de Python con una página. Buscá Flask(__name__) y una función decorada con @app.get."
         },
         {
           "id": "evento-js",
           "titulo": "Pista sobre eventos",
           "min_nivel": 2,
-          "texto": "Un evento conecta una acción de la persona con una función. Buscá addEventListener y fijate qué código ejecuta cuando se hace clic."
+          "texto": "addEventListener conecta una acción de la persona con una función. Después fetch puede pedir datos al servidor."
         },
         {
-          "id": "funcion-python",
-          "titulo": "Pista sobre funciones",
+          "id": "ruta-python",
+          "titulo": "Pista sobre la API",
           "min_nivel": 3,
-          "texto": "Una función agrupa instrucciones que podés reutilizar. Se define con def y puede devolver un resultado con return."
+          "texto": "Una ruta como /api/estado puede devolver datos con jsonify. JavaScript puede pedirlos usando fetch."
         }
       ]
     },
