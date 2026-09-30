@@ -36,6 +36,11 @@ def _educativo():
     return PerfilEducativoService(cuentas, auth, store, acceso)
 
 
+def _emitir_email(tipo, email, token, expires):
+    sender = current_app.config.get("ACCOUNT_EMAIL_SENDER")
+    if callable(sender):
+        sender(tipo=tipo, email=email, token=token, expires=expires)
+
 def _cookie_config():
     return {
         "httponly": True,
@@ -84,7 +89,50 @@ def registro():
         return jsonify(ok=False, mensaje=str(exc)), 400
     except AuthError as exc:
         return jsonify(ok=False, mensaje=str(exc)), 400
+    token, expires = auth.create_verification_token(cuenta.id)
+    _emitir_email("verification", cuenta.email, token, expires)
     return jsonify(ok=True, estado="pendiente_verificacion", email=cuenta.email), 202
+
+
+@bp.get("/verificar-email")
+def verificar_email():
+    token = request.args.get("token", "")
+    try:
+        _, auth = _repos()
+        auth.verify_email_token(token)
+    except AuthError:
+        return jsonify(ok=False, mensaje="El enlace no es válido o ya expiró."), 400
+    return jsonify(ok=True, estado="correo_verificado")
+
+
+@bp.post("/recuperar")
+def solicitar_recuperacion():
+    datos = request.get_json(silent=True) or {}
+    email = datos.get("email")
+    if isinstance(email, str):
+        _, auth = _repos()
+        token_info = auth.create_recovery_token(email)
+        if token_info:
+            token, expires = token_info
+            cuenta = _repos()[0].obtener_account_por_email(email)
+            if cuenta:
+                _emitir_email("recovery", cuenta.email, token, expires)
+    return jsonify(ok=True, estado="solicitud_recibida"), 202
+
+
+@bp.post("/restablecer-password")
+def restablecer_password():
+    datos = request.get_json(silent=True) or {}
+    token = datos.get("token")
+    password = datos.get("password")
+    if not isinstance(token, str) or not isinstance(password, str):
+        return jsonify(ok=False, mensaje="Token y contraseña son obligatorios."), 400
+    try:
+        _, auth = _repos()
+        auth.reset_password(token, password)
+    except AuthError as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 400
+    return jsonify(ok=True, estado="password_restablecida")
 
 
 @bp.post("/login")
