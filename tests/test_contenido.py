@@ -43,7 +43,7 @@ class TestCursosReales(unittest.TestCase):
             "nivel0-programa", "nivel0-lenguaje", "nivel0-codigo", "nivel0-navegador",
             "nivel0-internet", "nivel0-servidor", "nivel0-frontend", "nivel0-backend",
             "nivel0-datos", "nivel0-base-datos", "nivel0-api", "nivel0-seguridad",
-            "nivel0-integracion",
+            "nivel0-integracion", "nivel0-json", "nivel0-git", "nivel0-github",
         }
         self.assertEqual(set(ids), esperadas)
         self.assertEqual(len(ids), 13)
