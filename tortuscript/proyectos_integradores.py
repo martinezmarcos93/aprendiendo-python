@@ -70,17 +70,39 @@ def contexto(progreso):
     }
 
 
+def _franja_perfil(progreso):
+    franja = (progreso.get("config") or {}).get("franja_edad")
+    if franja in {"exploradores", "constructores", "creadores", "desarrolladores"}:
+        return franja
+    return None
+
+
+def _adaptacion(proyecto, progreso):
+    franja = _franja_perfil(progreso)
+    adaptaciones = proyecto.get("adaptaciones") or {}
+    datos = adaptaciones.get(franja) or adaptaciones.get("default") or {}
+    return {
+        "franja": franja,
+        "dificultad": datos.get("dificultad", proyecto.get("dificultad", "media")),
+        "ayudas_maximas": int(datos.get("ayudas_maximas", MAX_AYUDAS_VISTAS)),
+        "descripcion": datos.get("descripcion"),
+    }
+
+
 def disponibles(progreso):
-    """Proyectos que ya tienen al menos dos bloques curriculares completados."""
+    """Proyectos desbloqueados por currículo y compatibles con la franja, si existe."""
     hechos = bloques_completados(progreso)
     salida = []
     for p in cargar_catalogo():
         requeridos = set(p["bloques"])
-        if len(requeridos & hechos) >= 2:
-            salida.append({**p, "desbloqueado": True})
+        franja = _franja_perfil(progreso)
+        compatibles = not franja or not p.get("franjas_edad") or franja in p["franjas_edad"]
+        if len(requeridos & hechos) >= 2 and compatibles:
+            salida.append({**p, "desbloqueado": True, "adaptacion": _adaptacion(p, progreso)})
         else:
             faltan = sorted(requeridos - hechos)
-            salida.append({**p, "desbloqueado": False, "faltan_bloques": faltan})
+            motivo = "franja" if len(requeridos & hechos) >= 2 and not compatibles else "curriculo"
+            salida.append({**p, "desbloqueado": False, "faltan_bloques": faltan, "motivo_bloqueo": motivo})
     return salida
 
 
@@ -156,6 +178,7 @@ def estado(progreso, proyecto_id):
         "completado": bool(datos.get("completado")),
         "exportable": bool(datos.get("completado")),
         "contexto": contexto(progreso),
+        "adaptacion": _adaptacion(proyecto, progreso),
     }
 
 
@@ -198,10 +221,13 @@ def validar_etapa(progreso, proyecto_id, etapa_id, hoy=None):
     etapa = next((e for e in proyecto["etapas"] if e["id"] == etapa_id), None)
     if not etapa:
         raise ErrorProyectoIntegrador("Esa etapa no existe.")
+    indice = next(i for i, e in enumerate(proyecto["etapas"]) if e["id"] == etapa_id)
+    actual = int(datos.get("etapa_actual", 0))
+    if indice > actual:
+        return {"ok": False, "mensaje": "Primero completá la etapa anterior."}
     if not all(_criterio_ok(datos.get("archivos") or {}, c) for c in etapa["criterios"]):
         return {"ok": False, "mensaje": "Todavía falta algo para completar esta etapa."}
     datos.setdefault("etapas", {})[etapa_id] = True
-    indice = next(i for i, e in enumerate(proyecto["etapas"]) if e["id"] == etapa_id)
     datos["etapa_actual"] = max(datos.get("etapa_actual", 0), indice + 1)
     if datos["etapa_actual"] >= len(proyecto["etapas"]):
         datos["completado"] = True
@@ -215,6 +241,7 @@ def ayudas(progreso, proyecto_id):
     if not proyecto or not datos:
         return []
     nivel = contexto(progreso)["nivel"]
+    limite = _adaptacion(proyecto, progreso)["ayudas_maximas"]
     vistas = set(datos.get("ayudas_vistas") or [])
     salida = []
     for ayuda in proyecto.get("ayudas", []):
@@ -235,7 +262,7 @@ def ver_ayuda(progreso, proyecto_id, ayuda_id):
         raise ErrorProyectoIntegrador("Esa ayuda todavía no está desbloqueada.")
     vistas = datos.setdefault("ayudas_vistas", [])
     if ayuda_id not in vistas:
-        if len(vistas) >= MAX_AYUDAS_VISTAS:
+        if len(vistas) >= limite:
             raise ErrorProyectoIntegrador("Ya usaste muchas ayudas en este proyecto.")
         vistas.append(ayuda_id)
     return ayuda["texto"]
@@ -250,6 +277,7 @@ def resumen_catalogo(progreso):
             "desbloqueado": len(set(p["bloques"]) & hechos) >= 2,
             "iniciado": p["id"] in (progreso.get("proyectos_integradores") or {}),
             "completado": bool((progreso.get("proyectos_integradores") or {}).get(p["id"], {}).get("completado")),
+            "adaptacion": _adaptacion(p, progreso),
         }
         for p in cargar_catalogo()
     ]
