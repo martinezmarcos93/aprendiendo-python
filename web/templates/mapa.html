@@ -16,8 +16,16 @@
 
 {% if nivel0 %}
 <section class="nivel-mapa n0">
-  <h2><span class="etiqueta-nivel">NIVEL 0 — ALFABETIZACIÓN DIGITAL</span>
-    <span class="tenue">{{ nivel0|selectattr('completado')|list|length }}/{{ nivel0|length }} completadas</span></h2>
+  <div class="fila">
+    <h2><span class="etiqueta-nivel">NIVEL 0 — ALFABETIZACIÓN DIGITAL</span>
+      <span class="tenue">{{ nivel0|selectattr('completado')|list|length }}/{{ nivel0|length }} completadas</span></h2>
+    <span class="espacio"></span>
+    {% if nivel0|selectattr('completado')|list|length == nivel0|length %}
+      <a class="boton" href="{{ url_for('elegir_recorrido') }}">
+        {% if perfil.recorrido_inicial %}Cambiar recorrido{% else %}Elegir qué aprender{% endif %}
+      </a>
+    {% endif %}
+  </div>
   <div class="fichas">
     {% for f in nivel0 %}
       {% set clase = 'perfecto' if f.perfecto else ('bien' if f.completado else '') %}
@@ -42,39 +50,65 @@
 </section>
 {% endif %}
 
-{% for nivel, fichas in niveles.items() %}
-<section class="nivel-mapa n{{ nivel }}">
-  <h2><span class="etiqueta-nivel">NIVEL {{ nivel }} — {{ nombres.get(nivel, '')|upper }}</span>
-    <span class="tenue">{{ fichas|selectattr('completado')|list|length }}/{{ fichas|length }} completados</span></h2>
-  <div class="fichas">
-    {% for f in fichas %}
-      {% set clase = 'perfecto' if f.estrellas == 3 else ('bien' if f.estrellas == 2 else ('intentado' if f.completado else '')) %}
-      {% if f.abierto %}
-      <a class="ficha {{ clase }}" href="{{ url_for('leccion', leccion_id=f.leccion) }}">
-      {% else %}
-      <span class="ficha bloqueada" title="Completá los ejercicios anteriores para desbloquear este">
-      {% endif %}
-        <span class="ficha-num">#{{ f.numero }}</span>
-        <span class="ficha-nombre">{{ f.nombre }}</span>
-        {% if f.completado %}
-          <span class="ficha-estrellas">{{ '⭐' * f.estrellas }}{{ '☆' * (3 - f.estrellas) }}</span>
-          <span class="tenue ficha-xp">+{{ f.xp }} XP</span>
-        {% elif f.abierto %}
-          <span class="ficha-estrellas">▶ ¡Te toca!</span>
-        {% else %}
-          <span class="ficha-estrellas">🔒</span>
-        {% endif %}
-      {% if f.abierto %}</a>{% else %}</span>{% endif %}
-    {% endfor %}
+{% for curso in camino if curso.id != 'alfabetizacion-digital' %}
+<section class="nivel-mapa">
+  <div class="fila">
+    <h2>
+      <span class="etiqueta-nivel">{{ curso.icono }} {{ curso.titulo|upper }}</span>
+      <span class="tenue">{{ curso.hechas }}/{{ curso.total }} completadas</span>
+    </h2>
+    <span class="espacio"></span>
+    {% if curso.completo %}<span class="tenue">✓ Completado</span>
+    {% elif curso.abierto %}<span class="tenue">Disponible</span>
+    {% elif curso.proximamente %}<span class="tenue">Próximamente</span>
+    {% else %}<span class="tenue">🔒 Bloqueado</span>{% endif %}
   </div>
+
+  <p class="tenue">{{ curso.descripcion }}</p>
+
+  {% if not curso.abierto %}
+    <p class="tenue">🔒 Se desbloquea cuando {{ curso.requiere }}.</p>
+  {% endif %}
+
+  {% if curso.proximamente and not curso.secciones %}
+    <div class="tarjeta">
+      <p><b>Contenido en preparación.</b></p>
+      <p class="tenue">El recorrido ya forma parte del mapa curricular. Sus lecciones se incorporarán en su fase correspondiente.</p>
+    </div>
+  {% else %}
+    {% for seccion in curso.secciones %}
+      <h3>{{ seccion.titulo }}</h3>
+      <div class="fichas">
+        {% for f in seccion.lecciones %}
+          {% set clase = 'perfecto' if f.estado == 'perfecta' else ('bien' if f.estado in ('hecha', 'salteada') else '') %}
+          {% if f.estado != 'bloqueada' %}
+          <a class="ficha {{ clase }}" href="{{ url_for('leccion', leccion_id=f.id) }}">
+          {% else %}
+          <span class="ficha bloqueada" title="{{ f.pide or curso.requiere or 'Completá los requisitos anteriores' }}">
+          {% endif %}
+            <span class="ficha-num">#{{ f.numero }}</span>
+            <span class="ficha-nombre">{{ f.nombre }}</span>
+            {% if f.estado == 'perfecta' %}
+              <span class="ficha-estrellas">⭐⭐⭐</span>
+            {% elif f.estado in ('hecha', 'salteada') %}
+              <span class="ficha-estrellas">✓ Completada</span>
+            {% elif f.estado == 'actual' %}
+              <span class="ficha-estrellas">▶ ¡Te toca!</span>
+            {% else %}
+              <span class="ficha-estrellas">🔒</span>
+            {% endif %}
+          {% if f.estado != 'bloqueada' %}</a>{% else %}</span>{% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+  {% endif %}
 </section>
 {% endfor %}
 
 <section class="tarjeta leyenda">
-  <b class="tenue">Leyenda:</b>
+  <b class="tenue">Mapa:</b>
   <span class="verde-t">⭐⭐⭐ Perfecto</span>
-  <span class="celeste-t">⭐⭐ Completo</span>
-  <span class="amarillo-t">⭐ Intentado</span>
-  <span class="tenue">🔒 Sin desbloquear</span>
+  <span class="celeste-t">✓ Completado</span>
+  <span class="tenue">🔒 Bloqueado</span>
 </section>
 {% endblock %}
