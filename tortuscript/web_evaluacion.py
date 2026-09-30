@@ -32,8 +32,8 @@ def validar_codigo(codigo, lenguaje, reglas=None, estructura=False):
         if "{" not in codigo or "}" not in codigo:
             return False, "El CSS necesita una regla con llaves."
     elif estructura and lenguaje == "javascript":
-        if not re.search(r"\b(function|const|let|var)\b", codigo):
-            return False, "Escribí al menos una variable o función de JavaScript."
+        if not codigo.strip():
+            return False, "Escribí código JavaScript."
     requeridos = reglas.get("contiene", [])
     for texto in requeridos:
         if str(texto).lower() not in bajo:
