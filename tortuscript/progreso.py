@@ -1,22 +1,13 @@
-"""
-Progreso del chico: XP, estrellas, racha, sesión del día y perfiles.
+"""Motor educativo de progreso: XP, lecciones, práctica y gamificación.
 
-Guardado seguro:
-- Escritura atómica (archivo temporal + os.replace): un corte a mitad nunca deja
-  el JSON a medio escribir.
-- Antes de reemplazar se guarda una copia `.bak` del progreso anterior.
-- Si el JSON está dañado, NO se pisa: se aparta como `.corrupto-<fecha>` y se
-  recupera desde el `.bak` (o se empieza de cero si no hay copia).
-- Cada progreso cargado recuerda su perfil (`_perfil`), así una ventana abierta
-  con el perfil A nunca guarda sobre el archivo del perfil B.
+La persistencia local de archivos y la identidad de perfiles están aisladas en
+`persistencia_local.py`.
 """
 import copy
 from datetime import date, timedelta
 
 from . import practica
 
-# Los archivos viven en la carpeta raíz del proyecto (no en la carpeta desde donde se
-# lo abre, ni dentro del paquete tortuscript/).
 VERSION_ESQUEMA = 11
 
 
