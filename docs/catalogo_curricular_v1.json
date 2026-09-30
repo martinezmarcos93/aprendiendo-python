@@ -342,7 +342,48 @@
     {
       "id": "web-esencial",
       "profundidad": "introductoria",
-      "disponibilidad_comercial": "por_definir"
+      "disponibilidad_comercial": "por_definir",
+      "unidades": [
+        {
+          "id": "web-html-estructura",
+          "titulo": "HTML: la estructura",
+          "competencias": ["leer_html"],
+          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "lenguaje": "html",
+          "tipo_actividad": ["explicar", "reconocer", "predecir", "construir", "depurar"]
+        },
+        {
+          "id": "web-css-apariencia",
+          "titulo": "CSS: la apariencia",
+          "competencias": ["modificar_css"],
+          "franja_edad": ["constructores", "creadores", "desarrolladores"],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "lenguaje": "css",
+          "tipo_actividad": ["explicar", "reconocer", "predecir", "construir", "depurar"]
+        },
+        {
+          "id": "web-js-comportamiento",
+          "titulo": "JavaScript: comportamiento",
+          "competencias": ["responder_a_eventos_js"],
+          "franja_edad": ["creadores", "desarrolladores"],
+          "nivel": "fundamentos",
+          "dificultad": "media",
+          "lenguaje": "javascript",
+          "tipo_actividad": ["explicar", "reconocer", "predecir", "construir", "depurar"]
+        },
+        {
+          "id": "web-mini-productos",
+          "titulo": "Mini productos",
+          "competencias": ["leer_html", "modificar_css", "responder_a_eventos_js"],
+          "franja_edad": ["creadores", "desarrolladores"],
+          "nivel": "aplicacion",
+          "dificultad": "alta",
+          "tipo_actividad": ["integrar", "depurar", "construir"]
+        }
+      ]
     },
     {
       "id": "sql-fundamentos",
