@@ -1096,7 +1096,7 @@ def create_app(token=None):
         p = _cargar_progreso()
         ok = progreso.guardar_config(
             p, experiencia=datos.get("experiencia"), meta_min=datos.get("meta_min"),
-            nombre=crudo or None, onboarding=True, persistir=False
+            nombre=crudo or None, onboarding=True
         )
         if not ok:
             return jsonify(ok=False, mensaje="Alguna respuesta no es válida."), 400
@@ -1122,7 +1122,7 @@ def create_app(token=None):
         datos = request.get_json(silent=True) or {}
         p = _cargar_progreso()
         cambios = {k: datos.get(k) for k in progreso.AJUSTES if k in datos}
-        if not progreso.guardar_ajustes(p, persistir=False, **cambios):
+        if not progreso.guardar_ajustes(p, **cambios):
             return jsonify(ok=False, mensaje="Ese ajuste no existe."), 400
         _guardar_progreso(p)
         return jsonify(ok=True, ajustes=progreso.ajustes_de(p))
