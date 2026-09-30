@@ -513,7 +513,7 @@
               "pregunta": "¿Qué devuelve este filtro?",
               "codigo": "SELECT nombre FROM criaturas WHERE nivel >= 4 ORDER BY nombre LIMIT 2;",
               "opciones": [
-                "Dragón y Sirena",
+                "Dragón\nSirena",
                 "Lobo y Zorro",
                 "Gólem"
               ],
