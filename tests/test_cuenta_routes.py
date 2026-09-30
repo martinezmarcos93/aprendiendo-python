@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 
 from web.app import create_app
+from tortuscript.auth import AuthRepository
 from tortuscript.cuentas import CuentaRepository
 
 
@@ -44,7 +45,7 @@ class CuentaRoutesTests(unittest.TestCase):
         repo = CuentaRepository(self.tmp / "cuentas.sqlite3")
         repo.ensure_schema()
         cuenta = repo.obtener_account("acc_" + __import__("hashlib").sha256("adulto@example.com".encode()).hexdigest()[:24])
-        repo.marcar_verificada(cuenta.id)
+        AuthRepository(self.tmp / "cuentas.sqlite3").marcar_verificada(cuenta.id)
 
         login = self.client.post("/cuenta/login", json={
             "email": "adulto@example.com",
@@ -72,6 +73,17 @@ class CuentaRoutesTests(unittest.TestCase):
 
         me2 = self.client.get("/cuenta/me")
         self.assertEqual([p["nombre"] for p in me2.json["perfiles"]], ["Ana"])
+
+        selected = self.client.post(
+            "/cuenta/perfil",
+            json={"perfil_id": created.json["perfil"]["id"]},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(selected.status_code, 200)
+        self.assertEqual(selected.json["perfil_activo"], created.json["perfil"]["id"])
+
+        me3 = self.client.get("/cuenta/me")
+        self.assertEqual(me3.json["perfil_activo"], created.json["perfil"]["id"])
 
         logout = self.client.post("/cuenta/logout", headers={"X-Tortu-CSRF": csrf})
         self.assertEqual(logout.status_code, 200)
