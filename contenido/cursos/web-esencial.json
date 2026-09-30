@@ -4,7 +4,7 @@
   "icono": "🌐",
   "descripcion": "HTML, CSS y JavaScript para entender, modificar y depurar interfaces pequeñas.",
   "version": 1,
-  "requiere": {"curso": "python-real"},
+  "requiere": {"leccion": "py-problemas"},
   "secciones": [
     {
       "id": "html",
