@@ -282,3 +282,87 @@ def runtime_progreso():
         return jsonify(ok=True, **runtime.snapshot_publico(raw))
     except ContextoEducativoError as exc:
         return jsonify(ok=False, mensaje=str(exc)), 401
+
+
+@bp.post("/runtime/ejercicio")
+def runtime_registrar_ejercicio():
+    raw = request.cookies.get("tortu_session")
+    resultado = _require_session()
+    if not resultado:
+        return jsonify(ok=False, mensaje="Sesión requerida."), 401
+    _, auth, _ = resultado
+    if not _require_csrf(auth, raw):
+        return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
+    datos = request.get_json(silent=True) or {}
+    try:
+        runtime = RuntimeEducativo(_educativo())
+        mejora = runtime.registrar_ejercicio(raw, int(datos["indice"]), int(datos["estrellas"]), int(datos["xp_ganado"]))
+    except (ContextoEducativoError, ValueError, KeyError) as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 400
+    return jsonify(ok=True, mejora=mejora)
+
+
+@bp.post("/runtime/leccion/paso")
+def runtime_registrar_paso():
+    raw = request.cookies.get("tortu_session")
+    resultado = _require_session()
+    if not resultado:
+        return jsonify(ok=False, mensaje="Sesión requerida."), 401
+    _, auth, _ = resultado
+    if not _require_csrf(auth, raw):
+        return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
+    datos = request.get_json(silent=True) or {}
+    try:
+        runtime = RuntimeEducativo(_educativo())
+        info = runtime.registrar_paso_leccion(
+            raw, str(datos["leccion_id"]), int(datos["indice"]), int(datos["xp"]),
+            bool(datos["perfecto"]), int(datos["total_pasos"]), datos.get("estrellas"))
+    except (ContextoEducativoError, ValueError, KeyError) as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 400
+    return jsonify(ok=True, resultado=info)
+
+
+@bp.post("/runtime/practica")
+def runtime_registrar_practica():
+    raw = request.cookies.get("tortu_session")
+    resultado = _require_session()
+    if not resultado:
+        return jsonify(ok=False, mensaje="Sesión requerida."), 401
+    _, auth, _ = resultado
+    if not _require_csrf(auth, raw):
+        return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
+    datos = request.get_json(silent=True) or {}
+    try:
+        runtime = RuntimeEducativo(_educativo())
+        ganado = runtime.registrar_practica(raw, str(datos["leccion_id"]), int(datos["paso"]), bool(datos["acierto"]))
+    except (ContextoEducativoError, ValueError, KeyError) as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 400
+    return jsonify(ok=True, xp_ganado=ganado)
+
+
+@bp.get("/runtime/proyectos")
+def runtime_listar_proyectos():
+    raw = request.cookies.get("tortu_session")
+    try:
+        proyectos = RuntimeEducativo(_educativo()).listar_proyectos(raw)
+    except ContextoEducativoError as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 401
+    return jsonify(ok=True, proyectos=proyectos)
+
+
+@bp.post("/runtime/proyectos")
+def runtime_guardar_proyecto():
+    raw = request.cookies.get("tortu_session")
+    resultado = _require_session()
+    if not resultado:
+        return jsonify(ok=False, mensaje="Sesión requerida."), 401
+    _, auth, _ = resultado
+    if not _require_csrf(auth, raw):
+        return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
+    datos = request.get_json(silent=True) or {}
+    try:
+        proyecto_id = RuntimeEducativo(_educativo()).guardar_proyecto(
+            raw, datos.get("nombre"), datos.get("tipo"), datos.get("codigo"), datos.get("proyecto_id"))
+    except (ContextoEducativoError, ValueError, KeyError) as exc:
+        return jsonify(ok=False, mensaje=str(exc)), 400
+    return jsonify(ok=True, proyecto_id=proyecto_id)
