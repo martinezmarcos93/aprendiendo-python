@@ -1,6 +1,7 @@
 import unittest
 
 from tortuscript import contenido
+from tortuscript.validacion import validar_curso
 from tortuscript.web_evaluacion import evaluar, validar_codigo
 
 class WebV1Tests(unittest.TestCase):
@@ -28,6 +29,17 @@ class WebV1Tests(unittest.TestCase):
                 self.assertIn(paso["lenguaje"], {"html","css","javascript"})
                 self.assertTrue(paso["web"]["contiene"])
     
+    def test_validador_acepta_el_curso_web(self):
+        curso = next(c for c in contenido.cargar_cursos() if c["id"] == "web-esencial")
+        errores = [h for h in validar_curso(curso) if h.nivel == "error"]
+        self.assertEqual(errores, [], [str(h) for h in errores])
+
+    def test_evaluador_exige_las_piezas_declaradas(self):
+        r = evaluar("<h1>Bestiario</h1>", "<h1>Bestiario</h1>", "html", {"contiene":["<h1>", "Bestiario"]})
+        self.assertEqual(r["estado"], "correcto")
+        r = evaluar("<h1>Otro</h1>", "<h1>Bestiario</h1>", "html", {"contiene":["<h1>", "Bestiario"]})
+        self.assertEqual(r["estado"], "incorrecto")
+
     def test_evaluador_no_ejecuta_ni_permite_recursos_externos(self):
         self.assertEqual(evaluar("<h1>OK</h1>", "<h1>OK</h1>", "html", {"contiene":["<h1>"]})["estado"], "correcto")
         self.assertEqual(validar_codigo('<script src="https://x">', "html", {})[0], False)
