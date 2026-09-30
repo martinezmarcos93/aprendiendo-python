@@ -19,6 +19,8 @@ class CuentaRoutesTests(unittest.TestCase):
             ACCOUNT_COOKIE_SECURE=False,
             PROGRESS_DIR=self.tmp / "progreso_perfiles",
         )
+        self.emails = []
+        self.app.config["ACCOUNT_EMAIL_SENDER"] = lambda **payload: self.emails.append(payload)
         self.client = self.app.test_client()
 
     def tearDown(self):
@@ -238,6 +240,49 @@ class CuentaRoutesTests(unittest.TestCase):
         archivos = list((self.tmp / "progreso_perfiles").glob("progreso_*.json"))
         self.assertEqual(len(archivos), 1)
         self.assertIn(pid, archivos[0].name)
+
+
+    def test_verificacion_y_recuperacion_http_no_exponen_token(self):
+        registro = self.client.post("/cuenta/registro", json={
+            "email": "seguridad@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(registro.status_code, 202)
+        self.assertNotIn("token", registro.json)
+        self.assertEqual(self.emails[0]["tipo"], "verification")
+        token = self.emails[0]["token"]
+
+        verificado = self.client.get("/cuenta/verificar-email", query_string={"token": token})
+        self.assertEqual(verificado.status_code, 200)
+
+        login = self.client.post("/cuenta/login", json={
+            "email": "seguridad@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(login.status_code, 200)
+
+        recovery = self.client.post("/cuenta/recuperar", json={"email": "seguridad@example.com"})
+        self.assertEqual(recovery.status_code, 202)
+        self.assertEqual(self.emails[-1]["tipo"], "recovery")
+        recovery_token = self.emails[-1]["token"]
+
+        reset = self.client.post("/cuenta/restablecer-password", json={
+            "token": recovery_token,
+            "password": "otra-clave-larga-456",
+        })
+        self.assertEqual(reset.status_code, 200)
+
+        login2 = self.client.post("/cuenta/login", json={
+            "email": "seguridad@example.com",
+            "password": "otra-clave-larga-456",
+        })
+        self.assertEqual(login2.status_code, 200)
+
+        reused = self.client.post("/cuenta/restablecer-password", json={
+            "token": recovery_token,
+            "password": "tercera-clave-larga-789",
+        })
+        self.assertEqual(reused.status_code, 400)
 
 if __name__ == "__main__":
     unittest.main()
