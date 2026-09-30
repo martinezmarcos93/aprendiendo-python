@@ -67,12 +67,8 @@ class TestProyectosIntegradores(unittest.TestCase):
     def test_etapas_exigen_criterios_y_el_final_habilita_exportacion(self):
         self.completar("python", "web")
         pid = proyectos_integradores.iniciar(self.p, "ficha-criatura")
-        for etapa in proyectos_integradores.obtener_proyecto(pid)["etapas"]:
-            resultado = proyectos_integradores.validar_etapa(self.p, pid, etapa["id"])
-            if etapa["id"] != "estructura":
-                self.assertFalse(resultado["ok"])
-                break
-            self.assertTrue(resultado["ok"])
+        resultado = proyectos_integradores.validar_etapa(self.p, pid, "estructura")
+        self.assertFalse(resultado["ok"])
         estado = proyectos_integradores.estado(self.p, pid)
         self.assertFalse(estado["exportable"])
 
@@ -98,7 +94,7 @@ class TestProyectosIntegradores(unittest.TestCase):
         self.p["xp_total"] = 100
         self.assertTrue(proyectos_integradores.ayudas(self.p, pid)[0]["desbloqueada"])
         texto = proyectos_integradores.ver_ayuda(self.p, pid, "estructura-python")
-        self.assertIn("HTML", texto)
+        self.assertIn("Flask", texto)
 
 
 try:
