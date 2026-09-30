@@ -205,23 +205,23 @@ def create_app(token=None):
         return respuesta
 
     @app.before_request
-    @app.before_request
     def _requiere_contexto_educativo():
-        if request.endpoint in (None, "static") or request.path.startswith("/cuenta/"):
+        if request.endpoint in (None, "static") or request.path.startswith("/cuenta"):
             return None
         if not request.cookies.get("tortu_session"):
             if request.path.startswith("/api/"):
                 return jsonify(ok=False, mensaje="Iniciá sesión y seleccioná un perfil educativo."), 401
-            return redirect(url_for("cuenta.login"))
+            abort(401)
         runtime = RuntimeEducativo(_educativo())
         try:
             runtime.contexto(request.cookies["tortu_session"])
         except ContextoEducativoError:
             if request.path.startswith("/api/"):
                 return jsonify(ok=False, mensaje="La sesión educativa ya no es válida."), 401
-            return redirect(url_for("cuenta.login"))
+            abort(401)
         return None
 
+    @app.before_request
     def _proteger():
         if request.host.split(":")[0] not in HOSTS_PERMITIDOS:
             abort(403)
