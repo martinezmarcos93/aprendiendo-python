@@ -11,27 +11,11 @@ Guardado seguro:
   con el perfil A nunca guarda sobre el archivo del perfil B.
 """
 import copy
-import json
-import logging
-import os
-import re
-import shutil
-import tempfile
 from datetime import date, datetime, timedelta
-from pathlib import Path
 
 from . import practica
 
-logger = logging.getLogger("tortuscript.progreso")
-
-# Los archivos viven en la carpeta raíz del proyecto (no en la carpeta desde donde se
-# lo abre, ni dentro del paquete tortuscript/).
-DIRECTORIO = Path(__file__).resolve().parent.parent
-VERSION_ESQUEMA = 11
-
-PERFIL_ACTUAL = "default"
-
-
+\nVERSION_ESQUEMA = 11\n
 
 
 PROGRESO_INICIAL = {
@@ -75,80 +59,6 @@ PROGRESO_INICIAL = {
 
 
 # ─────────────────────────────────────────
-# CARGA / GUARDADO
-# ─────────────────────────────────────────
-def _leer(archivo):
-    with open(archivo, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    if not isinstance(data, dict) or not isinstance(data.get("ejercicios", {}), dict):
-        raise ValueError("estructura de progreso inválida")
-    return data
-
-
-def _migrar(data):
-    for campo, valor in PROGRESO_INICIAL.items():
-        if campo not in data:
-            data[campo] = copy.deepcopy(valor)
-    for clave, valor in PROGRESO_INICIAL["config"].items():      # config de versiones anteriores, a medias
-        data["config"].setdefault(clave, copy.deepcopy(valor))
-    for clave, valor in PROGRESO_INICIAL["config"]["ajustes"].items():
-        data["config"]["ajustes"].setdefault(clave, valor)
-    data["version"] = VERSION_ESQUEMA
-    return data
-
-
-def cargar_progreso(perfil=None):
-    perfil = perfil or PERFIL_ACTUAL
-    archivo = get_archivo_progreso(perfil)
-    data = None
-    if archivo.exists():
-        try:
-            data = _leer(archivo)
-        except (OSError, ValueError) as e:
-            marca = datetime.now().strftime("%Y%m%d-%H%M%S")
-            apartado = archivo.with_name(f"{archivo.name}.corrupto-{marca}")
-            logger.error("Progreso dañado en %s: %s — se aparta como %s", archivo, e, apartado.name)
-            try:
-                os.replace(archivo, apartado)
-            except OSError as e2:
-                logger.error("No se pudo apartar el progreso dañado: %s", e2, exc_info=True)
-            respaldo = archivo.with_name(archivo.name + ".bak")
-            if respaldo.exists():
-                try:
-                    data = _leer(respaldo)
-                    logger.warning("Progreso recuperado desde %s", respaldo.name)
-                except (OSError, ValueError) as e3:
-                    logger.error("El respaldo también está dañado: %s", e3)
-    data = _migrar(data) if data is not None else copy.deepcopy(PROGRESO_INICIAL)
-    data["_perfil"] = perfil
-    return data
-
-
-def guardar_progreso(progreso):
-    """Guarda de forma atómica. Devuelve True si pudo guardar."""
-    perfil = progreso.get("_perfil") or PERFIL_ACTUAL
-    archivo = get_archivo_progreso(perfil)
-    datos = {k: v for k, v in progreso.items() if not k.startswith("_")}
-    tmp = None
-    try:
-        archivo.parent.mkdir(parents=True, exist_ok=True)
-        fd, tmp = tempfile.mkstemp(prefix=".progreso_", suffix=".tmp", dir=str(archivo.parent))
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            json.dump(datos, f, ensure_ascii=False, indent=2)
-            f.flush()
-            os.fsync(f.fileno())
-        if archivo.exists():
-            shutil.copy2(archivo, archivo.with_name(archivo.name + ".bak"))
-        os.replace(tmp, archivo)
-        return True
-    except OSError as e:
-        logger.error("No se pudo guardar el progreso en %s: %s", archivo, e, exc_info=True)
-        if tmp and os.path.exists(tmp):
-            os.remove(tmp)
-        return False
-
-
-# ─────────────────────────────────────────
 # CONFIGURACIÓN, XP Y META DIARIA
 # ─────────────────────────────────────────
 EXPERIENCIAS = ("nunca", "poquito", "bastante")
@@ -164,13 +74,11 @@ def avisar(progreso, tipo, **datos):
     progreso.setdefault("avisos", []).append({"tipo": tipo, **datos})
 
 
-def tomar_avisos(progreso, guardar=True):
+def tomar_avisos(progreso):
     """Devuelve los avisos pendientes y los borra."""
     avisos = progreso.get("avisos") or []
     if avisos:
         progreso["avisos"] = []
-        if guardar:
-            guardar_progreso(progreso)
     return avisos
 
 
@@ -224,7 +132,7 @@ AJUSTES = {
 }
 
 
-def guardar_ajustes(progreso, persistir=True, **cambios):
+def guardar_ajustes(progreso):
     """Cambia ajustes de accesibilidad. Devuelve False (sin cambiar nada) si algún valor no es válido."""
     for nombre, valor in cambios.items():
         if valor is not None and valor not in AJUSTES.get(nombre, ()):
@@ -234,8 +142,6 @@ def guardar_ajustes(progreso, persistir=True, **cambios):
     for nombre, valor in cambios.items():
         if valor is not None:
             ajustes[nombre] = valor
-    if persistir:
-        guardar_progreso(progreso)
     return True
 
 
@@ -246,49 +152,12 @@ def ajustes_de(progreso):
     return base
 
 
-def saltear_hasta(progreso, lecciones_en_orden, entrada, hoy=None, persistir=True):
-    """Marca como salteadas por diagnóstico las lecciones anteriores a `entrada` que no estaban hechas.
-    No toca XP, logros ni lecciones hechas: el progreso solo crece (ADR-002)."""
-    if entrada not in lecciones_en_orden:
-        raise ValueError(f"lección de entrada desconocida: {entrada!r}")
-    salteadas = progreso.setdefault("salteadas", {})
-    hechas = progreso.get("lecciones", {})
-    for leccion_id in lecciones_en_orden[:lecciones_en_orden.index(entrada)]:
-        if not hechas.get(leccion_id, {}).get("completada"):
+def saltear_hasta(progreso, lecciones_en_orden, entrada, hoy=None):
             salteadas.setdefault(leccion_id, str(hoy or date.today()))
-    if persistir:
-        guardar_progreso(progreso)
     return True
 
 
-def guardar_config(progreso, experiencia=None, meta_min=None, nombre=None, onboarding=None, persistir=True):
-    """Valida y guarda la configuración. Devuelve False si algún valor no es válido."""
-    cfg = progreso.setdefault("config", copy.deepcopy(PROGRESO_INICIAL["config"]))
-    if experiencia is not None:
-        if experiencia not in EXPERIENCIAS:
-            return False
-        cfg["experiencia"] = experiencia
-    if meta_min is not None:
-        if meta_min not in METAS_MIN:
-            return False
-        cfg["meta_min"] = meta_min
-    if nombre is not None:
-        cfg["nombre"] = nombre[:30]
-    if onboarding is not None:
-        cfg["onboarding"] = bool(onboarding)
-    if persistir:
-        guardar_progreso(progreso)
-    return True
-
-
-# ─────────────────────────────────────────
-# RACHA DIARIA
-# ─────────────────────────────────────────
-MAX_CONGELADORES = 2
-DIAS_RETO = 7                     # el reto de racha: cada 7 días seguidos se gana un congelador
-
-
-def actualizar_racha(progreso, hoy=None):
+def guardar_config(progreso, experiencia=None, meta_min=None, nombre=None, onboarding=None):
     """
     Llamar cuando el usuario completa un ejercicio.
     Retorna (racha_actual, es_dia_nuevo).
@@ -392,29 +261,7 @@ def registrar_sesion_hoy(progreso, indice):
 # ─────────────────────────────────────────
 # REGISTRO DE EJERCICIO
 # ─────────────────────────────────────────
-def registrar_ejercicio(progreso, indice, estrellas, xp_ganado, persistir=True):
-    """Registra un ejercicio RESUELTO. Solo suma XP si mejora el puntaje anterior."""
-    key = str(indice)
-    anterior = progreso["ejercicios"].get(key, {})
-    hubo_mejora = estrellas > anterior.get("estrellas", 0)
-
-    if hubo_mejora:
-        sumar_xp(progreso, xp_ganado - anterior.get("xp", 0))
-        progreso["ejercicios"][key] = {"estrellas": estrellas, "xp": xp_ganado, "completado": True}
-
-    if estrellas >= 1:
-        actualizar_racha(progreso)
-        registrar_sesion_hoy(progreso, indice)
-
-    if persistir:
-        guardar_progreso(progreso)
-    return hubo_mejora
-
-
-# ─────────────────────────────────────────
-# PRÁCTICA DEL DÍA
-# ─────────────────────────────────────────
-def registrar_practica(progreso, leccion_id, paso, acierto, hoy=None, persistir=True):
+def registrar_ejercicio(progreso, indice, estrellas, xp_ganado):
     """Anota un paso practicado: reprograma su tarjeta, suma un poco de XP (con tope diario) y cuenta
     como actividad del día. `acierto` = respondió bien al primer intento. Guarda. Devuelve el XP ganado."""
     hoy = hoy or date.today()
@@ -429,60 +276,13 @@ def registrar_practica(progreso, leccion_id, paso, acierto, hoy=None, persistir=
             del por_dia[viejo]
         sumar_xp(progreso, ganado, hoy)
     actualizar_racha(progreso, hoy)
-    if persistir:
-        guardar_progreso(progreso)
     return ganado
 
 
 # ─────────────────────────────────────────
 # LECCIONES
 # ─────────────────────────────────────────
-def registrar_paso_leccion(progreso, leccion_id, indice, xp, perfecto, total_pasos, estrellas=None, persistir=True):
-    """Anota un paso terminado de una lección y guarda.
-
-    Se recuerda el MEJOR resultado de cada paso: repetir una lección nunca da XP doble, solo
-    suma la diferencia si el resultado mejora. Los pasos 'escribir' se pagan por
-    registrar_ejercicio (xp=0 acá) y solo se anotan para saber si la lección está completa.
-    Devuelve {"xp_ganado", "completa", "perfecta", "recien_completa"}.
-    """
-    lec = progreso.setdefault("lecciones", {}).setdefault(
-        leccion_id, {"pasos": {}, "completada": False, "perfecta": False})
-    antes = lec["pasos"].get(str(indice), {"xp": 0, "perfecto": False})
-    mejor = {"xp": max(antes["xp"], xp), "perfecto": bool(antes["perfecto"] or perfecto),
-             "fecha": antes.get("fecha") or str(date.today())}         # la práctica del día parte de acá
-    if estrellas is not None or "estrellas" in antes:                # pasos 'escribir' de cursos sin ejercicio
-        mejor["estrellas"] = max(antes.get("estrellas", 0), estrellas or 0)
-    ganado = mejor["xp"] - antes["xp"]
-    lec["pasos"][str(indice)] = mejor
-    sumar_xp(progreso, ganado)
-
-    estaba_completa = lec["completada"]
-    lec["completada"] = lec["completada"] or all(str(i) in lec["pasos"] for i in range(total_pasos))
-    lec["perfecta"] = lec["completada"] and all(
-        lec["pasos"].get(str(i), {}).get("perfecto") for i in range(total_pasos))
-    actualizar_racha(progreso)
-    if persistir:
-        guardar_progreso(progreso)
-    return {"xp_ganado": ganado, "completa": lec["completada"], "perfecta": lec["perfecta"],
-            "recien_completa": lec["completada"] and not estaba_completa}
-
-
-# ─────────────────────────────────────────
-# RESUMEN DE SESIÓN DE HOY
-# ─────────────────────────────────────────
-CONCEPTO_NIVEL = {
-    1: "Mostrar texto",
-    2: "Variables",
-    3: "Entrada de datos",
-    4: "Operaciones matemáticas",
-    5: "Condicionales (si/sino)",
-    6: "Bucles (repetir)",
-    7: "Funciones",
-    8: "Desafíos combinados",
-}
-
-
-def resumen_sesion_hoy(progreso, ejercicios_lista, hoy=None):
+def registrar_paso_leccion(progreso, leccion_id, indice, xp, perfecto, total_pasos, estrellas=None):
     hoy = hoy or date.today()
     # `sesion_hoy` solo vale si el último día jugado es hoy
     indices_hoy = progreso.get("sesion_hoy", []) if progreso.get("ultimo_dia") == str(hoy) else []
