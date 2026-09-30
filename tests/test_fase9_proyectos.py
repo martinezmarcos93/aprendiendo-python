@@ -78,7 +78,8 @@ class TestProyectosIntegradores(unittest.TestCase):
         archivos["app.js"] = "document.querySelector('#accion').addEventListener('click', () => { document.querySelector('#estado').textContent = 'ok'; });"
         archivos["app.py"] += "\n\ndef descripcion(nombre):\n    return nombre\n"
         for etapa in proyectos_integradores.obtener_proyecto(pid)["etapas"]:
-            proyectos_integradores.validar_etapa(self.p, pid, etapa["id"])
+            resultado = proyectos_integradores.validar_etapa(self.p, pid, etapa["id"])
+            self.assertTrue(resultado["ok"], f"{etapa['id']}: {resultado}")
         self.assertTrue(self.p["proyectos_integradores"][pid]["completado"])
         datos, nombre = proyectos_integradores.exportar(self.p, pid)
         self.assertEqual(nombre, "ficha-criatura.zip")
