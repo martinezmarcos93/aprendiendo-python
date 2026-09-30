@@ -285,7 +285,7 @@ AJUSTES = {
 }
 
 
-def guardar_ajustes(progreso, **cambios):
+def guardar_ajustes(progreso, persistir=True, **cambios):
     """Cambia ajustes de accesibilidad. Devuelve False (sin cambiar nada) si algún valor no es válido."""
     for nombre, valor in cambios.items():
         if valor is not None and valor not in AJUSTES.get(nombre, ()):
@@ -295,7 +295,9 @@ def guardar_ajustes(progreso, **cambios):
     for nombre, valor in cambios.items():
         if valor is not None:
             ajustes[nombre] = valor
-    return guardar_progreso(progreso)
+    if persistir:
+        guardar_progreso(progreso)
+    return True
 
 
 def ajustes_de(progreso):
@@ -305,7 +307,7 @@ def ajustes_de(progreso):
     return base
 
 
-def saltear_hasta(progreso, lecciones_en_orden, entrada, hoy=None):
+def saltear_hasta(progreso, lecciones_en_orden, entrada, hoy=None, persistir=True):
     """Marca como salteadas por diagnóstico las lecciones anteriores a `entrada` que no estaban hechas.
     No toca XP, logros ni lecciones hechas: el progreso solo crece (ADR-002)."""
     if entrada not in lecciones_en_orden:
@@ -315,10 +317,12 @@ def saltear_hasta(progreso, lecciones_en_orden, entrada, hoy=None):
     for leccion_id in lecciones_en_orden[:lecciones_en_orden.index(entrada)]:
         if not hechas.get(leccion_id, {}).get("completada"):
             salteadas.setdefault(leccion_id, str(hoy or date.today()))
-    return guardar_progreso(progreso)
+    if persistir:
+        guardar_progreso(progreso)
+    return True
 
 
-def guardar_config(progreso, experiencia=None, meta_min=None, nombre=None, onboarding=None):
+def guardar_config(progreso, experiencia=None, meta_min=None, nombre=None, onboarding=None, persistir=True):
     """Valida y guarda la configuración. Devuelve False si algún valor no es válido."""
     cfg = progreso.setdefault("config", copy.deepcopy(PROGRESO_INICIAL["config"]))
     if experiencia is not None:
@@ -333,7 +337,9 @@ def guardar_config(progreso, experiencia=None, meta_min=None, nombre=None, onboa
         cfg["nombre"] = nombre[:30]
     if onboarding is not None:
         cfg["onboarding"] = bool(onboarding)
-    return guardar_progreso(progreso)
+    if persistir:
+        guardar_progreso(progreso)
+    return True
 
 
 # ─────────────────────────────────────────
