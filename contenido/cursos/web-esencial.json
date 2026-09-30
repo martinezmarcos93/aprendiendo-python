@@ -231,7 +231,8 @@
             {
               "tipo": "explicacion",
               "texto": "CSS cambia la apariencia de elementos HTML. Un selector indica qué elemento queremos modificar.",
-              "codigo": "h1 { font-size: 32px; }"
+              "codigo": "h1 { font-size: 32px; }",
+              "lenguaje": "css"
             },
             {
               "tipo": "elegir",
@@ -242,7 +243,8 @@
                 "Reemplaza HTML"
               ],
               "correcta": 0,
-              "pista": "HTML estructura; CSS da apariencia."
+              "pista": "HTML estructura; CSS da apariencia.",
+              "lenguaje": "css"
             },
             {
               "tipo": "completar",
@@ -256,7 +258,8 @@
               "respuesta": [
                 "font-size"
               ],
-              "pista": "font-size controla el tamaño de la letra."
+              "pista": "font-size controla el tamaño de la letra.",
+              "lenguaje": "css"
             },
             {
               "tipo": "predecir",
@@ -268,7 +271,8 @@
                 "red"
               ],
               "correcta": 0,
-              "pista": "El selector aparece antes de las llaves."
+              "pista": "El selector aparece antes de las llaves.",
+              "lenguaje": "css"
             },
             {
               "tipo": "escribir",
@@ -296,7 +300,8 @@
             {
               "tipo": "explicacion",
               "texto": "Una clase permite aplicar el mismo estilo a varios elementos. En CSS una clase se escribe con un punto delante.",
-              "codigo": ".criatura { margin: 12px; }"
+              "codigo": ".criatura { margin: 12px; }",
+              "lenguaje": "css"
             },
             {
               "tipo": "elegir",
@@ -307,7 +312,8 @@
                 "#criatura"
               ],
               "correcta": 0,
-              "pista": "Las clases empiezan con punto."
+              "pista": "Las clases empiezan con punto.",
+              "lenguaje": "css"
             },
             {
               "tipo": "completar",
@@ -321,7 +327,8 @@
               "respuesta": [
                 "."
               ],
-              "pista": "Una clase se selecciona con punto."
+              "pista": "Una clase se selecciona con punto.",
+              "lenguaje": "css"
             },
             {
               "tipo": "ordenar",
@@ -331,7 +338,8 @@
                 "margin: 12px;",
                 "}"
               ],
-              "pista": "La propiedad debe quedar dentro de las llaves."
+              "pista": "La propiedad debe quedar dentro de las llaves.",
+              "lenguaje": "css"
             },
             {
               "tipo": "escribir",
@@ -358,7 +366,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Un error CSS puede ser pequeño: una propiedad mal escrita, una llave faltante o un selector equivocado."
+              "texto": "Un error CSS puede ser pequeño: una propiedad mal escrita, una llave faltante o un selector equivocado.",
+              "lenguaje": "css"
             },
             {
               "tipo": "elegir",
@@ -369,7 +378,8 @@
                 "El nombre del navegador"
               ],
               "correcta": 0,
-              "pista": "CSS depende de una regla bien formada y de que el selector coincida."
+              "pista": "CSS depende de una regla bien formada y de que el selector coincida.",
+              "lenguaje": "css"
             },
             {
               "tipo": "completar",
@@ -383,7 +393,8 @@
               "respuesta": [
                 "color"
               ],
-              "pista": "color es una propiedad de CSS."
+              "pista": "color es una propiedad de CSS.",
+              "lenguaje": "css"
             },
             {
               "tipo": "predecir",
@@ -395,7 +406,8 @@
                 "red"
               ],
               "correcta": 0,
-              "pista": "color es la propiedad; red es su valor."
+              "pista": "color es la propiedad; red es su valor.",
+              "lenguaje": "css"
             },
             {
               "tipo": "escribir",
@@ -430,7 +442,8 @@
             {
               "tipo": "explicacion",
               "texto": "JavaScript agrega comportamiento. Una variable puede guardar un valor que luego usa el programa.",
-              "codigo": "const vida = 100;"
+              "codigo": "const vida = 100;",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "elegir",
@@ -441,7 +454,8 @@
                 "JavaScript"
               ],
               "correcta": 0,
-              "pista": "El valor guardado está después del signo igual."
+              "pista": "El valor guardado está después del signo igual.",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "completar",
@@ -455,7 +469,8 @@
               "respuesta": [
                 "="
               ],
-              "pista": "JavaScript usa = para asignar un valor."
+              "pista": "JavaScript usa = para asignar un valor.",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "predecir",
@@ -467,7 +482,8 @@
                 "0"
               ],
               "correcta": 0,
-              "pista": "La variable recibe 80."
+              "pista": "La variable recibe 80.",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "escribir",
@@ -495,7 +511,8 @@
             {
               "tipo": "explicacion",
               "texto": "Un evento conecta una acción con una respuesta. Un botón puede reaccionar cuando alguien hace clic.",
-              "codigo": "boton.addEventListener('click', saludar);"
+              "codigo": "boton.addEventListener('click', saludar);",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "elegir",
@@ -506,7 +523,8 @@
                 "hover-db"
               ],
               "correcta": 0,
-              "pista": "click es el evento del mouse que estamos usando."
+              "pista": "click es el evento del mouse que estamos usando.",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "completar",
@@ -520,7 +538,8 @@
               "respuesta": [
                 "click"
               ],
-              "pista": "El evento ocurre cuando se hace clic."
+              "pista": "El evento ocurre cuando se hace clic.",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "predecir",
@@ -532,7 +551,8 @@
                 "boton"
               ],
               "correcta": 0,
-              "pista": "El primer argumento de addEventListener es el evento."
+              "pista": "El primer argumento de addEventListener es el evento.",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "escribir",
@@ -560,7 +580,8 @@
             {
               "tipo": "explicacion",
               "texto": "El DOM representa los elementos de la página. JavaScript puede encontrar un elemento y cambiar su contenido.",
-              "codigo": "titulo.textContent = 'Victoria';"
+              "codigo": "titulo.textContent = 'Victoria';",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "elegir",
@@ -571,7 +592,8 @@
                 "href"
               ],
               "correcta": 0,
-              "pista": "textContent representa el texto contenido."
+              "pista": "textContent representa el texto contenido.",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "completar",
@@ -585,7 +607,8 @@
               "respuesta": [
                 "textContent"
               ],
-              "pista": "Usá textContent para cambiar el texto."
+              "pista": "Usá textContent para cambiar el texto.",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "predecir",
@@ -597,7 +620,8 @@
                 "textContent"
               ],
               "correcta": 0,
-              "pista": "El valor asignado es Victoria."
+              "pista": "El valor asignado es Victoria.",
+              "lenguaje": "javascript"
             },
             {
               "tipo": "escribir",
