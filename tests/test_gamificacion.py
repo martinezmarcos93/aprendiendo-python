@@ -5,18 +5,18 @@ import unittest
 from datetime import date, timedelta
 from pathlib import Path
 
-from tortuscript import contenido, leccion, liga, logros, progreso
+from tortuscript import persistencia_local, contenido, leccion, liga, logros, progreso
 
 
 class Base(unittest.TestCase):
     def setUp(self):
         self._dir = Path(tempfile.mkdtemp())
-        self._orig = (progreso.DIRECTORIO, progreso.PERFIL_ACTUAL)
-        progreso.DIRECTORIO = self._dir
-        progreso.PERFIL_ACTUAL = "default"
+        self._orig = (persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL)
+        persistencia_local.DIRECTORIO = self._dir
+        persistencia_local.PERFIL_ACTUAL = "default"
 
     def tearDown(self):
-        progreso.DIRECTORIO, progreso.PERFIL_ACTUAL = self._orig
+        persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
         shutil.rmtree(self._dir)
 
 
@@ -31,7 +31,7 @@ class TestCongelador(Base):
     D0 = date(2026, 9, 1)
 
     def test_se_gana_uno_cada_7_dias_seguidos_y_avisa(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         jugar_dias(p, self.D0, 6)
         self.assertEqual(p["congeladores"], 0)
         progreso.actualizar_racha(p, self.D0 + timedelta(days=6))
@@ -40,14 +40,14 @@ class TestCongelador(Base):
         self.assertEqual(p["stats"]["congeladores_ganados"], 1)
 
     def test_se_guardan_como_maximo_2(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         jugar_dias(p, self.D0, 21)
         self.assertEqual(p["congeladores"], 2)
         self.assertEqual(p["stats"]["congeladores_ganados"], 3)      # el tercero se ganó aunque no entre
         self.assertEqual(sum(1 for a in p["avisos"] if a["tipo"] == "congelador_ganado"), 2)
 
     def test_un_dia_de_falta_se_salva_con_congelador(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         ultimo = jugar_dias(p, self.D0, 7)                            # racha 7, 1 congelador
         hoy = ultimo + timedelta(days=2)                              # faltó un día
         self.assertEqual(progreso.racha_vigente(p, hoy), 7)           # sigue viva mientras no juegue
@@ -58,19 +58,19 @@ class TestCongelador(Base):
         self.assertEqual(p["avisos"][-1]["tipo"], "congelador_usado")
 
     def test_sin_congelador_o_con_dos_dias_de_falta_se_corta(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         ultimo = jugar_dias(p, self.D0, 3)
         self.assertEqual(progreso.racha_vigente(p, ultimo + timedelta(days=2)), 0)        # sin congelador
         progreso.actualizar_racha(p, ultimo + timedelta(days=2))
         self.assertEqual(p["racha"], 1)
-        q = progreso.cargar_progreso("otro")
+        q = persistencia_local.cargar_progreso("otro")
         ultimo = jugar_dias(q, self.D0, 7)
         self.assertEqual(progreso.racha_vigente(q, ultimo + timedelta(days=3)), 0)        # faltó 2 días
         progreso.actualizar_racha(q, ultimo + timedelta(days=3))
         self.assertEqual((q["racha"], q["congeladores"]), (1, 1))                          # el congelador no se gasta
 
     def test_reto_de_7_dias(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual(progreso.reto_de_racha(p, self.D0), (0, 7))
         ultimo = jugar_dias(p, self.D0, 3)
         self.assertEqual(progreso.reto_de_racha(p, ultimo), (3, 7))
@@ -80,7 +80,7 @@ class TestCongelador(Base):
         self.assertEqual(progreso.reto_de_racha(p, ultimo), (1, 7))
 
     def test_calendario_marca_los_dias_congelados(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         ultimo = jugar_dias(p, self.D0, 7)
         hoy = ultimo + timedelta(days=2)
         progreso.actualizar_racha(p, hoy)
@@ -92,14 +92,14 @@ class TestCongelador(Base):
 
 class TestAvisosYMeta(Base):
     def test_tomar_avisos_los_entrega_una_sola_vez_y_persiste(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         progreso.avisar(p, "logro", id="x")
         self.assertEqual(progreso.tomar_avisos(p), [{"tipo": "logro", "id": "x"}])
         self.assertEqual(progreso.tomar_avisos(p), [])
-        self.assertEqual(progreso.cargar_progreso()["avisos"], [])
+        self.assertEqual(persistencia_local.cargar_progreso()["avisos"], [])
 
     def test_meta_cumplida_avisa_una_vez_por_dia(self):
-        p = progreso.cargar_progreso()                   # meta 10 min = 40 XP
+        p = persistencia_local.cargar_progreso()                   # meta 10 min = 40 XP
         hoy = date(2026, 9, 25)
         progreso.sumar_xp(p, 30, hoy)
         self.assertEqual(p["avisos"], [])
@@ -115,7 +115,7 @@ class TestAvisosYMeta(Base):
     def test_perfil_viejo_se_migra_con_los_campos_nuevos(self):
         (self._dir / "progreso_default.json").write_text(
             '{"version": 4, "xp_total": 40, "ejercicios": {}, "config": {"onboarding": true, "meta_min": 10}}', encoding="utf-8")
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual((p["congeladores"], p["logros"], p["avisos"], p["liga"]["nivel"]), (0, {}, [], 0))
         self.assertEqual(p["version"], progreso.VERSION_ESQUEMA)
 
@@ -137,11 +137,11 @@ class TestLogros(Base):
             self.assertTrue(icono and titulo and descripcion and callable(condicion), id_)
 
     def test_progreso_vacio_no_da_ningun_logro(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual(logros.cumplidos(p, self.resumen(p)), [])
 
     def test_primer_paso_y_primera_leccion(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         progreso.registrar_paso_leccion(p, "hola-mundo", 0, 0, True, 6)
         self.assertEqual(logros.revisar(p, self.resumen(p), date(2026, 9, 25)), ["primer-paso"])
         for i in range(1, 6):
@@ -151,7 +151,7 @@ class TestLogros(Base):
         self.assertEqual(p["logros"]["perfecta"], "2026-09-25")
 
     def test_no_se_repiten_y_avisan_una_vez(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         progreso.registrar_paso_leccion(p, "hola-mundo", 0, 0, True, 1)
         logros.revisar(p, self.resumen(p))
         avisos = len([a for a in p["avisos"] if a["tipo"] == "logro"])
@@ -159,7 +159,7 @@ class TestLogros(Base):
         self.assertEqual(len([a for a in p["avisos"] if a["tipo"] == "logro"]), avisos)
 
     def test_no_es_perfecta_si_hubo_errores(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         for i in range(5):
             progreso.registrar_paso_leccion(p, "hola-mundo", i, 2, i != 2, 6)
         progreso.registrar_paso_leccion(p, "hola-mundo", 5, 0, True, 6)
@@ -167,7 +167,7 @@ class TestLogros(Base):
         self.assertIn("primera-leccion", logros.cumplidos(p, self.resumen(p)))
 
     def test_cursos_y_racha_y_niveles(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         for _, lec in contenido.lecciones(contenido.cargar_curso("tortuga")):
             progreso.registrar_paso_leccion(p, lec["id"], 0, 0, True, 1)
         p["racha_max"] = 7
@@ -180,7 +180,7 @@ class TestLogros(Base):
         self.assertNotIn("racha-30", hechos)
 
     def test_catalogo(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         p["logros"] = {"primer-paso": "2026-09-25"}
         cat = logros.catalogo(p)
         self.assertEqual(len(cat), len(logros.LOGROS))
