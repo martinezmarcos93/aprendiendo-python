@@ -74,7 +74,7 @@ class TestProyectosIntegradores(unittest.TestCase):
 
         archivos = self.p["proyectos_integradores"][pid]["archivos"]
         archivos["templates/index.html"] += '<button id="accion">Interactuar</button><p id="estado"></p><script src="app.js"></script>'
-        archivos["style.css"] += "main { color: white; }"
+        archivos["static/style.css"] += "main { color: white; }"
         archivos["app.js"] = "document.querySelector('#accion').addEventListener('click', () => { document.querySelector('#estado').textContent = 'ok'; });"
         archivos["app.py"] = "def descripcion(nombre):\n    return nombre\n"
         for etapa in proyectos_integradores.obtener_proyecto(pid)["etapas"]:
