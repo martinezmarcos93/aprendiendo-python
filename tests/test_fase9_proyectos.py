@@ -31,12 +31,28 @@ class TestProyectosIntegradores(unittest.TestCase):
         self.assertGreaterEqual(len(proyectos), 2)
         for proyecto in proyectos:
             self.assertGreaterEqual(len(proyecto["bloques"]), 2)
+        self.assertEqual(proyectos_integradores.validar_catalogo(), [])
 
     def test_proyecto_se_desbloquea_con_dos_bloques(self):
         self.completar("python", "web")
         disponibles = {p["id"]: p for p in proyectos_integradores.disponibles(self.p)}
         self.assertTrue(disponibles["ficha-criatura"]["desbloqueado"])
         self.assertFalse(disponibles["inventario-fantasia"]["desbloqueado"])
+
+    def test_no_puede_saltar_etapas(self):
+        self.completar("python", "web")
+        pid = proyectos_integradores.iniciar(self.p, "ficha-criatura")
+        r = proyectos_integradores.validar_etapa(self.p, pid, "interaccion")
+        self.assertFalse(r["ok"])
+        self.assertIn("etapa anterior", r["mensaje"])
+
+    def test_adaptacion_por_franja_modifica_ayudas(self):
+        self.completar("python", "web")
+        self.p["config"]["franja_edad"] = "desarrolladores"
+        pid = proyectos_integradores.iniciar(self.p, "ficha-criatura")
+        self.assertEqual(proyectos_integradores.estado(self.p, pid)["adaptacion"]["ayudas_maximas"], 4)
+        self.p["config"]["franja_edad"] = "constructores"
+        self.assertEqual(proyectos_integradores.ayudas(self.p, pid)[0]["desbloqueada"], True)
 
     def test_iniciar_conserva_archivos_y_no_reinicia(self):
         self.completar("python", "web")
@@ -78,7 +94,7 @@ class TestProyectosIntegradores(unittest.TestCase):
         self.completar("python", "web")
         pid = proyectos_integradores.iniciar(self.p, "ficha-criatura")
         self.p["xp_total"] = 0
-        self.assertFalse(proyectos_integradores.ayudas(self.p, pid)[0]["desbloqueada"])
+        self.assertTrue(proyectos_integradores.ayudas(self.p, pid)[0]["desbloqueada"])
         self.p["xp_total"] = 100
         self.assertTrue(proyectos_integradores.ayudas(self.p, pid)[0]["desbloqueada"])
         texto = proyectos_integradores.ver_ayuda(self.p, pid, "estructura-html")
