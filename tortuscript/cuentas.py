@@ -153,6 +153,15 @@ class CuentaRepository:
             elif row["version"] != SCHEMA_VERSION:
                 raise CuentaError("Versión de esquema de cuentas no compatible.")
 
+
+    def obtener_account_por_email(self, email: str) -> Optional[Account]:
+        email = _normalizar_email(email)
+        with self._conexion() as con:
+            row = con.execute(
+                "SELECT id,email,created_at,role FROM accounts WHERE email=?", (email,)
+            ).fetchone()
+        return Account(row["id"], row["email"], row["created_at"], row["role"]) if row else None
+
     def crear_account(self, email: str) -> Account:
         email = _normalizar_email(email)
         account_id = _id("acc", email)
