@@ -179,7 +179,7 @@ class CuentaRepository:
     def obtener_account(self, account_id: str) -> Optional[Account]:
         with self._conexion() as con:
             row = con.execute(
-                "SELECT id,email,created_at FROM accounts WHERE id=?", (account_id,)
+                "SELECT id,email,created_at,role FROM accounts WHERE id=?", (account_id,)
             ).fetchone()
         return Account(row["id"], row["email"], row["created_at"], row["role"]) if row else None
 
