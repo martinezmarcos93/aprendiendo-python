@@ -59,7 +59,7 @@ Cada lección dura unos 2 minutos y sigue el ciclo **explicar → practicar → 
 
 | Curso | Lecciones | De qué trata |
 |---|---|---|
-| 💻 Nivel 0 — El mundo digital por dentro | 13 | conceptos de programas, código, navegador, redes, servidor, datos, API y seguridad |\n| 🐢 Primeros pasos con TortuScript | 30 | mostrar, variables, preguntar, cuentas, si/sino, repetir, mientras, funciones |
+| 💻 Nivel 0 — El mundo digital por dentro | 16 | conceptos de programas, código, navegador, redes, servidor, datos, API y seguridad |\n| 🐢 Primeros pasos con TortuScript | 30 | mostrar, variables, preguntar, cuentas, si/sino, repetir, mientras, funciones |
 | 🎨 Dibujá con la tortuga | 15 | avanzar y girar, figuras con repetir, colores, lápiz, variables y funciones; al final, 3 laberintos donde la tortuga busca la salida (se abre al terminar *Dos variables*) |
 | 🛠️ Proyectos guiados | 3 | un adivinador de números, una calculadora y una casa; cada paso sigue desde el código anterior |
 | 🐍 De TortuScript a Python real | 9 | print, input, if, for/while, def, datos, listas y resolución de problemas (se abre al terminar *Desafío final*) |
