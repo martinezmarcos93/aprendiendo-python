@@ -48,6 +48,14 @@ class TestPythonV1(unittest.TestCase):
         from tortuscript.validacion import _correr
         codigo = 'edad = 12\nnombre = "Luna"\nes_mayor = edad >= 18\nprint(es_mayor)'
         self.assertEqual(detectar_tipo(codigo), "python")
+        ejemplos = [
+            'frutas = ["manzana", "pera", "banana"]\nprint(frutas[0])',
+            'numeros = [3, 8, 5]\nmayores = 0\nfor n in numeros:\n    if n >= 5:\n        mayores = mayores + 1\nprint(mayores)',
+        ]
+        for ejemplo in ejemplos:
+            self.assertEqual(detectar_tipo(ejemplo), "python", ejemplo)
+            salida, error, _ = _correr(ejemplo)
+            self.assertEqual(error, "", error)
         salida, error, _ = _correr(codigo)
         self.assertEqual(error, "", error)
         self.assertEqual(salida.strip(), "False")
