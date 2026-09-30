@@ -346,6 +346,10 @@ def validar_curso(curso):
         for texto in _textos_del_paso(paso):
             _revisar_texto(texto, donde, hallazgos)
 
+        if paso.get("lenguaje") in {"html", "css", "javascript"}:
+            _validar_paso(paso, donde, hallazgos)
+            continue
+
         nuevas = set()
         if paso.get("forma"):
             nuevas = _palabras(paso["forma"]) - _SIN_PRESENTACION
