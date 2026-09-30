@@ -78,7 +78,7 @@
       exportar.disabled = true;
       try {
         const r = await Tortu.api("/api/proyectos-integradores/" + encodeURIComponent(proyecto.id) + "/exportar", {});
-        const blob = new Blob([r.archivo], { type: "application/zip" });
+        const bin = atob(r.archivo);\n        const bytes = new Uint8Array(bin.length);\n        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);\n        const blob = new Blob([bytes], { type: "application/zip" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url; a.download = r.nombre; a.click();
