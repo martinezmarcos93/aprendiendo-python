@@ -44,6 +44,38 @@ class AuthTests(unittest.TestCase):
         self.auth.revoke(sesion)
         self.assertIsNone(self.auth.get_session(sesion))
 
+    def test_sesion_expirada_no_se_considera_autenticada(self):
+        cuenta = self.cuentas.crear_account("expirada@example.com")
+        sesion, csrf, _ = self.auth.create_session(cuenta.id)
+        with self.auth._db() as db:
+            db.execute(
+                "UPDATE sessions SET expires_at=? WHERE id_hash=?",
+                ("2000-01-01T00:00:00+00:00", __import__("hashlib").sha256(sesion.encode()).hexdigest()),
+            )
+        self.assertIsNone(self.auth.get_session(sesion))
+        self.assertFalse(self.auth.csrf_ok(sesion, csrf))
+
+    def test_sesion_con_expiracion_corrupta_no_rompe_la_autenticacion(self):
+        cuenta = self.cuentas.crear_account("corrupta@example.com")
+        sesion, _, _ = self.auth.create_session(cuenta.id)
+        with self.auth._db() as db:
+            db.execute(
+                "UPDATE sessions SET expires_at=? WHERE id_hash=?",
+                ("no-es-una-fecha", __import__("hashlib").sha256(sesion.encode()).hexdigest()),
+            )
+        self.assertIsNone(self.auth.get_session(sesion))
+
+    def test_revocar_todas_las_sesiones_de_una_cuenta_no_afecta_a_otra(self):
+        una = self.cuentas.crear_account("una@example.com")
+        otra = self.cuentas.crear_account("otra@example.com")
+        sesion_una_1, _, _ = self.auth.create_session(una.id)
+        sesion_una_2, _, _ = self.auth.create_session(una.id)
+        sesion_otra, _, _ = self.auth.create_session(otra.id)
+        self.auth.revoke_all(una.id)
+        self.assertIsNone(self.auth.get_session(sesion_una_1))
+        self.assertIsNone(self.auth.get_session(sesion_una_2))
+        self.assertIsNotNone(self.auth.get_session(sesion_otra))
+
     def test_el_hash_de_sesion_no_es_el_token(self):
         cuenta = self.cuentas.crear_account("adulto@example.com")
         sesion, _, _ = self.auth.create_session(cuenta.id)
