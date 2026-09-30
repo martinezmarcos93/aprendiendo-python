@@ -47,10 +47,10 @@ class Hallazgo:
         return f"{icono} {self.donde}: {self.mensaje}"
 
 
-def _correr_dibujo(codigo_tortu, entradas=None):
+def _correr_dibujo(codigo_tortu, entradas=None, lenguaje=None):
     """Traduce y ejecuta con la tortuga. Devuelve (salida_programa, error, palabras_usadas, ordenes)."""
     t = TraductorTortuScript()
-    python = codigo_tortu if detectar_tipo(codigo_tortu) == "python" else t.traducir_codigo(codigo_tortu)
+    python = codigo_tortu if lenguaje == "python" or detectar_tipo(codigo_tortu) == "python" else t.traducir_codigo(codigo_tortu)
     detalles = {}
     registro = tortuga.Registro()
     _, hay_error, mensaje = ejecutar_codigo(python, entradas_fijas=list(entradas or []), detalles=detalles,
@@ -67,15 +67,15 @@ def _correr_juego(codigo_tortu, entradas=None):
     return primera, r["eventos"], palabras_usadas(codigo_tortu)
 
 
-def _correr(codigo_tortu, entradas=None):
+def _correr(codigo_tortu, entradas=None, lenguaje=None):
     """Traduce y ejecuta. Devuelve (salida_programa, error, palabras_usadas)."""
-    salida, error, palabras, _ = _correr_dibujo(codigo_tortu, entradas)
+    salida, error, palabras, _ = _correr_dibujo(codigo_tortu, entradas, lenguaje)
     return salida, error, palabras
 
 
-def _dibuja(codigo_tortu, entradas=None):
+def _dibuja(codigo_tortu, entradas=None, lenguaje=None):
     """(hay_error, ordenes, palabras) de un programa de tortuga."""
-    _, error, palabras, ordenes = _correr_dibujo(codigo_tortu, entradas)
+    _, error, palabras, ordenes = _correr_dibujo(codigo_tortu, entradas, lenguaje)
     return error, ordenes, palabras
 
 
@@ -173,7 +173,7 @@ def _validar_paso(paso, donde, hallazgos):
             elif not eventos:
                 hallazgos.append(Hallazgo(ERROR, donde, "el juego de ejemplo no hace nada"))
         elif _requeridos(paso, ["texto"], donde, hallazgos) and paso.get("codigo"):
-            err, ordenes, usadas = _dibuja(paso["codigo"], entradas)
+            err, ordenes, usadas = _dibuja(paso["codigo"], entradas, paso.get("lenguaje"))
             if err:
                 hallazgos.append(Hallazgo(ERROR, donde, f"el ejemplo no corre: {err}"))
             elif paso.get("lienzo") and not tortuga.trazos(ordenes):
@@ -202,7 +202,7 @@ def _validar_paso(paso, donde, hallazgos):
                 if any(str(o) == real for i, o in enumerate(opciones) if i != correcta):
                     hallazgos.append(Hallazgo(ERROR, donde, "otra opción también es correcta"))
         elif tipo == "predecir":
-            salida, err, usadas = _correr(paso["codigo"], entradas)
+            salida, err, usadas = _correr(paso["codigo"], entradas, paso.get("lenguaje"))
             if err:
                 hallazgos.append(Hallazgo(ERROR, donde, f"el código no corre: {err}"))
             else:
@@ -237,7 +237,7 @@ def _validar_paso(paso, donde, hallazgos):
             elif not eventos:
                 hallazgos.append(Hallazgo(ERROR, donde, "completado con la respuesta, el juego no hace nada"))
             return set(usadas)
-        salida, err, usadas, ordenes = _correr_dibujo(codigo, entradas)
+        salida, err, usadas, ordenes = _correr_dibujo(codigo, entradas, paso.get("lenguaje"))
         if err:
             hallazgos.append(Hallazgo(ERROR, donde, f"completado con la respuesta, no corre: {err}"))
         elif paso.get("tortuga"):
@@ -265,7 +265,7 @@ def _validar_paso(paso, donde, hallazgos):
                             hallazgos.append(Hallazgo(AVISO, donde, "hay otro orden que hace el mismo juego; aceptá los dos al evaluar"))
                             break
             return set(usadas)
-        salida, err, usadas, ordenes = _correr_dibujo("\n".join(lineas), entradas)
+        salida, err, usadas, ordenes = _correr_dibujo("\n".join(lineas), entradas, paso.get("lenguaje"))
         dibujando = bool(paso.get("tortuga"))
         if err:
             hallazgos.append(Hallazgo(ERROR, donde, f"en el orden correcto no corre: {err}"))
@@ -278,7 +278,7 @@ def _validar_paso(paso, donde, hallazgos):
             for orden in itertools.permutations(lineas):
                 if list(orden) == lineas:
                     continue
-                s, e, _, o = _correr_dibujo("\n".join(orden), entradas)
+                s, e, _, o = _correr_dibujo("\n".join(orden), entradas, paso.get("lenguaje"))
                 igual = tortuga.mismo_dibujo(o, ordenes) if dibujando else normalizar_salida(s) == objetivo
                 if not e and igual:
                     hallazgos.append(Hallazgo(AVISO, donde, "hay otro orden que muestra lo mismo; aceptá los dos al evaluar"))
@@ -304,7 +304,7 @@ def _validar_paso(paso, donde, hallazgos):
             elif not eventos:
                 hallazgos.append(Hallazgo(ERROR, donde, "la solución del juego no hace nada (no se podría evaluar)"))
             return set(usadas)
-        salida, err, usadas, ordenes = _correr_dibujo(paso["solucion"], entradas)
+        salida, err, usadas, ordenes = _correr_dibujo(paso["solucion"], entradas, paso.get("lenguaje"))
         usadas = set(usadas)
         if ("preguntar" in usadas or "input(" in paso["solucion"]) and not entradas:
             hallazgos.append(Hallazgo(ERROR, donde, "la solución usa preguntar/input: agregá «entradas_prueba»"))
