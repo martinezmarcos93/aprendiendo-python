@@ -397,8 +397,25 @@ def create_app(token=None):
                 "completado": bool(d.get("completado")), "estrellas": d.get("estrellas", 0),
                 "xp": d.get("xp", 0), "abierto": bool(_desbloqueado(i, p)),
             })
+        camino = _camino(p)
+        nivel0_curso = next((c for c in camino if c["id"] == "alfabetizacion-digital"), None)
+        nivel0 = []
+        if nivel0_curso:
+            for seccion in nivel0_curso["secciones"]:
+                for lec in seccion["lecciones"]:
+                    lp = p.get("lecciones", {}).get(lec["id"], {})
+                    nivel0.append({
+                        "leccion": lec["id"],
+                        "numero": lec["titulo"].partition(". ")[0],
+                        "nombre": lec["titulo"].partition(". ")[2] or lec["titulo"],
+                        "completado": lec["estado"] in ("hecha", "perfecta"),
+                        "perfecto": lec["estado"] == "perfecta",
+                        "abierto": lec["estado"] != "bloqueada",
+                        "xp": sum(v.get("xp", 0) for v in lp.get("pasos", {}).values()),
+                    })
         tres = sum(1 for d in datos.values() if d.get("estrellas", 0) == 3)
-        return render_template("mapa.html", niveles=niveles, nombres=_niveles(), tres_estrellas=tres)
+        return render_template("mapa.html", niveles=niveles, nombres=_niveles(),
+                               nivel0=nivel0, tres_estrellas=tres)
 
     @app.get("/resumen")
     def resumen():
