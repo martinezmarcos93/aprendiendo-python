@@ -48,13 +48,7 @@ def main(argv=None):
     auth.ensure_schema()
 
     email = args.email.strip().lower()
-    try:
-        cuenta = next(
-            (c for c in cuentas.listar_accounts() if c.email == email),
-            None,
-        )
-    except AttributeError:
-        cuenta = None
+    cuenta = cuentas.obtener_account_por_email(email)
 
     if cuenta is None:
         try:
