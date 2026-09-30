@@ -261,6 +261,7 @@ def ver_ayuda(progreso, proyecto_id, ayuda_id):
     if contexto(progreso)["nivel"] < int(ayuda.get("min_nivel", 1)):
         raise ErrorProyectoIntegrador("Esa ayuda todavía no está desbloqueada.")
     vistas = datos.setdefault("ayudas_vistas", [])
+    limite = _adaptacion(proyecto, progreso)["ayudas_maximas"]
     if ayuda_id not in vistas:
         if len(vistas) >= limite:
             raise ErrorProyectoIntegrador("Ya usaste muchas ayudas en este proyecto.")
