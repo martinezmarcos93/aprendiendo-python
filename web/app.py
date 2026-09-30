@@ -162,6 +162,40 @@ def create_app(token=None):
             return True
         return progreso.guardar_progreso(p)
 
+    def _registrar_ejercicio(p, indice, estrellas, xp_ganado):
+        runtime, raw_session = _runtime_autenticado()
+        if runtime is not None:
+            resultado = runtime.registrar_ejercicio(raw_session, indice, estrellas, xp_ganado)
+            actualizado = runtime.cargar_datos(raw_session)
+            p.clear()
+            p.update(actualizado)
+            return resultado
+        return progreso.registrar_ejercicio(p, indice, estrellas, xp_ganado)
+
+    def _registrar_paso_leccion(p, leccion_id, indice, xp, perfecto, total_pasos, estrellas=None):
+        runtime, raw_session = _runtime_autenticado()
+        if runtime is not None:
+            resultado = runtime.registrar_paso_leccion(
+                raw_session, leccion_id, indice, xp, perfecto, total_pasos, estrellas
+            )
+            actualizado = runtime.cargar_datos(raw_session)
+            p.clear()
+            p.update(actualizado)
+            return resultado
+        return progreso.registrar_paso_leccion(
+            p, leccion_id, indice, xp, perfecto, total_pasos, estrellas
+        )
+
+    def _registrar_practica(p, leccion_id, paso, acierto):
+        runtime, raw_session = _runtime_autenticado()
+        if runtime is not None:
+            resultado = runtime.registrar_practica(raw_session, leccion_id, paso, acierto)
+            actualizado = runtime.cargar_datos(raw_session)
+            p.clear()
+            p.update(actualizado)
+            return resultado
+        return progreso.registrar_practica(p, leccion_id, paso, acierto)
+
     # ─────────────── seguridad ───────────────
     @app.after_request
     def _cabeceras_de_seguridad(respuesta):
