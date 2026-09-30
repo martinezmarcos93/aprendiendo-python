@@ -37,7 +37,7 @@ from tortuscript.referencia import cargar_referencia  # noqa: E402
 from tortuscript.runtime_educativo import RuntimeEducativo, ContextoEducativoError  # noqa: E402
 from tortuscript.repaso import MODOS, cola_repaso, contar  # noqa: E402
 from tortuscript.translator import TraductorTortuScript, detectar_tipo  # noqa: E402
-from web.cuenta_routes import bp as cuenta_bp  # noqa: E402
+from web.cuenta_routes import bp as cuenta_bp, _educativo  # noqa: E402
 
 logger = logging.getLogger("tortuscript.web")
 HOSTS_PERMITIDOS = {"127.0.0.1", "localhost"}
