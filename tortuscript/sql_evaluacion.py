@@ -5,8 +5,10 @@ construida desde el dataset declarado por la lección. La V1 es de solo lectura.
 No se abre ningún archivo ni se permite ATTACH, PRAGMA, DDL, DML o extensiones.
 """
 
+import json
 import re
 import sqlite3
+from pathlib import Path
 
 MAX_CODIGO_SQL = 4000
 MAX_FILAS = 100
@@ -26,6 +28,10 @@ def _normalizar(codigo):
 
 def _dataset(datos):
     datos = datos or {}
+    if isinstance(datos, str):
+        ruta = Path(__file__).resolve().parent.parent / "contenido" / "datos" / "sql" / f"{datos}.json"
+        with ruta.open(encoding="utf-8") as f:
+            datos = json.load(f)
     return datos.get("tablas") or {}
 
 def _construir(datos):
@@ -90,7 +96,11 @@ def ejecutar(codigo, datos=None):
     try:
         con = _construir(datos)
         con.set_authorizer(_autorizar)
-        con.set_progress_handler(lambda: 1, 1000)
+        operaciones = {"n": 0}
+        def limite():
+            operaciones["n"] += 1000
+            return 1 if operaciones["n"] > MAX_OPS else 0
+        con.set_progress_handler(limite, 1000)
         cur = con.execute(codigo)
         filas = cur.fetchmany(MAX_FILAS + 1)
         if len(filas) > MAX_FILAS:
