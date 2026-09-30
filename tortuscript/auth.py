@@ -200,13 +200,14 @@ class AuthRepository:
     def select_profile(self, session, profile_id):
         if not session or not profile_id:
             raise AuthError("Sesión y perfil son obligatorios.")
+        session_row = self.get_session(session)
+        if not session_row:
+            raise AuthError("La sesión no es válida o ya expiró.")
         with self._db() as db:
             row = db.execute(
-                """SELECT s.id_hash, s.account_id, p.id
-                   FROM sessions s
-                   JOIN child_profiles p ON p.account_id=s.account_id
-                   WHERE s.id_hash=? AND p.id=? AND p.active=1 AND s.revoked_at IS NULL""",
-                (_digest(session), profile_id),
+                """SELECT id FROM child_profiles
+                   WHERE id=? AND account_id=? AND active=1""",
+                (profile_id, session_row["account_id"]),
             ).fetchone()
             if not row:
                 raise AuthError("El perfil no pertenece a la cuenta o no está activo.")
