@@ -65,6 +65,18 @@ class AuthTests(unittest.TestCase):
             )
         self.assertIsNone(self.auth.get_session(sesion))
 
+    def test_no_se_puede_seleccionar_perfil_con_sesion_expirada(self):
+        cuenta = self.cuentas.crear_account("perfil-expirado@example.com")
+        perfil = self.cuentas.crear_child_profile(cuenta.id, "Ana")
+        sesion, _, _ = self.auth.create_session(cuenta.id)
+        with self.auth._db() as db:
+            db.execute(
+                "UPDATE sessions SET expires_at=? WHERE id_hash=?",
+                ("2000-01-01T00:00:00+00:00", __import__("hashlib").sha256(sesion.encode()).hexdigest()),
+            )
+        with self.assertRaises(AuthError):
+            self.auth.select_profile(sesion, perfil.id)
+
     def test_revocar_todas_las_sesiones_de_una_cuenta_no_afecta_a_otra(self):
         una = self.cuentas.crear_account("una@example.com")
         otra = self.cuentas.crear_account("otra@example.com")
