@@ -22,6 +22,7 @@ if str(RAIZ) not in sys.path:
     sys.path.insert(0, str(RAIZ))
 
 from tortuscript import contenido, evaluacion, leccion as motor, liga, logros, progreso  # noqa: E402
+from tortuscript import web_evaluacion  # noqa: E402
 from tortuscript import practica as espaciado  # noqa: E402
 from tortuscript import proyectos as mis_proyectos  # noqa: E402
 from tortuscript import diagnostico, intereses, respaldo  # noqa: E402
@@ -636,8 +637,34 @@ def create_app(token=None):
                        estado_juego=_estado(), avisos=_avisos_tras(p))
 
     def _evaluar_escribir(leccion_id, i, paso, datos):
-        """Ejecuta y evalúa un paso 'escribir'. Los ejercicios del curso clásico guardan su
-        resultado en `ejercicios` (clave histórica); los de otros cursos, en el paso de la lección."""
+        """Ejecuta y evalúa un paso escribir. Web se evalúa declarativamente: el servidor
+        nunca ejecuta HTML/CSS/JavaScript del alumno."""
+        if paso.get("web"):
+            reglas = paso.get("web") or {}
+            lenguaje = paso.get("lenguaje") or reglas.get("lenguaje")
+            r = {"evaluacion": web_evaluacion.evaluar(
+                datos.get("codigo", ""), paso["solucion"], lenguaje, reglas
+            )}
+            if r["evaluacion"]["estado"] == evaluacion.CORRECTO:
+                _, _, lec = _leccion_o_404(leccion_id)
+                vistas = pistas_vistas.get((progreso.PERFIL_ACTUAL, leccion_id, i), 0)
+                estrellas, xp = evaluacion.estrellas_por_pistas(vistas)
+                p = progreso.cargar_progreso()
+                nivel_antes = progreso.calcular_nivel(p.get("xp_total", 0))[0]
+                indice = contenido.indices_ejercicio(leccion_id).get(i)
+                if indice is not None:
+                    mejora = progreso.registrar_ejercicio(p, indice, estrellas, xp)
+                    info = progreso.registrar_paso_leccion(p, leccion_id, i, 0, estrellas == 3, len(lec["pasos"]))
+                else:
+                    info = progreso.registrar_paso_leccion(p, leccion_id, i, xp, estrellas == 3, len(lec["pasos"]),
+                                                           estrellas=estrellas)
+                    mejora = info["xp_ganado"] > 0
+                r["premio"] = {"estrellas": estrellas, "xp": xp, "mejora": mejora,
+                               "sube_nivel": progreso.calcular_nivel(p["xp_total"])[0] > nivel_antes}
+                r["leccion"] = _resumen_leccion(leccion_id, info)
+                r["avisos"] = _avisos_tras(p)
+            r["estado_juego"] = _estado()
+            return r
         op = "evaluar_juego" if paso.get("juego") else "evaluar_tortuga" if paso.get("tortuga") else "evaluar"
         pedido = {"op": op, "fuente": datos.get("codigo", ""),
                   "entradas": datos.get("entradas", []), "solucion": paso["solucion"]}
@@ -682,7 +709,9 @@ def create_app(token=None):
                                "texto": f"En total son {len(lineas)} línea{'s' if len(lineas) != 1 else ''}."}
         else:
             contenido_pista = {"titulo": "Solución completa", "codigo": sol}
-            if paso.get("lenguaje") != "python":
+            if paso.get("web"):
+                contenido_pista["lenguaje"] = paso.get("lenguaje", "html")
+            elif paso.get("lenguaje") != "python":
                 contenido_pista["python"] = TraductorTortuScript().traducir_codigo(sol)
         return jsonify(nivel=nivel, **contenido_pista)
 
