@@ -21,9 +21,9 @@
       "objetivo": "La aplicación debe mostrar una criatura y cambiar su estado cuando la persona interactúa con ella.",
       "archivos_iniciales": {
         "app.py": "from flask import Flask, jsonify, render_template\\n\\napp = Flask(__name__)\\n\\n@app.get('/')\\ndef inicio():\\n    return render_template('index.html')\\n\\n@app.get('/api/estado')\\ndef estado():\\n    return jsonify({'estado': 'Esperando una acción...'})\\n\\nif __name__ == '__main__':\\n    app.run(debug=False)\\n",
-        "templates/index.html": "<!doctype html>\\n<html lang=\"es\">\\n<head><meta charset=\"utf-8\"><title>Mi criatura</title><link rel=\"stylesheet\" href=\"{{ url_for('static', filename='style.css') }}\"></head>\\n<body>\\n  <main>\\n    <h1 id=\"nombre\">Mi criatura</h1>\\n    <p id=\"estado\">Esperando...</p>\\n    <button id=\"accion\">Interactuar</button>\\n  </main>\\n  <script src=\"{{ url_for('static', filename='app.js') }}\"></script>\\n</body>\\n</html>\\n",
+        "templates/index.html": "<!doctype html>\\n<html lang=\"es\">\\n<head><meta charset=\"utf-8\"><title>Mi criatura</title><link rel=\"stylesheet\" href=\"{{ url_for('static', filename='style.css') }}\"></head>\\n<body>\\n  <main>\\n    <h1 id=\"nombre\">Mi criatura</h1>\\n    <p id=\"estado\">Esperando...</p>\\n  </main>\\n  <script src=\"{{ url_for('static', filename='app.js') }}\"></script>\\n</body>\\n</html>\\n",
         "static/style.css": "body { font-family: sans-serif; }\\nmain { max-width: 32rem; margin: 3rem auto; }\\n",
-        "static/app.js": "const boton = document.querySelector('#accion');\\nconst estado = document.querySelector('#estado');\\n\\nboton.addEventListener('click', async () => {\\n  const respuesta = await fetch('/api/estado');\\n  const datos = await respuesta.json();\\n  estado.textContent = datos.estado;\\n});\\n",
+        "static/app.js": "const boton = document.querySelector('#accion');\\n",
         "requirements.txt": "Flask\\n",
         "README.md": "# Mi criatura\\n\\nInstalá Python y Flask, abrí esta carpeta en VS Code y ejecutá `python app.py`.\\nDespués abrí http://127.0.0.1:5000 en el navegador.\\n"
       },
