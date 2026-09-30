@@ -655,7 +655,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Ahora juntamos las piezas: HTML estructura, CSS cambia la apariencia y JavaScript agrega comportamiento."
+              "texto": "Ahora juntamos las piezas: HTML estructura, CSS cambia la apariencia y JavaScript agrega comportamiento.",
+              "lenguaje": "html"
             },
             {
               "tipo": "elegir",
@@ -666,7 +667,8 @@
                 "HTML reemplaza todo"
               ],
               "correcta": 0,
-              "pista": "Cada tecnología cumple un papel distinto."
+              "pista": "Cada tecnología cumple un papel distinto.",
+              "lenguaje": "html"
             },
             {
               "tipo": "completar",
@@ -680,7 +682,8 @@
               "respuesta": [
                 "HTML"
               ],
-              "pista": "La estructura pertenece a HTML."
+              "pista": "La estructura pertenece a HTML.",
+              "lenguaje": "html"
             },
             {
               "tipo": "ordenar",
@@ -690,7 +693,8 @@
                 "CSS: apariencia",
                 "JavaScript: comportamiento"
               ],
-              "pista": "Primero se estructura, después se presenta y finalmente se agrega comportamiento."
+              "pista": "Primero se estructura, después se presenta y finalmente se agrega comportamiento.",
+              "lenguaje": "html"
             },
             {
               "tipo": "escribir",
@@ -718,7 +722,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Una interfaz pequeña puede responder a una acción. Un botón y un evento son suficientes para empezar."
+              "texto": "Una interfaz pequeña puede responder a una acción. Un botón y un evento son suficientes para empezar.",
+              "lenguaje": "html"
             },
             {
               "tipo": "elegir",
@@ -729,7 +734,8 @@
                 "CSS solamente"
               ],
               "correcta": 0,
-              "pista": "El comportamiento lo agrega JavaScript."
+              "pista": "El comportamiento lo agrega JavaScript.",
+              "lenguaje": "html"
             },
             {
               "tipo": "completar",
@@ -784,7 +790,8 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "El último reto mezcla lectura y reparación. No necesitás escribir mucho: necesitás encontrar qué pieza no cumple su función."
+              "texto": "El último reto mezcla lectura y reparación. No necesitás escribir mucho: necesitás encontrar qué pieza no cumple su función.",
+              "lenguaje": "html"
             },
             {
               "tipo": "elegir",
@@ -795,7 +802,8 @@
                 "El texto del título"
               ],
               "correcta": 0,
-              "pista": "Si la apariencia está bien pero no hay respuesta, revisá el comportamiento."
+              "pista": "Si la apariencia está bien pero no hay respuesta, revisá el comportamiento.",
+              "lenguaje": "html"
             },
             {
               "tipo": "completar",
