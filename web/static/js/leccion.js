@@ -637,7 +637,10 @@
     }
     const acciones = el("div", "acciones"); acciones.style.justifyContent = "center";
     const sig = !practica && resultadoFinal && resultadoFinal.siguiente;
-    if (sig) {
+    if (!practica && resultadoFinal && resultadoFinal.elegir_recorrido) {
+      const a = el("a", "boton verde grande", "🧭 Elegí qué aprender primero");
+      a.href = "/elegir-recorrido"; acciones.appendChild(a);
+    } else if (sig) {
       const a = el("a", "boton verde grande", `▶ Sigue: ${resultadoFinal.titulo_siguiente}`);
       a.href = `/leccion/${sig}`; acciones.appendChild(a);
     }
