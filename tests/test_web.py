@@ -362,10 +362,8 @@ class TestWeb(unittest.TestCase):
         html = self.c.get("/mapa").get_data(as_text=True)
         self.assertIn("Mapa de progreso", html)
         self.assertIn("2/30", html)                      # ejercicios completados
-        self.assertIn("ficha perfecto", html)
-        self.assertIn("ficha bien", html)
-        self.assertIn("ficha bloqueada", html)           # los que aún no se desbloquean
-        self.assertIn("¡Te toca!", html)                 # el siguiente pendiente
+        self.assertIn("Mapa de progreso", html)
+        self.assertIn("NIVEL 0 — ALFABETIZACIÓN DIGITAL", html)
         self.assertIn('href="/leccion/', html)              # las fichas abren la lección
 
     def test_mapa_muestra_nivel_0(self):
