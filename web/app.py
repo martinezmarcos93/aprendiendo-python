@@ -462,7 +462,7 @@ def create_app(token=None):
                     })
         tres = sum(1 for d in datos.values() if d.get("estrellas", 0) == 3)
         return render_template("mapa.html", niveles=niveles, nombres=_niveles(),
-                               nivel0=nivel0, tres_estrellas=tres)
+                               nivel0=nivel0, camino=camino, tres_estrellas=tres)
 
     @app.get("/resumen")
     def resumen():
