@@ -42,3 +42,8 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 - [PRODUCTO_V1](../PRODUCTO_V1.md)
 - [ROADMAP V1 hasta 31/12/2026](../ROADMAP_V1_2026-12-31.md)
 - [Catálogo curricular V1](../catalogo_curricular_v1.json)
+
+- ADR-025 Aceptada — Arquitectura web/comercial futura
+- ADR-026 Aceptada — Privacidad y menores
+- ADR-027 Aceptada — UX diferenciada por edad
+- ADR-028 Aceptada — Fuentes curriculares avanzadas externas
