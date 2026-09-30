@@ -588,7 +588,7 @@ def create_app(token=None):
         if not curso["completo"]:
             return redirect(url_for("inicio"))
         return render_template("certificado.html", curso=curso, hoy=date.today(), xp=p.get("xp_total", 0),
-                               nombre=p["config"].get("nombre") or progreso.PERFIL_ACTUAL)
+                               nombre=_nombre_perfil_contexto(p))
 
     @app.get("/logros")
     def pagina_logros():
@@ -1165,8 +1165,9 @@ def create_app(token=None):
     @app.get("/api/perfil/exportar")
     def api_exportar_perfil():
         """El progreso del perfil actual, listo para descargar como archivo."""
-        return jsonify(archivo=respaldo.nombre_de_archivo(progreso.PERFIL_ACTUAL),
-                       datos=respaldo.exportar(_cargar_progreso(), progreso.PERFIL_ACTUAL))
+        nombre = _nombre_perfil_contexto()
+        return jsonify(archivo=respaldo.nombre_de_archivo(nombre),
+                       datos=respaldo.exportar(_cargar_progreso(), nombre))
 
     @app.post("/api/perfil/importar")
     def api_importar_perfil():
