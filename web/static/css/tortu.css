@@ -240,9 +240,9 @@ a.nodo:hover { transform: translateY(-3px) scale(1.04); }
 .lienzo-caja { background: #fff; border: 2px solid var(--borde); border-radius: var(--radio-chico); overflow: hidden; }
 .lienzo-caja canvas { display: block; width: 100%; height: auto; aspect-ratio: 1; }
 .lienzo-panel h3 { color: var(--celeste); }
-.opcion { display: inline-flex; align-items: center; gap: .5rem; font-weight: 800; color: var(--texto-suave); }
-.opcion input[type=checkbox] { width: 1.2rem; height: 1.2rem; accent-color: var(--violeta); }
-.opcion input[type=range] { accent-color: var(--violeta); }
+.opcion { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; max-width: 100%; font-weight: 800; color: var(--texto-suave); }
+.opcion input[type=checkbox] { width: 1.2rem; height: 1.2rem; accent-color: var(--violeta); flex: none; }
+.opcion input[type=range] { width: min(180px, 45vw); max-width: 100%; accent-color: var(--violeta); }
 .CodeMirror .linea-actual { background: #33407a; box-shadow: inset 4px 0 0 var(--amarillo); }
 
 /* ───────── páginas de contenido ───────── */
@@ -376,8 +376,8 @@ a.ficha:hover { transform: translateY(-3px); background: var(--superficie-2); }
 .pregunta-ayuda p { margin: .6rem 0 0; }
 .palabras-cierre { margin: .4rem 0; }
 .encuesta { margin: 1rem 0; }
-.registro-juego { max-height: 240px; overflow-y: auto; margin: .5rem 0; padding-left: 1.6rem; line-height: 1.5; }
-.escena-paso canvas, #escena { width: 100%; height: auto; display: block; }
+.registro-juego { max-height: min(240px, 35vh); overflow-y: auto; overflow-x: hidden; margin: .5rem 0; padding: .2rem .4rem .2rem 1.6rem; line-height: 1.5; overflow-wrap: anywhere; }
+.escena-paso canvas, #escena { width: 100%; height: auto; max-width: 100%; display: block; }
 .escena-paso { min-width: 0; }
 .pregunta-prueba { text-align: left; margin: .8rem 0; }
 .codigo-prueba { background: var(--fondo-2); border: 1px solid var(--borde); border-radius: var(--radio-chico); padding: .5rem .7rem; overflow-x: auto; }
@@ -402,6 +402,18 @@ html[data-contraste="alto"] .opcion-encuesta[aria-pressed="true"] { color: #000;
 .ejemplo-ejecutable .lienzo-paso { max-width: 300px; margin-top: .7rem; }
 .paso-caja > .objetivo-caja { max-width: 260px; margin-bottom: 1rem; }
 @media (max-width: 800px) { .duo-tortuga { grid-template-columns: 1fr; } }
+@media (max-width: 600px) {
+  .columna-lienzos { grid-template-columns: 1fr; }
+  .columna-lienzos .lienzo-paso { max-width: 520px; }
+  .registro-juego { max-height: min(220px, 32vh); }
+  .escena-paso canvas, #escena { max-height: 52vh; object-fit: contain; }
+}
+@media (max-width: 380px) {
+  .opcion { width: 100%; justify-content: space-between; }
+  .opcion input[type=range] { width: min(170px, 52vw); }
+  .tortuga-grid { gap: .7rem; }
+  .lienzo-panel .lienzo-caja { max-width: 100%; }
+}
 
 /* barra de feedback fija abajo */
 .pie-leccion { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 1rem 1.4rem 1.2rem;
@@ -417,6 +429,12 @@ html[data-contraste="alto"] .opcion-encuesta[aria-pressed="true"] { color: #000;
 @keyframes subir { from { transform: translateY(100%); } to { transform: none; } }
 @media (max-width: 900px) { .leccion { padding-bottom: 12rem; } }
 @media (max-width: 700px) {
+  .leccion { padding-left: .1rem; padding-right: .1rem; }
+  .leccion-cab { gap: .6rem; }
+  .cerrar { min-width: 44px; min-height: 44px; display: inline-grid; place-items: center; }
+  .progreso-leccion { min-width: 0; }
+  .paso-caja { min-height: 240px; overflow-wrap: anywhere; }
+  .opcion-paso, .ficha-paso, .linea-paso { min-height: 44px; }
   .pie-leccion { padding: .8rem; gap: .7rem; align-items: stretch; }
   .pie-mensaje { min-width: 0; max-width: none; width: 100%; font-size: 1rem; }
   .pie-botones { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
@@ -693,7 +711,11 @@ html[data-contraste="alto"] .opcion-ajuste[aria-checked="true"] { background: #f
 
 @media (max-width: 380px) {
   .CodeMirror { height: 250px; font-size: 1rem; }
+  .paso-caja .CodeMirror { height: 230px !important; }
   .acciones .boton { flex: 1 1 calc(50% - .6rem); }
   .pie-botones { grid-template-columns: 1fr; }
   .tarjeta { padding: 1rem; }
+  .texto-grande { font-size: 1.15rem; }
+  .paso-caja { padding: 1rem; }
+  .leccion-titulo { align-items: flex-start; flex-direction: column; gap: .35rem; }
 }
