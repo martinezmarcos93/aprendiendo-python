@@ -283,7 +283,7 @@ const Tortu = (() => {
     const campo = document.getElementById("pf-campo");
     const error = document.getElementById("pf-error");
     const datos = await api("/api/perfiles");
-    const cuenta = datos.perfiles.length > 0 && typeof datos.perfiles[0] === "object";
+    const cuenta = datos.modo === "cuenta";
     lista.textContent = "";
     error.textContent = "";
     campo.value = "";
