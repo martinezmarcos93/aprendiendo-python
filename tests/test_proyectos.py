@@ -5,7 +5,7 @@ import unittest
 from datetime import date
 from pathlib import Path
 
-from tortuscript import logros, progreso, proyectos
+from tortuscript import persistencia_local, logros, progreso, proyectos
 from tortuscript.proyectos import ErrorProyecto
 
 try:
@@ -93,16 +93,16 @@ class TestLogrosDeProyectos(unittest.TestCase):
 class TestWebProyectos(unittest.TestCase):
     def setUp(self):
         self._dir = Path(tempfile.mkdtemp())
-        self._orig = (progreso.DIRECTORIO, progreso.PERFIL_ACTUAL)
-        progreso.DIRECTORIO = self._dir
-        progreso.PERFIL_ACTUAL = "default"
+        self._orig = (persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL)
+        persistencia_local.DIRECTORIO = self._dir
+        persistencia_local.PERFIL_ACTUAL = "default"
         from web.app import create_app
         self.c = create_app(token="t").test_client()
         self.h = {"X-Tortu-Token": "t"}
-        progreso.guardar_config(progreso.cargar_progreso(), onboarding=True)
+        progreso.guardar_config(persistencia_local.cargar_progreso(), onboarding=True)
 
     def tearDown(self):
-        progreso.DIRECTORIO, progreso.PERFIL_ACTUAL = self._orig
+        persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
         shutil.rmtree(self._dir)
 
     def post(self, ruta, datos=None):
@@ -120,7 +120,7 @@ class TestWebProyectos(unittest.TestCase):
         self.assertIn("avanzar 50", html)
         self.assertIn("Mi dibujo", html)
         self.assertEqual(self.guardar(nombre="Mi dibujo 2", codigo="avanzar 99", id=id_)["id"], id_)
-        self.assertEqual(progreso.cargar_progreso()["proyectos"][id_]["codigo"], "avanzar 99")
+        self.assertEqual(persistencia_local.cargar_progreso()["proyectos"][id_]["codigo"], "avanzar 99")
         self.assertEqual(self.guardar(id=id_)["avisos"], [])                            # el logro no se repite
 
     def test_un_proyecto_se_abre_en_su_pagina(self):
@@ -157,7 +157,7 @@ class TestWebProyectos(unittest.TestCase):
         html = self.c.get("/proyectos").get_data(as_text=True)
         self.assertNotIn("<script>alert(1)</script>", html)
         self.assertNotIn("<b>x</b>", html)
-        pagina = self.c.get("/tortuga?proyecto=" + progreso.cargar_progreso()["proyectos"].__iter__().__next__()).get_data(as_text=True)
+        pagina = self.c.get("/tortuga?proyecto=" + persistencia_local.cargar_progreso()["proyectos"].__iter__().__next__()).get_data(as_text=True)
         self.assertNotIn("<script>alert(1)</script>", pagina)                                 # va como JSON, no como HTML
 
 
