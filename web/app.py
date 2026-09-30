@@ -1175,7 +1175,13 @@ def create_app(token=None):
 
     @app.post("/api/perfil/importar")
     def api_importar_perfil():
-        """Trae un progreso exportado como perfil NUEVO (nunca pisa uno existente) y cambia a ese perfil."""
+        """Importa un progreso local solo en el modo de compatibilidad sin cuenta."""
+        runtime, _ = _runtime_autenticado()
+        if runtime is not None:
+            return jsonify(
+                ok=False,
+                mensaje="La importación de progreso en cuentas se realiza desde /cuenta/progreso/importar-local.",
+            ), 409
         if (request.content_length or 0) > respaldo.MAX_BYTES:
             return jsonify(ok=False, mensaje="El archivo es demasiado grande para ser un progreso."), 400
         try:
