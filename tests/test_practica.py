@@ -5,7 +5,7 @@ import unittest
 from datetime import date, timedelta
 from pathlib import Path
 
-from tortuscript import contenido, practica, progreso
+from tortuscript import persistencia_local, contenido, practica, progreso
 
 CURSOS = contenido.todos_los_cursos()
 HOY = date(2026, 9, 25)
@@ -106,31 +106,31 @@ class TestRegistrar(unittest.TestCase):
 class TestProgresoPractica(unittest.TestCase):
     def setUp(self):
         self._dir = Path(tempfile.mkdtemp())
-        self._orig = (progreso.DIRECTORIO, progreso.PERFIL_ACTUAL)
-        progreso.DIRECTORIO = self._dir
-        progreso.PERFIL_ACTUAL = "default"
+        self._orig = (persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL)
+        persistencia_local.DIRECTORIO = self._dir
+        persistencia_local.PERFIL_ACTUAL = "default"
 
     def tearDown(self):
-        progreso.DIRECTORIO, progreso.PERFIL_ACTUAL = self._orig
+        persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
         shutil.rmtree(self._dir)
 
     def test_acierto_da_xp_con_tope_diario_y_cuenta_para_la_racha(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         ganado = [progreso.registrar_practica(p, "hola-mundo", 1 + i % 4, True, HOY) for i in range(8)]
         self.assertEqual(ganado, [2] * 6 + [0, 0])                                       # tope de 12 XP por día
         self.assertEqual((p["xp_total"], p["racha"]), (12, 1))
         self.assertEqual(progreso.xp_de_hoy(p, HOY), 12)
 
     def test_error_no_da_xp_pero_reprograma(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual(progreso.registrar_practica(p, "hola-mundo", 1, False, HOY), 0)
         self.assertEqual(p["repaso"]["hola-mundo:1"]["caja"], 1)
         self.assertEqual(p["xp_total"], 0)
 
     def test_se_guarda_y_los_pasos_de_leccion_recuerdan_la_fecha(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         progreso.registrar_practica(p, "hola-mundo", 1, True, HOY)
-        self.assertIn("hola-mundo:1", progreso.cargar_progreso()["repaso"])
+        self.assertIn("hola-mundo:1", persistencia_local.cargar_progreso()["repaso"])
         progreso.registrar_paso_leccion(p, "hola-mundo", 1, 5, True, 6)
         fecha = p["lecciones"]["hola-mundo"]["pasos"]["1"]["fecha"]
         progreso.registrar_paso_leccion(p, "hola-mundo", 1, 5, True, 6)
@@ -139,7 +139,7 @@ class TestProgresoPractica(unittest.TestCase):
     def test_perfil_viejo_se_migra(self):
         (self._dir / "progreso_default.json").write_text(
             '{"version": 5, "xp_total": 10, "ejercicios": {}}', encoding="utf-8")
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual((p["repaso"], p["xp_practica"]), ({}, {}))
 
 
