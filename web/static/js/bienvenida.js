@@ -92,8 +92,10 @@
       });
       if (r.ok) location.href = "/";
     } catch (e) {
-      errorFinal.textContent = "No pude guardar tus respuestas. Revisá el nombre y probá de nuevo.";
-      boton.disabled = false; ir(1);
+      const mensaje = e?.datos?.mensaje || "No pude guardar tus respuestas. Revisá el nombre y probá de nuevo.";
+      errorFinal.textContent = mensaje;
+      boton.disabled = false;
+      ir(3);
     }
   });
   nombre.focus();
