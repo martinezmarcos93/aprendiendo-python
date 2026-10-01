@@ -467,7 +467,7 @@
     ocultarPie();
 
     function escaparScript(texto) {
-      return String(texto).replace(/<\\/script/gi, "<\\\\/script");
+      return String(texto).replace(/<\/script/gi, "<\\/script");
     }
     function documentoPreview(codigo) {
       const lenguaje = (paso.web && paso.web.lenguaje) || paso.lenguaje || "html";
