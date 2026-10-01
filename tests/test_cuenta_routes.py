@@ -346,6 +346,44 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertIn(pid, archivos[0].name)
 
 
+    def test_gateway_educativo_llega_a_bienvenida_despues_de_seleccionar_perfil(self):
+        self.client.post("/cuenta/registro", json={
+            "email": "gateway@example.com",
+            "password": "una-clave-larga-123",
+        })
+        repo = CuentaRepository(self.tmp / "cuentas.sqlite3")
+        repo.ensure_schema()
+        cuenta = repo.obtener_account("acc_" + __import__("hashlib").sha256(
+            "gateway@example.com".encode()
+        ).hexdigest()[:24])
+        AuthRepository(self.tmp / "cuentas.sqlite3").marcar_verificada(cuenta.id)
+
+        login = self.client.post("/cuenta/login", json={
+            "email": "gateway@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(login.status_code, 200)
+        csrf = login.json["csrf"]
+
+        perfil = self.client.post(
+            "/cuenta/perfiles",
+            json={"nombre": "Ana"},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(perfil.status_code, 201)
+
+        selected = self.client.post(
+            "/cuenta/perfil",
+            json={"perfil_id": perfil.json["perfil"]["id"]},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(selected.status_code, 200)
+
+        inicio = self.client.get("/", follow_redirects=False)
+        self.assertEqual(inicio.status_code, 302)
+        self.assertIn("/bienvenida", inicio.headers["Location"])
+
+
     def test_verificacion_y_recuperacion_http_no_exponen_token(self):
         registro = self.client.post("/cuenta/registro", json={
             "email": "seguridad@example.com",
