@@ -49,7 +49,7 @@ class PerfilEducativoService:
         perfil = next((p for p in perfiles if p.id == profile_id and p.active), None)
         if not perfil:
             raise ContextoEducativoError("El perfil activo no pertenece a la cuenta o no está activo.")
-        return ContextoEducativo(account=account, perfil=perfil)
+        return ContextoEducativo(cuenta=account, perfil=perfil)
 
     def cargar_progreso(self, raw_session: str | None) -> ProgresoSnapshot | None:
         contexto = self.contexto(raw_session)
