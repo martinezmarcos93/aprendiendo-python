@@ -154,8 +154,9 @@ def create_app(token=None):
         return runtime.contexto(raw_session).perfil.id
 
     def _nombre_perfil_contexto(p=None):
-        p = p or _cargar_progreso()
-        return p.get("config", {}).get("nombre") or _perfil_contexto()
+        # La identidad visible pertenece al ChildProfile, no al nombre legacy del progreso.
+        raw_session = request.cookies.get("tortu_session")
+        return RuntimeEducativo(_educativo()).contexto(raw_session).perfil.display_name
 
     def _cargar_progreso():
         runtime, raw_session = _runtime_educativo()
@@ -277,14 +278,22 @@ def create_app(token=None):
 
     @app.context_processor
     def _globales():
-        # Las páginas de cuenta son públicas/autenticadas pero no tienen contexto educativo.
-        # Evita que el context processor intente cargar progreso y convierta /cuenta/* en 401.
+        # Las páginas de cuenta no tienen contexto educativo.
         if request.path.startswith("/cuenta"):
             return {"token": app.config["TOKEN"]}
-        # Lo que quedó pendiente (p. ej. subir de liga al cambiar la semana) se cuenta en la próxima página
+        raw_session = request.cookies.get("tortu_session")
+        contexto = RuntimeEducativo(_educativo()).contexto(raw_session)
         avisos = _tomar_avisos(_cargar_progreso())
-        return {"token": app.config["TOKEN"], "estado": _estado(), "perfil": _nombre_perfil_contexto(),
-                "avisos_pendientes": avisos, "ajustes": progreso.ajustes_de(_cargar_progreso())}
+        return {
+            "token": app.config["TOKEN"],
+            "estado": _estado(),
+            "perfil": contexto.perfil.display_name,
+            "cuenta_email": contexto.cuenta.email,
+            "cuenta_role": contexto.cuenta.role,
+            "cuenta_csrf": request.cookies.get("tortu_csrf", ""),
+            "avisos_pendientes": avisos,
+            "ajustes": progreso.ajustes_de(_cargar_progreso()),
+        }
 
     # ─────────────── helpers ───────────────
     def _estado():
@@ -316,7 +325,18 @@ def create_app(token=None):
             "estrellas": {k: v.get("estrellas", 0) for k, v in p["ejercicios"].items()},
         }
 
+    def _es_admin():
+        raw_session = request.cookies.get("tortu_session")
+        if not raw_session:
+            return False
+        try:
+            return RuntimeEducativo(_educativo()).contexto(raw_session).cuenta.role == "admin"
+        except ContextoEducativoError:
+            return False
+
     def _desbloqueado(indice, p=None):
+        if _es_admin():
+            return True
         p = p or _cargar_progreso()
         ej = p["ejercicios"]
         return indice == 0 or ej.get(str(indice), {}).get("completado") or \
@@ -360,7 +380,16 @@ def create_app(token=None):
         return contenido.todos_los_cursos()
 
     def _camino(p=None):
-        return motor.estado_cursos(_cursos(), p or _cargar_progreso(), INDICES_POR_LECCION)
+        camino = motor.estado_cursos(_cursos(), p or _cargar_progreso(), INDICES_POR_LECCION)
+        if _es_admin():
+            # El admin puede recorrer todo el árbol sin falsear el progreso.
+            for curso in camino:
+                curso["abierto"] = True
+                for seccion in curso.get("secciones", []):
+                    for leccion in seccion.get("lecciones", []):
+                        if leccion.get("estado") == "bloqueada":
+                            leccion["estado"] = "actual"
+        return camino
 
     def _leccion_o_404(leccion_id):
         hallada = motor.buscar_en_cursos(_cursos(), leccion_id)
@@ -381,6 +410,8 @@ def create_app(token=None):
         return motor.esta_completada(p, leccion["id"], INDICES_POR_LECCION.get(leccion["id"], []))
 
     def _leccion_desbloqueada(leccion_id, p=None):
+        if _es_admin():
+            return True
         return any(l["id"] == leccion_id and l["estado"] != "bloqueada"
                    for l in motor.lecciones_planas(_camino(p)))
 
