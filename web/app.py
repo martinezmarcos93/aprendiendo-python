@@ -1143,7 +1143,7 @@ def create_app(token=None):
         contexto = runtime.contexto(raw_session)
         perfiles = [
             {"id": p.id, "nombre": p.display_name}
-            for p in contexto.cuentas.listar_child_profiles(contexto.account.id)
+            for p in contexto.cuenta and _educativo().cuentas.listar_child_profiles(contexto.cuenta.id)
         ]
         return jsonify(modo="cuenta", actual=contexto.perfil.id, perfiles=perfiles)
 
