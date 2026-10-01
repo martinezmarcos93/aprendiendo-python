@@ -5,7 +5,7 @@ No activa todavía el despliegue remoto: create_app mantiene el límite localhos
 """
 from pathlib import Path
 
-from flask import Blueprint, current_app, jsonify, make_response, request
+from flask import Blueprint, current_app, jsonify, make_response, redirect, render_template, request, url_for
 
 from tortuscript.acceso import AccesoProducto
 from tortuscript.auth import AuthError, AuthRepository
@@ -85,6 +85,53 @@ def _require_csrf(auth, raw_session):
     return True
 
 
+@bp.get("/registrar")
+def registrar():
+    return render_template("cuenta/registrar.html")
+
+
+@bp.get("/ingresar")
+def ingresar():
+    if _require_session():
+        return redirect(url_for("cuenta.seleccionar_perfil"))
+    return render_template("cuenta/ingresar.html")
+
+
+@bp.get("/seleccionar-perfil")
+def seleccionar_perfil():
+    resultado = _require_session()
+    if not resultado:
+        return redirect(url_for("cuenta.ingresar"))
+    cuentas, _, row = resultado
+    perfiles = cuentas.listar_child_profiles(row["account_id"])
+    return render_template(
+        "cuenta/perfiles.html",
+        perfiles=perfiles,
+        csrf=request.cookies.get("tortu_csrf", ""),
+        perfil_activo=row["active_profile_id"],
+    )
+
+
+@bp.post("/registrar")
+def registrar_post():
+    datos = request.form if request.form else (request.get_json(silent=True) or {})
+    email = datos.get("email")
+    password = datos.get("password")
+    if not isinstance(email, str) or not isinstance(password, str):
+        return render_template("cuenta/registrar.html", error="Correo y contraseña son obligatorios."), 400
+    cuentas, auth = _repos()
+    try:
+        cuenta = cuentas.crear_account(email)
+        auth.set_password(cuenta.id, password)
+    except CuentaError as exc:
+        return render_template("cuenta/registrar.html", error=str(exc)), 400
+    except AuthError as exc:
+        return render_template("cuenta/registrar.html", error=str(exc)), 400
+    token, expires = auth.create_verification_token(cuenta.id)
+    _emitir_email("verification", cuenta.email, token, expires)
+    return render_template("cuenta/pendiente.html", email=cuenta.email), 202
+
+
 @bp.post("/registro")
 def registro():
     datos = request.get_json(silent=True) or {}
@@ -112,8 +159,12 @@ def verificar_email():
         _, auth = _repos()
         auth.verify_email_token(token)
     except AuthError:
-        return jsonify(ok=False, mensaje="El enlace no es válido o ya expiró."), 400
-    return jsonify(ok=True, estado="correo_verificado")
+        if request.accept_mimetypes.best == "application/json":
+            return jsonify(ok=False, mensaje="El enlace no es válido o ya expiró."), 400
+        return render_template("cuenta/verificacion.html", ok=False), 400
+    if request.accept_mimetypes.best == "application/json":
+        return jsonify(ok=True, estado="correo_verificado")
+    return render_template("cuenta/verificacion.html", ok=True)
 
 
 @bp.post("/recuperar")
@@ -151,7 +202,7 @@ def restablecer_password():
 
 @bp.post("/login")
 def login():
-    datos = request.get_json(silent=True) or {}
+    datos = request.get_json(silent=True) or request.form
     email = datos.get("email")
     password = datos.get("password")
     if not isinstance(email, str) or not isinstance(password, str):
@@ -163,10 +214,15 @@ def login():
     try:
         cuenta = auth.verify_password(email, password)
         raw_session, csrf, expires = auth.create_session(cuenta["id"])
-    except AuthError:
+    except AuthError as exc:
+        if request.form:
+            return render_template("cuenta/ingresar.html", error=str(exc)), 401
         return jsonify(ok=False, mensaje="Correo o contraseña incorrectos o cuenta sin verificar."), 401
-    respuesta = make_response(jsonify(ok=True, cuenta={"id": cuenta["id"], "email": cuenta["email"], "role": cuenta["role"]},
-                                      csrf=csrf, expira=expires.isoformat()))
+    if request.form:
+        respuesta = make_response(redirect(url_for("cuenta.seleccionar_perfil")))
+    else:
+        respuesta = make_response(jsonify(ok=True, cuenta={"id": cuenta["id"], "email": cuenta["email"], "role": cuenta["role"]},
+                                          csrf=csrf, expira=expires.isoformat()))
     respuesta.set_cookie("tortu_session", raw_session, **_cookie_config())
     respuesta.set_cookie(
         "tortu_csrf", csrf,
