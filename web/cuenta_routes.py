@@ -93,12 +93,12 @@ def registrar():
 @bp.get("/ingresar")
 def ingresar():
     if _require_session():
-        return redirect(url_for("cuenta.seleccionar_perfil"))
+        return redirect(url_for("cuenta.seleccionar_perfil_pagina"))
     return render_template("cuenta/ingresar.html")
 
 
 @bp.get("/seleccionar-perfil")
-def seleccionar_perfil():
+def seleccionar_perfil_pagina():
     resultado = _require_session()
     if not resultado:
         return redirect(url_for("cuenta.ingresar"))
