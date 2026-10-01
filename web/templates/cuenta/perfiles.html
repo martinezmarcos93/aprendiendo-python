@@ -14,17 +14,23 @@
       <h1>¿Quién programa hoy?</h1>
       <p class="texto-grande">Elegí un perfil educativo.</p>
     </div>
-    <div id="error" class="error" role="alert" hidden></div>
+    {% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
     <div class="lista-perfiles">
       {% for perfil in perfiles %}
-      <button class="boton grande" type="button" data-perfil="{{ perfil.id }}">{{ perfil.display_name }}</button>
+      <form method="post" action="{{ url_for('cuenta.seleccionar_perfil') }}">
+        <input type="hidden" name="csrf" value="{{ csrf }}">
+        <input type="hidden" name="perfil_id" value="{{ perfil.id }}">
+        <input type="hidden" name="next" value="{{ request.args.get('next', '/') }}">
+        <button class="boton grande" type="submit">{{ perfil.display_name }}</button>
+      </form>
       {% else %}
       <p class="centrado">Todavía no hay perfiles. Creá el primero abajo.</p>
       {% endfor %}
     </div>
     {% if perfiles|length < 5 %}
     <hr>
-    <form id="nuevo-perfil">
+    <form method="post" action="{{ url_for('cuenta.crear_perfil') }}">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
       <label class="etiqueta" for="nombre">Nuevo perfil</label>
       <input class="campo" id="nombre" name="nombre" maxlength="40" autocomplete="off" required>
       <button class="boton violeta grande" type="submit">Crear perfil y entrar</button>
