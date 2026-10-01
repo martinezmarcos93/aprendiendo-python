@@ -252,6 +252,22 @@ const Tortu = (() => {
     lanzarConfeti({ particleCount: grande ? 180 : 90, spread: grande ? 100 : 70, origin: { y: 0.7 } });
   }
 
+  // ───────── cuenta adulta ─────────
+  const modalCuenta = document.getElementById("modal-cuenta");
+  const btnCuenta = document.getElementById("btn-cuenta");
+  if (modalCuenta && btnCuenta) {
+    btnCuenta.addEventListener("click", () => {
+      modalCuenta.hidden = false;
+    });
+    const cancelarCuenta = document.getElementById("cuenta-cancelar");
+    if (cancelarCuenta) cancelarCuenta.addEventListener("click", () => {
+      modalCuenta.hidden = true;
+    });
+    modalCuenta.addEventListener("click", (ev) => {
+      if (ev.target === modalCuenta) modalCuenta.hidden = true;
+    });
+  }
+
   // ───────── perfiles ─────────
   function cookie(nombre) {
     const prefijo = nombre + "=";
