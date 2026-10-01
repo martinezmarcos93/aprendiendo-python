@@ -222,7 +222,7 @@ def create_app(token=None):
             cuentas, auth = _educativo().cuentas, _educativo().auth
             sesion = auth.get_session(raw_session)
             if sesion and not sesion["active_profile_id"]:
-                return redirect(url_for("cuenta.seleccionar_perfil", next=request.full_path))
+                return redirect(url_for("cuenta.seleccionar_perfil_pagina", next=request.full_path))
             return redirect(url_for("cuenta.ingresar"))
         return None
 
