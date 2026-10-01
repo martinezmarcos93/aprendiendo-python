@@ -4,6 +4,7 @@ La persistencia local de archivos y la identidad de perfiles están aisladas en
 `persistencia_local.py`.
 """
 import copy
+import re
 from datetime import date, timedelta
 
 from . import practica
@@ -73,6 +74,12 @@ EXPERIENCIAS = ("nunca", "poquito", "bastante")
 PUNTOS_DE_ENTRADA = {"poquito": "tu-primera-variable", "bastante": "si-es-grande"}
 METAS_MIN = (5, 10, 15)
 XP_POR_MINUTO = 4                 # meta de 5 min = 20 XP, 10 min = 40 XP, 15 min = 60 XP
+
+
+def sanitizar_perfil(nombre):
+    """Normaliza un nombre de perfil para los usos legacy que aún requieren un identificador seguro."""
+    nombre = (nombre or "").strip().lower().replace(" ", "_")
+    return re.sub(r"[^a-z0-9ñáéíóúü_-]", "", nombre)[:30]
 
 
 def avisar(progreso, tipo, **datos):
