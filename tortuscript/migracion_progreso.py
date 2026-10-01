@@ -9,7 +9,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from tortuscript.perfil_educativo import PerfilEducativoService, ContextoEducativoError
-from tortuscript.progreso import cargar_progreso, sanitizar_perfil
+from tortuscript.persistencia_local import cargar_progreso, obtener_perfiles, sanitizar_perfil
 from tortuscript.progreso_contrato import nuevo_snapshot
 
 
@@ -37,5 +37,4 @@ class MigracionProgresoLocal:
 
     def listar_locales(self, raw_session: str | None) -> list[str]:
         self.educativo.contexto(raw_session)
-        from tortuscript import progreso
-        return progreso.obtener_perfiles()
+        return obtener_perfiles()
