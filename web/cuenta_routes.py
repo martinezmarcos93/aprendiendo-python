@@ -79,7 +79,7 @@ def _require_session():
 
 
 def _require_csrf(auth, raw_session):
-    csrf = request.headers.get("X-Tortu-CSRF", "")
+    csrf = request.headers.get("X-Tortu-CSRF") or request.form.get("csrf", "")
     if not auth.csrf_ok(raw_session, csrf):
         return False
     return True
@@ -289,7 +289,11 @@ def crear_perfil():
     try:
         perfil = cuentas.crear_child_profile(row["account_id"], nombre)
     except CuentaError as exc:
+        if request.form:
+            return render_template("cuenta/perfiles.html", perfiles=cuentas.listar_child_profiles(row["account_id"]), csrf=request.cookies.get("tortu_csrf", ""), perfil_activo=row["active_profile_id"], error=str(exc)), 400
         return jsonify(ok=False, mensaje=str(exc)), 400
+    if request.form:
+        return redirect(url_for("cuenta.seleccionar_perfil_pagina"))
     return jsonify(ok=True, perfil={"id": perfil.id, "nombre": perfil.display_name}), 201
 
 
@@ -302,13 +306,18 @@ def seleccionar_perfil():
     _, auth, row = resultado
     if not _require_csrf(auth, raw):
         return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
-    profile_id = (request.get_json(silent=True) or {}).get("perfil_id")
+    datos = request.get_json(silent=True) or request.form
+    profile_id = datos.get("perfil_id")
     if not profile_id:
         return jsonify(ok=False, mensaje="Falta perfil_id."), 400
     try:
         auth.select_profile(raw, profile_id)
     except AuthError as exc:
+        if request.form:
+            return redirect(url_for("cuenta.seleccionar_perfil_pagina")), 403
         return jsonify(ok=False, mensaje=str(exc)), 403
+    if request.form:
+        return redirect(request.form.get("next") or url_for("inicio"))
     return jsonify(ok=True, perfil_activo=profile_id)
 
 
