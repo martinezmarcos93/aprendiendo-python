@@ -97,6 +97,22 @@ def ingresar():
     return render_template("cuenta/ingresar.html")
 
 
+@bp.get("/configuracion")
+def configuracion():
+    resultado = _require_session()
+    if not resultado:
+        return redirect(url_for("cuenta.ingresar"))
+    cuentas, _, row = resultado
+    cuenta = cuentas.obtener_account(row["account_id"])
+    perfiles = cuentas.listar_child_profiles(row["account_id"])
+    return render_template(
+        "cuenta/configuracion.html",
+        cuenta=cuenta,
+        perfiles=perfiles,
+        max_perfiles=3,
+    )
+
+
 @bp.get("/seleccionar-perfil")
 def seleccionar_perfil_pagina():
     resultado = _require_session()
