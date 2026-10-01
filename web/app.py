@@ -253,7 +253,7 @@ def create_app(token=None):
     def _bienvenida():
         """Un perfil nuevo empieza por la bienvenida (nombre, experiencia y meta diaria)."""
         if request.method != "GET" or request.endpoint in (None, "static", "bienvenida") \
-                or request.path.startswith("/api/"):
+                or request.path.startswith("/api/") or request.path.startswith("/cuenta"):
             return None
         if progreso.necesita_onboarding(_cargar_progreso()):
             return redirect(url_for("bienvenida"))
@@ -262,7 +262,8 @@ def create_app(token=None):
     @app.before_request
     def _semana_de_la_liga():
         """Al cambiar de semana se resuelve la liga anterior (¿subió?) una sola vez."""
-        if request.method != "GET" or request.endpoint in (None, "static") or request.path.startswith("/api/"):
+        if request.method != "GET" or request.endpoint in (None, "static") \
+                or request.path.startswith("/api/") or request.path.startswith("/cuenta"):
             return None
         p = _cargar_progreso()
         viejo = dict(p.get("liga") or {})
@@ -276,6 +277,10 @@ def create_app(token=None):
 
     @app.context_processor
     def _globales():
+        # Las páginas de cuenta son públicas/autenticadas pero no tienen contexto educativo.
+        # Evita que el context processor intente cargar progreso y convierta /cuenta/* en 401.
+        if request.path.startswith("/cuenta"):
+            return {"token": app.config["TOKEN"]}
         # Lo que quedó pendiente (p. ej. subir de liga al cambiar la semana) se cuenta en la próxima página
         avisos = _tomar_avisos(_cargar_progreso())
         return {"token": app.config["TOKEN"], "estado": _estado(), "perfil": _nombre_perfil_contexto(),
