@@ -219,7 +219,7 @@ def login():
             return render_template("cuenta/ingresar.html", error=str(exc)), 401
         return jsonify(ok=False, mensaje="Correo o contraseña incorrectos o cuenta sin verificar."), 401
     if request.form:
-        respuesta = make_response(redirect(url_for("cuenta.seleccionar_perfil")))
+        respuesta = make_response(redirect(url_for("cuenta.seleccionar_perfil_pagina")))
     else:
         respuesta = make_response(jsonify(ok=True, cuenta={"id": cuenta["id"], "email": cuenta["email"], "role": cuenta["role"]},
                                           csrf=csrf, expira=expires.isoformat()))
@@ -270,7 +270,10 @@ def logout():
         if not _require_csrf(auth, raw):
             return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
         auth.revoke(raw)
-    respuesta = make_response(jsonify(ok=True))
+    if request.form:
+        respuesta = make_response(redirect(url_for("cuenta.ingresar")))
+    else:
+        respuesta = make_response(jsonify(ok=True))
     respuesta.delete_cookie("tortu_session", path="/")
     respuesta.delete_cookie("tortu_csrf", path="/")
     return respuesta
