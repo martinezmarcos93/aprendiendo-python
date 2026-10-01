@@ -27,7 +27,7 @@
       <p class="centrado">Todavía no hay perfiles. Creá el primero abajo.</p>
       {% endfor %}
     </div>
-    {% if perfiles|length < 5 %}
+    {% if perfiles|length < 3 %}
     <hr>
     <form method="post" action="{{ url_for('cuenta.crear_perfil') }}">
       <input type="hidden" name="csrf" value="{{ csrf }}">
@@ -36,7 +36,10 @@
       <button class="boton violeta grande" type="submit">Crear perfil y entrar</button>
     </form>
     {% endif %}
-    <p class="centrado"><a href="{{ url_for('cuenta.logout') }}">Cerrar sesión</a></p>
+    <form method="post" action="{{ url_for('cuenta.logout') }}" class="centrado">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <button class="boton chico" type="submit">Cerrar sesión</button>
+    </form>
   </section>
 </main>
 <script>
