@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tortuscript import progreso
+from tortuscript import persistencia_local, progreso
 
 try:
     import flask  # noqa: F401
@@ -17,29 +17,29 @@ except ImportError:
 class Base(unittest.TestCase):
     def setUp(self):
         self._dir = Path(tempfile.mkdtemp())
-        self._orig = (progreso.DIRECTORIO, progreso.PERFIL_ACTUAL)
-        progreso.DIRECTORIO = self._dir
-        progreso.PERFIL_ACTUAL = "default"
+        self._orig = (persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL)
+        persistencia_local.DIRECTORIO = self._dir
+        persistencia_local.PERFIL_ACTUAL = "default"
 
     def tearDown(self):
-        progreso.DIRECTORIO, progreso.PERFIL_ACTUAL = self._orig
+        persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
         shutil.rmtree(self._dir)
 
 
 class TestAjustes(Base):
     def test_de_fabrica(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual(progreso.ajustes_de(p), {"tam": "normal", "contraste": "normal", "movimiento": "normal",
                                                   "letra": "normal", "voz": "no", "velocidad": "normal"})
 
     def test_guardar_y_recordar(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertTrue(progreso.guardar_ajustes(p, tam="grande", contraste="alto", voz="si"))
-        again = progreso.ajustes_de(progreso.cargar_progreso())
+        again = progreso.ajustes_de(persistencia_local.cargar_progreso())
         self.assertEqual((again["tam"], again["contraste"], again["voz"], again["letra"]), ("grande", "alto", "si", "normal"))
 
     def test_valores_invalidos_no_cambian_nada(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         for cambios in ({"tam": "gigante"}, {"inventado": "x"}, {"tam": "grande", "contraste": "medio"}):
             with self.subTest(cambios=cambios):
                 self.assertFalse(progreso.guardar_ajustes(p, **cambios))
@@ -48,22 +48,22 @@ class TestAjustes(Base):
     def test_valor_dañado_en_el_archivo_se_ignora(self):
         (self._dir / "progreso_default.json").write_text(
             '{"version": 7, "xp_total": 0, "ejercicios": {}, "config": {"ajustes": {"tam": "gigante", "voz": "si"}}}', encoding="utf-8")
-        a = progreso.ajustes_de(progreso.cargar_progreso())
+        a = progreso.ajustes_de(persistencia_local.cargar_progreso())
         self.assertEqual((a["tam"], a["voz"]), ("normal", "si"))
 
     def test_perfil_viejo_sin_ajustes_se_migra(self):
         (self._dir / "progreso_default.json").write_text(
             '{"version": 7, "xp_total": 5, "ejercicios": {}, "config": {"onboarding": true, "meta_min": 5}}', encoding="utf-8")
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual(p["config"]["meta_min"], 5)
         self.assertEqual(p["config"]["ajustes"]["contraste"], "normal")
         self.assertEqual(p["version"], progreso.VERSION_ESQUEMA)
 
     def test_cada_perfil_tiene_los_suyos(self):
-        a = progreso.cargar_progreso("lua")
+        a = persistencia_local.cargar_progreso("lua")
         progreso.guardar_ajustes(a, tam="enorme")
-        self.assertEqual(progreso.ajustes_de(progreso.cargar_progreso("lua"))["tam"], "enorme")
-        self.assertEqual(progreso.ajustes_de(progreso.cargar_progreso("tomi"))["tam"], "normal")
+        self.assertEqual(progreso.ajustes_de(persistencia_local.cargar_progreso("lua"))["tam"], "enorme")
+        self.assertEqual(progreso.ajustes_de(persistencia_local.cargar_progreso("tomi"))["tam"], "normal")
 
     def test_los_valores_de_fabrica_son_validos(self):
         for nombre, valores in progreso.AJUSTES.items():
@@ -77,7 +77,7 @@ class TestPaginas(Base):
         from web.app import create_app
         self.c = create_app(token="t").test_client()
         self.h = {"X-Tortu-Token": "t"}
-        progreso.guardar_config(progreso.cargar_progreso(), onboarding=True)
+        progreso.guardar_config(persistencia_local.cargar_progreso(), onboarding=True)
 
     def post(self, ruta, datos=None):
         return self.c.post(ruta, json=datos or {}, headers=self.h)

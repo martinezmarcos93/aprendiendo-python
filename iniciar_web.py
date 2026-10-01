@@ -84,9 +84,9 @@ def main(argv=None):
         print(f"❌ {problema}")
         return 1
     sys.path.insert(0, str(RAIZ))
-    from tortuscript import progreso, rutas
+    from tortuscript import persistencia_local, rutas
     datos = rutas.preparar_carpeta_de_datos()          # junto al programa, o la del usuario si está instalado
-    progreso.DIRECTORIO = datos
+    persistencia_local.DIRECTORIO = datos
     configurar_logs(datos / "logs")
     try:
         puerto = args.puerto or puerto_libre()

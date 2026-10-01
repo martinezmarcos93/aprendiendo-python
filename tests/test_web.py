@@ -12,23 +12,23 @@ try:
 except ImportError:
     HAY_FLASK = False
 
-from tortuscript import progreso
+from tortuscript import persistencia_local, progreso
 
 
 @unittest.skipUnless(HAY_FLASK, "Flask no instalado (pip install -r requirements.txt)")
 class TestWeb(unittest.TestCase):
     def setUp(self):
         self._dir = Path(tempfile.mkdtemp())
-        self._orig = (progreso.DIRECTORIO, progreso.PERFIL_ACTUAL)
-        progreso.DIRECTORIO = self._dir
+        self._orig = (persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL)
+        persistencia_local.DIRECTORIO = self._dir
         from web.app import create_app
         self.app = create_app(token="secreto")
         self.c = self.app.test_client()
         self.h = {"X-Tortu-Token": "secreto"}
-        progreso.guardar_config(progreso.cargar_progreso(), onboarding=True)   # sin pasar por la bienvenida
+        progreso.guardar_config(persistencia_local.cargar_progreso(), onboarding=True)   # sin pasar por la bienvenida
 
     def tearDown(self):
-        progreso.DIRECTORIO, progreso.PERFIL_ACTUAL = self._orig
+        persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
         shutil.rmtree(self._dir)
 
     def post(self, ruta, datos=None, **kw):
@@ -38,11 +38,11 @@ class TestWeb(unittest.TestCase):
     def _completar_curso(self, curso_id):
         from tortuscript import contenido
         curso = contenido.cargar_curso(curso_id)
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         for _, lec in contenido.lecciones(curso):
             for i in range(len(lec["pasos"])):
                 progreso.registrar_paso_leccion(p, lec["id"], i, 0, True, len(lec["pasos"]))
-        progreso.guardar_progreso(p)
+        persistencia_local.guardar_progreso(p)
 
     def test_mapa_muestra_todos_los_recorridos_y_sql_bloqueado(self):
         html = self.c.get("/mapa").get_data(as_text=True)
@@ -67,7 +67,7 @@ class TestWeb(unittest.TestCase):
         r = self.c.post("/elegir-recorrido", data={"recorrido": "python"})
         self.assertEqual(r.status_code, 302)
         self.assertTrue(r.headers["Location"].endswith("/leccion/py-print"))
-        self.assertEqual(progreso.cargar_progreso()["recorrido_inicial"], "python")
+        self.assertEqual(persistencia_local.cargar_progreso()["recorrido_inicial"], "python")
 
     def test_sql_se_desbloquea_al_completar_web(self):
         self._completar_curso("alfabetizacion-digital")
@@ -172,13 +172,13 @@ class TestWeb(unittest.TestCase):
 
     def test_la_pagina_de_error_no_depende_del_progreso(self):
         self._rutas_que_explotan()
-        original = progreso.cargar_progreso
-        progreso.cargar_progreso = lambda *a, **k: (_ for _ in ()).throw(OSError("disco roto"))
+        original = persistencia_local.cargar_progreso
+        persistencia_local.cargar_progreso = lambda *a, **k: (_ for _ in ()).throw(OSError("disco roto"))
         try:
             with self.assertLogs("tortuscript.web", level="ERROR"):
                 r = self.c.get("/explota")
         finally:
-            progreso.cargar_progreso = original
+            persistencia_local.cargar_progreso = original
         self.assertEqual(r.status_code, 500)
         self.assertIn("Algo se rompió de nuestro lado", r.get_data(as_text=True))
 
@@ -191,18 +191,18 @@ class TestWeb(unittest.TestCase):
         self.assertNotIn("_perfil", r["datos"]["progreso"])
 
     def test_importar_crea_un_perfil_nuevo_sin_pisar_y_cambia_a_ese(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         p["xp_total"] = 123
-        progreso.guardar_progreso(p)
+        persistencia_local.guardar_progreso(p)
         sobre = self.c.get("/api/perfil/exportar", headers=self.h).get_json()["datos"]
         p["xp_total"] = 7                                                      # el perfil original sigue su vida
-        progreso.guardar_progreso(p)
+        persistencia_local.guardar_progreso(p)
         r = self.post("/api/perfil/importar", {"sobre": sobre}).get_json()
         self.assertTrue(r["ok"])
         self.assertEqual(r["actual"], "default_2")                              # "default" ya existía
-        self.assertEqual(progreso.PERFIL_ACTUAL, "default_2")
-        self.assertEqual(progreso.cargar_progreso("default_2")["xp_total"], 123)
-        self.assertEqual(progreso.cargar_progreso("default")["xp_total"], 7)    # no se pisó
+        self.assertEqual(persistencia_local.PERFIL_ACTUAL, "default_2")
+        self.assertEqual(persistencia_local.cargar_progreso("default_2")["xp_total"], 123)
+        self.assertEqual(persistencia_local.cargar_progreso("default")["xp_total"], 7)    # no se pisó
         self.assertEqual(r["estado"]["xp"], 123)
 
     def test_importar_rechaza_archivos_invalidos_o_enormes(self):
@@ -213,7 +213,7 @@ class TestWeb(unittest.TestCase):
         self.assertEqual(enorme.status_code, 400)
         self.assertIn("demasiado grande", enorme.get_json()["mensaje"])
         self.assertEqual(self.c.post("/api/perfil/importar", json={"sobre": {}}).status_code, 403)   # sin token
-        self.assertEqual(progreso.obtener_perfiles(), ["default"])              # no se creó nada
+        self.assertEqual(persistencia_local.obtener_perfiles(), ["default"])              # no se creó nada
 
     def test_el_modal_de_perfiles_ofrece_guardar_y_traer(self):
         html = self.c.get("/").get_data(as_text=True)
@@ -348,7 +348,7 @@ class TestWeb(unittest.TestCase):
 
     # ── mapa, resumen, referencia y repaso ──
     def _completar(self, *indices_estrellas):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         for i, e in indices_estrellas:
             progreso.registrar_ejercicio(p, i, e, {1: 5, 2: 20, 3: 30}[e])
 
@@ -450,7 +450,7 @@ class TestWeb(unittest.TestCase):
         self.assertTrue(self.comprobar(1, "pantalla").get_json()["puede_ver_respuesta"])
         r = self.post("/api/lecciones/hola-mundo/pasos/1/respuesta").get_json()
         self.assertEqual(r["respuesta"], "mostrar")
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         paso = p["lecciones"]["hola-mundo"]["pasos"]["1"]
         self.assertEqual((paso["xp"], paso["perfecto"]), (0, False))
         self.assertIn("fecha", paso)                                                        # desde acá parte la práctica del día
@@ -473,7 +473,7 @@ class TestWeb(unittest.TestCase):
         self.assertTrue(r["leccion"]["recien_completa"])
         self.assertFalse(r["leccion"]["perfecta"])                                 # hubo un reintento
         self.assertEqual(r["leccion"]["siguiente"], "texto-o-cuenta")
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual(p["xp_total"], 5 + 2 + 2 + 5 + 30)                        # elegir, completar, ordenar, predecir + ejercicio
 
     def test_escribir_no_se_comprueba_por_la_api_de_pasos(self):
@@ -497,7 +497,7 @@ class TestWeb(unittest.TestCase):
         r = self.post("/api/lecciones/hola-mundo/pasos/5/evaluar", {"codigo": 'mostrar "Hola mundo"'}).get_json()
         self.assertEqual(r["evaluacion"]["estado"], "correcto")
         self.assertEqual((r["premio"]["estrellas"], r["premio"]["xp"], r["premio"]["mejora"]), (3, 30, True))
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertTrue(p["ejercicios"]["0"]["completado"])                    # clave histórica intacta
         self.assertIn("5", p["lecciones"]["hola-mundo"]["pasos"])
         self.assertEqual(self.post("/api/lecciones/hola-mundo/pasos/1/evaluar", {"codigo": "x"}).status_code, 400)

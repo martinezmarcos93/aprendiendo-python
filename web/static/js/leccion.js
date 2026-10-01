@@ -467,12 +467,12 @@
     ocultarPie();
 
     function escaparScript(texto) {
-      return String(texto).replace(/<\\/script/gi, "<\\\\/script");
+      return String(texto).replace(/<\/script/gi, "<\\/script");
     }
     function documentoPreview(codigo) {
       const lenguaje = (paso.web && paso.web.lenguaje) || paso.lenguaje || "html";
       const seguro = escaparScript(codigo);
-      const csp = '<meta http-equiv="Content-Security-Policy" content="default-src \\'none\\'; script-src \\'unsafe-inline\\'; style-src \\'unsafe-inline\\'; img-src data:; connect-src \\'none\\'; object-src \\'none\\'; base-uri \\'none\\'; form-action \\'none\\'">';
+      const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">`;
       if (lenguaje === "css") return `<!doctype html><html><head>${csp}<style>${seguro}</style></head><body><h2 class="criatura">Vista de ejemplo</h2><p class="enemigo">Probá tus estilos.</p></body></html>`;
       if (lenguaje === "javascript") return `<!doctype html><html><head>${csp}</head><body><button id="boton">Probar</button><p id="mensaje">Esperando…</p><script>${seguro}<\\/script></body></html>`;
       return `<!doctype html><html><head>${csp}</head><body>${seguro}</body></html>`;

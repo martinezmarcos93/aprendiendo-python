@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tortuscript import contenido, leccion, progreso
+from tortuscript import persistencia_local, contenido, leccion, progreso
 from tortuscript.worker import atender
 
 ELEGIR = {"tipo": "elegir", "pregunta": "¿Cuál?", "opciones": ["a", "b", "c"], "correcta": 1}
@@ -150,15 +150,15 @@ class TestNavegacion(unittest.TestCase):
 class TestProgresoLecciones(unittest.TestCase):
     def setUp(self):
         self._dir = Path(tempfile.mkdtemp())
-        self._orig = progreso.DIRECTORIO
-        progreso.DIRECTORIO = self._dir
+        self._orig = persistencia_local.DIRECTORIO
+        persistencia_local.DIRECTORIO = self._dir
 
     def tearDown(self):
-        progreso.DIRECTORIO = self._orig
+        persistencia_local.DIRECTORIO = self._orig
         shutil.rmtree(self._dir)
 
     def test_completa_al_terminar_todos_los_pasos(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         r = progreso.registrar_paso_leccion(p, "l", 0, 5, True, 2)
         self.assertEqual((r["completa"], r["xp_ganado"], p["xp_total"]), (False, 5, 5))
         r = progreso.registrar_paso_leccion(p, "l", 1, 2, False, 2)
@@ -167,7 +167,7 @@ class TestProgresoLecciones(unittest.TestCase):
         self.assertEqual(p["xp_total"], 7)
 
     def test_repetir_no_da_xp_doble_pero_si_mejora(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         progreso.registrar_paso_leccion(p, "l", 0, 2, False, 1)
         r = progreso.registrar_paso_leccion(p, "l", 0, 2, False, 1)
         self.assertEqual((r["xp_ganado"], r["recien_completa"], p["xp_total"]), (0, False, 2))
@@ -175,9 +175,9 @@ class TestProgresoLecciones(unittest.TestCase):
         self.assertEqual((r["xp_ganado"], r["perfecta"], p["xp_total"]), (3, True, 5))
 
     def test_se_guarda_y_sobrevive_al_recargar(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         progreso.registrar_paso_leccion(p, "l", 0, 5, True, 1)
-        again = progreso.cargar_progreso()
+        again = persistencia_local.cargar_progreso()
         self.assertTrue(again["lecciones"]["l"]["completada"])
         self.assertEqual(again["version"], progreso.VERSION_ESQUEMA)
 
@@ -185,7 +185,7 @@ class TestProgresoLecciones(unittest.TestCase):
         (self._dir / "progreso_default.json").write_text(
             '{"version": 2, "xp_total": 30, "ejercicios": {"0": {"completado": true, "estrellas": 3, "xp": 30}}}',
             encoding="utf-8")
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual(p["lecciones"], {})
         self.assertEqual(p["xp_total"], 30)
         self.assertTrue(p["ejercicios"]["0"]["completado"])
@@ -375,18 +375,18 @@ class TestSalteadasPorDiagnostico(unittest.TestCase):
 class TestSaltearHasta(unittest.TestCase):
     def setUp(self):
         self._dir = Path(tempfile.mkdtemp())
-        self._orig = progreso.DIRECTORIO
-        progreso.DIRECTORIO = self._dir
+        self._orig = persistencia_local.DIRECTORIO
+        persistencia_local.DIRECTORIO = self._dir
 
     def tearDown(self):
-        progreso.DIRECTORIO = self._orig
+        persistencia_local.DIRECTORIO = self._orig
         shutil.rmtree(self._dir)
 
     def test_solo_marca_las_anteriores_no_hechas(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         p["lecciones"]["b"] = {"pasos": {}, "completada": True, "perfecta": False}
         progreso.saltear_hasta(p, ["a", "b", "c", "d"], "c")
-        self.assertEqual(sorted(progreso.cargar_progreso()["salteadas"]), ["a"])
+        self.assertEqual(sorted(persistencia_local.cargar_progreso()["salteadas"]), ["a"])
         with self.assertRaises(ValueError):
             progreso.saltear_hasta(p, ["a", "b"], "z")
 

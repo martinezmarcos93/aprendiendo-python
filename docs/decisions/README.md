@@ -49,6 +49,7 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 | [ADR-035](ADR-035-tortu-llm-como-asistente-pedagogico.md) | Tortu-LLM como asistente pedagógico | **Aceptada** |
 | [ADR-036](ADR-036-croco-script-como-producto-avanzado.md) | Croco-Script como producto avanzado separado | **Aceptada** |
 | [ADR-037](ADR-037-integracion-tortuscript-croco-script.md) | Integración entre TortuScript y Croco-Script | **Aceptada** |
+| [ADR-038](ADR-038-persistencia-cuenta-familiar.md) | Persistencia de cuenta familiar y perfiles | **Aceptada** |
 
 ## Documentos de producto
 
@@ -60,3 +61,8 @@ Las medidas de endurecimiento que no condicionan el modelo de producto, por ejem
 ## Regla de transición comercial
 
 ADR-025 a ADR-037 forman ahora el bloque de arquitectura comercial y de evolución de producto. Las ADR anteriores siguen vigentes salvo contradicción explícita. La implementación comercial debe respetar las separaciones entre núcleo educativo, identidad adulta, perfiles infantiles, acceso comercial, ejecución remota y producto avanzado Croco-Script.
+
+| [ADR-041](ADR-041-progreso-por-childprofile.md) | Contrato de progreso asociado a ChildProfile | **Aceptada** |
+| [ADR-042](ADR-042-adaptador-progreso-childprofile.md) | Adaptador de progreso por ChildProfile | **Aceptada** |\n| [ADR-043](ADR-043-contexto-educativo-autenticado.md) | Contexto educativo autenticado por ChildProfile | **Aceptada** |
+| [ADR-044](ADR-044-migracion-progreso-local.md) | Migración explícita de progreso local | **Aceptada** |
+| [ADR-045](ADR-045-runtime-educativo-childprofile.md) | Adaptador del runtime educativo para ChildProfile | **Aceptada** |

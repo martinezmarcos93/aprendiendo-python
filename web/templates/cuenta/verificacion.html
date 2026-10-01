@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verificación · TortuScript</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tortu.css') }}">
+</head>
+<body>
+<main id="contenido" class="columna-ancha pagina-error">
+  <section class="tarjeta centrado">
+    {% if ok %}
+      <div class="mascota gran" aria-hidden="true">✅</div>
+      <h1>Correo verificado</h1>
+      <p class="texto-grande">La cuenta ya puede ingresar a TortuScript.</p>
+      <p><a class="boton verde grande" href="{{ url_for('cuenta.ingresar') }}">Ingresar</a></p>
+    {% else %}
+      <div class="mascota gran" aria-hidden="true">⚠️</div>
+      <h1>Enlace no válido</h1>
+      <p class="texto-grande">El enlace no es válido o ya expiró.</p>
+      <p><a class="boton verde grande" href="{{ url_for('cuenta.ingresar') }}">Ir a ingresar</a></p>
+    {% endif %}
+  </section>
+</main>
+</body>
+</html>

@@ -5,7 +5,7 @@ import unittest
 from datetime import date, timedelta
 from pathlib import Path
 
-from tortuscript import contenido, leccion, liga, logros, progreso
+from tortuscript import persistencia_local, contenido, leccion, liga, logros, progreso
 
 try:
     import flask  # noqa: F401
@@ -17,18 +17,18 @@ except ImportError:
 class Base(unittest.TestCase):
     def setUp(self):
         self._dir = Path(tempfile.mkdtemp())
-        self._orig = (progreso.DIRECTORIO, progreso.PERFIL_ACTUAL)
-        progreso.DIRECTORIO = self._dir
-        progreso.PERFIL_ACTUAL = "default"
+        self._orig = (persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL)
+        persistencia_local.DIRECTORIO = self._dir
+        persistencia_local.PERFIL_ACTUAL = "default"
 
     def tearDown(self):
-        progreso.DIRECTORIO, progreso.PERFIL_ACTUAL = self._orig
+        persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
         shutil.rmtree(self._dir)
 
 
 class TestMetaDiaria(Base):
     def test_xp_del_dia_y_total(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         progreso.sumar_xp(p, 10, date(2026, 9, 25))
         progreso.sumar_xp(p, 5, date(2026, 9, 25))
         progreso.sumar_xp(p, 7, date(2026, 9, 26))
@@ -40,7 +40,7 @@ class TestMetaDiaria(Base):
         self.assertEqual(progreso.xp_de_hoy(p, date(2026, 9, 27)), 0)
 
     def test_solo_se_guardan_30_dias(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         for d in range(1, 29):
             progreso.sumar_xp(p, 1, date(2026, 8, d))
         for d in range(1, 11):
@@ -49,21 +49,21 @@ class TestMetaDiaria(Base):
         self.assertNotIn("2026-08-01", p["xp_por_dia"])
 
     def test_los_ejercicios_y_pasos_suman_al_dia(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         progreso.registrar_ejercicio(p, 0, 3, 30)
         progreso.registrar_paso_leccion(p, "l", 0, 5, True, 2)
         self.assertEqual(progreso.xp_de_hoy(p), 35)
         self.assertEqual(p["xp_total"], 35)
 
     def test_meta_en_xp(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual(progreso.meta_diaria_xp(p), 40)
         for minutos, xp in ((5, 20), (10, 40), (15, 60)):
             self.assertTrue(progreso.guardar_config(p, meta_min=minutos))
             self.assertEqual(progreso.meta_diaria_xp(p), xp)
 
     def test_config_invalida_se_rechaza(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertFalse(progreso.guardar_config(p, meta_min=7))
         self.assertFalse(progreso.guardar_config(p, experiencia="experto"))
         self.assertEqual(p["config"]["meta_min"], 10)
@@ -71,18 +71,18 @@ class TestMetaDiaria(Base):
 
 class TestOnboarding(Base):
     def test_perfil_nuevo_necesita_bienvenida(self):
-        self.assertTrue(progreso.necesita_onboarding(progreso.cargar_progreso()))
+        self.assertTrue(progreso.necesita_onboarding(persistencia_local.cargar_progreso()))
 
     def test_con_progreso_previo_no_hace_falta(self):
         (self._dir / "progreso_default.json").write_text(
             '{"version": 2, "xp_total": 30, "ejercicios": {"0": {"completado": true, "estrellas": 3, "xp": 30}}}',
             encoding="utf-8")
-        self.assertFalse(progreso.necesita_onboarding(progreso.cargar_progreso()))
+        self.assertFalse(progreso.necesita_onboarding(persistencia_local.cargar_progreso()))
 
     def test_una_vez_hecha_no_se_repite_y_persiste(self):
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         progreso.guardar_config(p, experiencia="poquito", meta_min=15, nombre="Lua", onboarding=True)
-        again = progreso.cargar_progreso()
+        again = persistencia_local.cargar_progreso()
         self.assertFalse(progreso.necesita_onboarding(again))
         self.assertEqual((again["config"]["experiencia"], again["config"]["meta_min"], again["config"]["nombre"]),
                          ("poquito", 15, "Lua"))
@@ -90,7 +90,7 @@ class TestOnboarding(Base):
     def test_config_de_version_anterior_a_medias_se_completa(self):
         (self._dir / "progreso_default.json").write_text(
             '{"version": 3, "xp_total": 0, "ejercicios": {}, "config": {"meta_min": 5}}', encoding="utf-8")
-        cfg = progreso.cargar_progreso()["config"]
+        cfg = persistencia_local.cargar_progreso()["config"]
         self.assertEqual((cfg["meta_min"], cfg["onboarding"], cfg["experiencia"]), (5, False, None))
 
 
@@ -198,7 +198,7 @@ class TestWebCamino(Base):
         self.post("/api/onboarding", {"meta_min": 10})
         r = self.c.get("/aprender")
         self.assertTrue(r.headers["Location"].endswith("/leccion/nivel0-programa"))
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         for i in range(4):
             progreso.registrar_paso_leccion(p, "nivel0-programa", i, 1, True, 4)
         self.assertTrue(self.c.get("/aprender").headers["Location"].endswith("/leccion/nivel0-lenguaje"))
@@ -207,7 +207,7 @@ class TestWebCamino(Base):
     def _terminar_hasta(self, leccion_id):
         """Da por completada (con el formato del motor) cada lección del curso 1 hasta `leccion_id` inclusive."""
         curso = contenido.cargar_curso()
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         for lec in leccion.lista_lecciones(curso):
             progreso.registrar_paso_leccion(p, lec["id"], 0, 0, True, 1)
             if lec["id"] == leccion_id:
@@ -218,10 +218,10 @@ class TestWebCamino(Base):
                 for i in range(len(nivel0_lec["pasos"])):
                     progreso.registrar_paso_leccion(p, nivel0_lec["id"], i, 0, True, len(nivel0_lec["pasos"]))
             p["recorrido_inicial"] = "python"
-            progreso.guardar_progreso(p)
+            persistencia_local.guardar_progreso(p)
 
     def _dar_por_completa(self, leccion_id):
-        progreso.registrar_paso_leccion(progreso.cargar_progreso(), leccion_id, 0, 0, True, 1)
+        progreso.registrar_paso_leccion(persistencia_local.cargar_progreso(), leccion_id, 0, 0, True, 1)
 
     def _abrir_laberintos(self):
         self.post("/api/onboarding", {"meta_min": 10})
@@ -265,9 +265,9 @@ class TestWebCamino(Base):
         self.post("/api/onboarding", {"meta_min": 10})
         html = self.c.get("/tortuga").get_data(as_text=True)
         self.assertIn(f'data-color-tortuga="{progreso.color_tortuga(1)}"', html)
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         p["xp_total"] = progreso.UMBRALES_NIVEL[2]                                  # nivel 3
-        progreso.guardar_progreso(p)
+        persistencia_local.guardar_progreso(p)
         html = self.c.get("/tortuga").get_data(as_text=True)
         self.assertIn(f'data-color-tortuga="{progreso.color_tortuga(3)}"', html)
         r = self.post("/api/tortuga", {"codigo": "avanzar 10"}).get_json()
@@ -280,10 +280,10 @@ class TestWebCamino(Base):
         html = self.c.get("/").get_data(as_text=True)
         self.assertNotIn("Hola de nuevo", html)                                # perfil nuevo: saludo normal
         self._dar_por_completa("hola-mundo")                                    # ya había hecho una lección
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         ayer = (date.today() - timedelta(days=1)).isoformat()
         p["ultimo_dia"], p["xp_por_dia"] = ayer, {ayer: 35}
-        progreso.guardar_progreso(p)
+        persistencia_local.guardar_progreso(p)
         html = self.c.get("/").get_data(as_text=True)
         self.assertIn("¡Hola de nuevo, Lua!", html)
         self.assertIn("Ayer", html)
@@ -291,7 +291,7 @@ class TestWebCamino(Base):
         self.assertIn("Hoy te espera <b>«", html)
         self.assertIn("▶ Continuar:", html)
         p["ultimo_dia"] = date.today().isoformat()                                  # ya vino hoy: no se repite
-        progreso.guardar_progreso(p)
+        persistencia_local.guardar_progreso(p)
         self.assertNotIn("Hola de nuevo", self.c.get("/").get_data(as_text=True))
 
     def test_el_cierre_de_la_leccion_cuenta_que_aprendio_y_que_sigue(self):
@@ -305,11 +305,11 @@ class TestWebCamino(Base):
     def test_empezar_mas_adelante_saltea_sin_dar_nada(self):
         r = self.post("/api/onboarding", {"meta_min": 10, "experiencia": "poquito", "entrada": "tu-primera-variable"})
         self.assertTrue(r.get_json()["ok"])
-        planas = leccion.lecciones_planas(leccion.estado_cursos(contenido.todos_los_cursos(), progreso.cargar_progreso(), {}))
+        planas = leccion.lecciones_planas(leccion.estado_cursos(contenido.todos_los_cursos(), persistencia_local.cargar_progreso(), {}))
         estados = {l["id"]: l["estado"] for l in planas}
         self.assertEqual([estados[i] for i in ("hola-mundo", "texto-o-cuenta", "dos-lineas")], ["salteada"] * 3)
         self.assertEqual(estados["tu-primera-variable"], "actual")
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual((p["xp_total"], p["logros"]), (0, {}))                         # no se regala nada
         estado = self.c.get("/api/estado", headers=self.h).get_json()
         self.assertEqual(estado["lecciones_hechas"], 0)
@@ -321,8 +321,8 @@ class TestWebCamino(Base):
     def test_hacer_despues_una_salteada_la_convierte_en_hecha(self):
         self.post("/api/onboarding", {"meta_min": 10, "experiencia": "poquito", "entrada": "tu-primera-variable"})
         self.post("/api/lecciones/hola-mundo/pasos/0/comprobar", {})
-        progreso.registrar_paso_leccion(progreso.cargar_progreso(), "hola-mundo", 1, 5, True, 2)
-        planas = leccion.lecciones_planas(leccion.estado_cursos(contenido.todos_los_cursos(), progreso.cargar_progreso(), {}))
+        progreso.registrar_paso_leccion(persistencia_local.cargar_progreso(), "hola-mundo", 1, 5, True, 2)
+        planas = leccion.lecciones_planas(leccion.estado_cursos(contenido.todos_los_cursos(), persistencia_local.cargar_progreso(), {}))
         self.assertIn(next(l["estado"] for l in planas if l["id"] == "hola-mundo"), ("hecha", "perfecta"))
 
     def test_prueba_de_nivel_recomienda_y_la_bienvenida_la_ofrece(self):
@@ -336,7 +336,7 @@ class TestWebCamino(Base):
         self.assertEqual(self.post("/api/diagnostico", {"respuestas": ["x"]}).status_code, 400)
         ok = self.post("/api/onboarding", {"meta_min": 10, "experiencia": "bastante", "entrada": "tu-primera-funcion"})
         self.assertTrue(ok.get_json()["ok"])
-        self.assertIn("repetir", progreso.cargar_progreso()["salteadas"])
+        self.assertIn("repetir", persistencia_local.cargar_progreso()["salteadas"])
 
     def test_la_entrada_tiene_que_corresponder_a_la_experiencia(self):
         for datos in ({"experiencia": "nunca", "entrada": "tu-primera-variable"},
@@ -345,7 +345,7 @@ class TestWebCamino(Base):
                       {"experiencia": "bastante", "entrada": "hola-mundo"}):
             with self.subTest(datos):
                 self.assertEqual(self.post("/api/onboarding", {"meta_min": 10, **datos}).status_code, 400)
-        self.assertEqual(progreso.cargar_progreso()["salteadas"], {})
+        self.assertEqual(persistencia_local.cargar_progreso()["salteadas"], {})
 
     def test_la_bienvenida_ofrece_empezar_mas_adelante(self):
         html = self.c.get("/bienvenida").get_data(as_text=True)
@@ -363,7 +363,7 @@ class TestWebCamino(Base):
         self.assertIn("¿Qué te gustaría crear ahora?", html)
         r = self.post("/api/intereses/que-crear", {"respuestas": ["rpg", "dibujos"]})
         self.assertTrue(r.get_json()["ok"])
-        self.assertEqual(progreso.cargar_progreso()["intereses"]["que-crear"]["respuestas"], ["rpg", "dibujos"])
+        self.assertEqual(persistencia_local.cargar_progreso()["intereses"]["que-crear"]["respuestas"], ["rpg", "dibujos"])
         self.assertNotIn('id="encuesta"', self.c.get("/").get_data(as_text=True))       # no se repite ni encadena otra
 
     def test_intereses_rechaza_lo_invalido_y_pide_token(self):
@@ -484,17 +484,17 @@ class TestWebCamino(Base):
         self.assertNotIn("objetivo", mal["evaluacion"])
         self.assertEqual(self.post(ruta, {"codigo": "girar_der 90"}).get_json()["evaluacion"]["estado"], "sin_dibujo")
         self.assertEqual(len(mal["ordenes"]), 1)
-        antes = progreso.cargar_progreso()["xp_total"]
+        antes = persistencia_local.cargar_progreso()["xp_total"]
         ok = self.post(ruta, {"codigo": "avanzar 60\navanzar 60"}).get_json()            # otra forma de dibujar lo mismo
         self.assertEqual(ok["evaluacion"]["estado"], "correcto")
         self.assertEqual((ok["premio"]["estrellas"], ok["premio"]["xp"], ok["premio"]["mejora"]), (3, 30, True))
-        self.assertEqual(progreso.cargar_progreso()["xp_total"], antes + 30)
-        p = progreso.cargar_progreso()
+        self.assertEqual(persistencia_local.cargar_progreso()["xp_total"], antes + 30)
+        p = persistencia_local.cargar_progreso()
         self.assertEqual(p["lecciones"]["tortuga-avanzar"]["pasos"]["4"]["estrellas"], 3)
         self.assertNotIn("4", p["ejercicios"])                                              # no toca la clave de ejercicios
         repetido = self.post(ruta, {"codigo": "avanzar 120"}).get_json()
         self.assertFalse(repetido["premio"]["mejora"])                                       # sin XP doble
-        self.assertEqual(progreso.cargar_progreso()["xp_total"], antes + 30)
+        self.assertEqual(persistencia_local.cargar_progreso()["xp_total"], antes + 30)
 
     def test_pasos_de_dibujo_de_completar_y_ordenar_por_la_api(self):
         self.post("/api/onboarding", {"meta_min": 10})
@@ -521,7 +521,7 @@ class TestWebCamino(Base):
         html = self.c.get("/logros").get_data(as_text=True)
         self.assertIn("Primer paso", html)
         self.assertIn("Ganado el", html)
-        self.assertEqual(progreso.cargar_progreso()["avisos"], [])
+        self.assertEqual(persistencia_local.cargar_progreso()["avisos"], [])
 
     def test_la_meta_diaria_se_avisa_al_cumplirla(self):
         self.post("/api/onboarding", {"meta_min": 5})                      # 20 XP
@@ -530,7 +530,7 @@ class TestWebCamino(Base):
         r = self._paso(4, "Buen día")
         self.assertIn("meta_cumplida", [a["tipo"] for a in r["avisos"]])
         self.assertEqual(r["estado_juego"]["meta_pct"], 100)
-        self.assertIn("meta-diaria", progreso.cargar_progreso()["logros"])
+        self.assertIn("meta-diaria", persistencia_local.cargar_progreso()["logros"])
 
     def test_estado_y_paginas_de_gamificacion(self):
         self.post("/api/onboarding", {"meta_min": 10})
@@ -547,10 +547,10 @@ class TestWebCamino(Base):
 
     def test_liga_con_otro_perfil_de_la_pc(self):
         self.post("/api/onboarding", {"meta_min": 10, "nombre": "Lua"})
-        p = progreso.cargar_progreso("tomi")
+        p = persistencia_local.cargar_progreso("tomi")
         p["config"]["nombre"] = "Tomi"
         progreso.sumar_xp(p, 500)
-        progreso.guardar_progreso(p)
+        persistencia_local.guardar_progreso(p)
         html = self.c.get("/liga").get_data(as_text=True)
         self.assertIn("Tomi", html)
         self.assertIn("(vos)", html)
@@ -561,25 +561,25 @@ class TestWebCamino(Base):
         self.post("/api/onboarding", {"meta_min": 10})
         hoy = date.today()
         anterior = liga.lunes_de(hoy) - timedelta(days=2)                              # un sábado de la semana pasada
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         p["liga"] = {"nivel": 0, "semana": liga.clave_semana(anterior)}
         p["xp_por_dia"] = {str(anterior): 900}
-        progreso.guardar_progreso(p)
+        persistencia_local.guardar_progreso(p)
         html = self.c.get("/").get_data(as_text=True)
         self.assertIn("liga_asciende", html)
         self.assertIn("Plata", html)
-        self.assertEqual(progreso.cargar_progreso()["liga"], {"nivel": 1, "semana": liga.clave_semana(hoy)})
+        self.assertEqual(persistencia_local.cargar_progreso()["liga"], {"nivel": 1, "semana": liga.clave_semana(hoy)})
         self.assertNotIn("liga_asciende", self.c.get("/").get_data(as_text=True))       # el aviso se cuenta una sola vez
 
     # ── práctica del día ──
     def _con_pasos_viejos(self):
         """hola-mundo con sus 4 pasos rápidos hechos hace una semana."""
         self.post("/api/onboarding", {"meta_min": 10})
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         for i in (1, 2, 3, 4):
             progreso.registrar_paso_leccion(p, "hola-mundo", i, 5, True, 6)
             p["lecciones"]["hola-mundo"]["pasos"][str(i)]["fecha"] = "2026-01-01"
-        progreso.guardar_progreso(p)
+        persistencia_local.guardar_progreso(p)
 
     def _practica(self, i, respuesta):
         return self.post("/api/practica/comprobar", {"leccion": "hola-mundo", "paso": i, "respuesta": respuesta}).get_json()
@@ -604,10 +604,10 @@ class TestWebCamino(Base):
     def test_acertar_sube_la_tarjeta_da_xp_y_la_saca_de_las_pendientes(self):
         self._con_pasos_viejos()
         self.c.get("/practica")
-        antes = progreso.cargar_progreso()["xp_total"]
+        antes = persistencia_local.cargar_progreso()["xp_total"]
         r = self._practica(1, "mostrar")
         self.assertEqual((r["ok"], r["xp"], r["perfecto"]), (True, 2, True))
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         self.assertEqual(p["xp_total"], antes + 2)
         self.assertEqual(p["repaso"]["hola-mundo:1"]["caja"], 1)
         self.assertEqual(self.c.get("/api/estado", headers=self.h).get_json()["practica_pendientes"], 3)
@@ -621,7 +621,7 @@ class TestWebCamino(Base):
         self.assertFalse(r["puede_ver_respuesta"])
         r = self._practica(1, "mostrar")
         self.assertEqual((r["ok"], r["xp"], r["perfecto"]), (True, 0, False))
-        self.assertEqual(progreso.cargar_progreso()["repaso"]["hola-mundo:1"]["fallos"], 1)
+        self.assertEqual(persistencia_local.cargar_progreso()["repaso"]["hola-mundo:1"]["fallos"], 1)
 
     def test_ver_la_respuesta_de_una_tarjeta_solo_tras_dos_errores(self):
         self._con_pasos_viejos()
@@ -631,7 +631,7 @@ class TestWebCamino(Base):
         self._practica(1, "pantalla"); self._practica(1, "escribir")
         r = pedir().get_json()
         self.assertEqual(r["respuesta"], "mostrar")
-        self.assertEqual(progreso.cargar_progreso()["repaso"]["hola-mundo:1"]["fallos"], 1)
+        self.assertEqual(persistencia_local.cargar_progreso()["repaso"]["hola-mundo:1"]["fallos"], 1)
 
     def test_solo_se_pueden_comprobar_tarjetas_de_la_sesion(self):
         self._con_pasos_viejos()
@@ -700,7 +700,7 @@ class TestWebCamino(Base):
     def _completar_curso_tortuga(self, perfectas=True):
         self._terminar_hasta("dos-variables")
         for _, lec in contenido.lecciones(contenido.cargar_curso("tortuga")):
-            progreso.registrar_paso_leccion(progreso.cargar_progreso(), lec["id"], 0, 0, perfectas, 1)
+            progreso.registrar_paso_leccion(persistencia_local.cargar_progreso(), lec["id"], 0, 0, perfectas, 1)
 
     def test_el_certificado_solo_existe_al_terminar_el_curso(self):
         self.post("/api/onboarding", {"meta_min": 10, "nombre": "Lua"})
@@ -775,7 +775,7 @@ class TestWebCamino(Base):
 
     def test_la_meta_avanza_con_el_xp(self):
         self.post("/api/onboarding", {"meta_min": 5})                      # 20 XP
-        p = progreso.cargar_progreso()
+        p = persistencia_local.cargar_progreso()
         progreso.registrar_ejercicio(p, 0, 3, 30)
         est = self.c.get("/api/estado", headers=self.h).get_json()
         self.assertEqual((est["xp_hoy"], est["meta_pct"]), (30, 100))

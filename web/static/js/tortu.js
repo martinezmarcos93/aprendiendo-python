@@ -252,32 +252,80 @@ const Tortu = (() => {
     lanzarConfeti({ particleCount: grande ? 180 : 90, spread: grande ? 100 : 70, origin: { y: 0.7 } });
   }
 
+  // ───────── cuenta adulta ─────────
+  const modalCuenta = document.getElementById("modal-cuenta");
+  const btnCuenta = document.getElementById("btn-cuenta");
+  if (modalCuenta && btnCuenta) {
+    btnCuenta.addEventListener("click", () => {
+      modalCuenta.hidden = false;
+    });
+    const cancelarCuenta = document.getElementById("cuenta-cancelar");
+    if (cancelarCuenta) cancelarCuenta.addEventListener("click", () => {
+      modalCuenta.hidden = true;
+    });
+    modalCuenta.addEventListener("click", (ev) => {
+      if (ev.target === modalCuenta) modalCuenta.hidden = true;
+    });
+  }
+
   // ───────── perfiles ─────────
+  function cookie(nombre) {
+    const prefijo = nombre + "=";
+    const parte = document.cookie.split("; ").find((x) => x.startsWith(prefijo));
+    return parte ? decodeURIComponent(parte.slice(prefijo.length)) : "";
+  }
+
+  async function cuentaPost(ruta, datos) {
+    const r = await fetch(ruta, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Tortu-CSRF": cookie("tortu_csrf"),
+      },
+      body: JSON.stringify(datos),
+    });
+    if (!r.ok) {
+      const error = new Error(`Error ${r.status} en ${ruta}`);
+      error.estado = r.status;
+      try { error.datos = await r.json(); } catch (e) { error.datos = null; }
+      throw error;
+    }
+    return r.json();
+  }
+
   async function abrirPerfiles() {
     const modal = document.getElementById("modal-perfil");
     const lista = document.getElementById("pf-lista");
     const campo = document.getElementById("pf-campo");
     const error = document.getElementById("pf-error");
     const datos = await api("/api/perfiles");
+    if (datos.modo !== "cuenta") throw new Error("El selector de perfiles requiere una cuenta.");
     lista.textContent = "";
     error.textContent = "";
     campo.value = "";
-    for (const p of datos.perfiles) {
+    for (const perfil of datos.perfiles) {
+      const id = perfil.id;
+      const nombre = perfil.nombre;
+      const activo = id === datos.actual;
       const b = document.createElement("button");
       b.type = "button";
-      b.className = "boton chico" + (p === datos.actual ? " violeta" : "");
-      b.textContent = p;
-      b.addEventListener("click", () => cambiar(p));
+      b.className = "boton chico" + (activo ? " violeta" : "");
+      b.textContent = nombre;
+      b.addEventListener("click", () => cambiar(perfil));
       lista.appendChild(b);
     }
     modal.hidden = false;
     campo.focus();
-    async function cambiar(nombre) {
+
+    async function cambiar(perfil) {
       try {
-        const r = await api("/api/perfil", { nombre });
-        if (r.ok) location.reload();
-      } catch (e) { error.textContent = "Usá letras o números para el nombre."; }
+        await cuentaPost("/cuenta/perfil", { perfil_id: perfil.id });
+        location.reload();
+      } catch (e) {
+        error.textContent = (e.datos && e.datos.mensaje) || "No se pudo cambiar de perfil.";
+      }
     }
+
     document.getElementById("pf-exportar").onclick = async () => {
       try {
         const r = await api("/api/perfil/exportar");
@@ -289,25 +337,21 @@ const Tortu = (() => {
         error.textContent = `✅ Listo: se descargó «${r.archivo}».`;
       } catch (e) { error.textContent = "No se pudo preparar el archivo."; }
     };
-    const archivo = document.getElementById("pf-archivo");
-    document.getElementById("pf-importar").onclick = () => { archivo.value = ""; archivo.click(); };
-    archivo.onchange = async () => {
-      const elegido = archivo.files[0];
-      if (!elegido) return;
-      if (elegido.size > 1000000) { error.textContent = "Ese archivo es demasiado grande para ser un progreso."; return; }
-      let sobre;
-      try { sobre = JSON.parse(await elegido.text()); } catch (e) {
-        error.textContent = "Ese archivo no es un progreso de TortuScript."; return;
-      }
+
+    document.getElementById("pf-ok").onclick = async () => {
+      const nombre = campo.value.trim();
+      if (!nombre) return;
       try {
-        const r = await api("/api/perfil/importar", { sobre });
-        if (r.ok) location.reload();
-      } catch (e) { error.textContent = (e.datos && e.datos.mensaje) || "No se pudo traer el progreso."; }
+        const creado = await cuentaPost("/cuenta/perfiles", { nombre });
+        await cuentaPost("/cuenta/perfil", { perfil_id: creado.perfil.id });
+        location.reload();
+      } catch (e) {
+        error.textContent = (e.datos && e.datos.mensaje) || "No se pudo crear o seleccionar el perfil.";
+      }
     };
-    document.getElementById("pf-ok").onclick = () => campo.value.trim() && cambiar(campo.value);
     document.getElementById("pf-cancelar").onclick = () => { modal.hidden = true; };
     campo.onkeydown = (ev) => {
-      if (ev.key === "Enter" && campo.value.trim()) cambiar(campo.value);
+      if (ev.key === "Enter" && campo.value.trim()) document.getElementById("pf-ok").click();
       if (ev.key === "Escape") modal.hidden = true;
     };
   }

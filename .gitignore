@@ -17,3 +17,8 @@ config_tortuscript.json
 
 # Paquetes generados por herramientas/crear_paquete.py
 dist/
+
+# Secretos locales (nunca versionar)
+.env
+.env.*
+!.env.example

@@ -46,12 +46,35 @@
       </span>
       <button class="chip sonido" id="btn-sonido" type="button" aria-pressed="true" title="Sonido" aria-label="Sonido de los premios">🔊</button>
       <button class="chip" id="btn-ajustes" type="button" title="Ajustes de accesibilidad" aria-haspopup="dialog" aria-label="Ajustes de accesibilidad">⚙️</button>
+      <button class="chip cuenta" id="btn-cuenta" type="button" title="Cuenta y configuración" aria-haspopup="dialog">
+        🧑‍💼 <span id="e-cuenta">{{ cuenta_email }}</span>
+      </button>
       <button class="chip perfil" id="btn-perfil" type="button" title="Cambiar de perfil" aria-haspopup="dialog">👤 <span id="e-perfil">{{ perfil }}</span></button>
     </div>
     </div>
   </header>
 
   <main id="contenido" tabindex="-1">{% block contenido %}{% endblock %}</main>
+
+  <!-- Menú de cuenta adulta -->
+  <div class="modal" id="modal-cuenta" hidden role="dialog" aria-modal="true" aria-labelledby="cuenta-titulo">
+    <div class="caja">
+      <h2 id="cuenta-titulo">🧑‍💼 Cuenta</h2>
+      <p><b>{{ cuenta_email }}</b></p>
+      {% if cuenta_role == "admin" %}<p class="tenue">Administrador</p>{% else %}<p class="tenue">Cuenta adulta</p>{% endif %}
+      <div class="lista-perfiles">
+        <a class="boton chico" href="{{ url_for('cuenta.configuracion') }}">⚙️ Configuración de cuenta</a>
+      </div>
+      <div class="pie">
+        <span class="espacio"></span>
+        <button class="boton chico" id="cuenta-cancelar" type="button">Cancelar</button>
+        <form method="post" action="{{ url_for('cuenta.logout') }}">
+          <input type="hidden" name="csrf" value="{{ cuenta_csrf }}">
+          <button class="boton chico" type="submit">Cerrar sesión</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- Ventana de preguntar() -->
   <div class="modal" id="modal-pregunta" hidden role="dialog" aria-modal="true" aria-labelledby="mp-texto">
@@ -90,9 +113,7 @@
       <div class="tenue atajo" id="pf-error" role="alert"></div>
       <div class="respaldo-perfil">
         <button class="boton chico" id="pf-exportar" type="button">💾 Guardar mi progreso en un archivo</button>
-        <button class="boton chico" id="pf-importar" type="button">📥 Traer un progreso desde un archivo</button>
-        <input type="file" id="pf-archivo" accept="application/json,.json" hidden>
-        <p class="tenue">Sirve para pasar tu progreso a otra compu. Traer un archivo crea un perfil nuevo: no borra nada.</p>
+        <p class="tenue">El progreso pertenece a tu perfil familiar y se guarda de forma independiente.</p>
       </div>
       <div class="pie">
         <button class="boton chico" id="pf-cancelar" type="button">Cancelar</button>
