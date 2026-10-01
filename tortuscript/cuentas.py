@@ -23,7 +23,7 @@ from typing import Optional
 
 
 SCHEMA_VERSION = 2
-MAX_CHILD_PROFILES = 5
+MAX_CHILD_PROFILES = 3
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
