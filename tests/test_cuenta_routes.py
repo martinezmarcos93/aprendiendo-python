@@ -26,6 +26,19 @@ class CuentaRoutesTests(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmp)
 
+    def test_gateway_web_redirige_al_login_y_perfil(self):
+        inicio = self.client.get("/", follow_redirects=False)
+        self.assertEqual(inicio.status_code, 302)
+        self.assertIn("/cuenta/ingresar", inicio.headers["Location"])
+
+        login_page = self.client.get("/cuenta/ingresar")
+        self.assertEqual(login_page.status_code, 200)
+        self.assertIn("Ingresar a TortuScript", login_page.get_data(as_text=True))
+
+        registro_page = self.client.get("/cuenta/registrar")
+        self.assertEqual(registro_page.status_code, 200)
+        self.assertIn("Crear cuenta adulta", registro_page.get_data(as_text=True))
+
     def test_registro_queda_pendiente_de_verificacion(self):
         r = self.client.post("/cuenta/registro", json={
             "email": "adulto@example.com",
