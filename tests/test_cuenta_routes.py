@@ -384,6 +384,60 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertIn("/bienvenida", inicio.headers["Location"])
 
 
+    def test_onboarding_web_persiste_en_el_childprofile_activo(self):
+        self.client.post("/cuenta/registro", json={
+            "email": "onboarding@example.com",
+            "password": "una-clave-larga-123",
+        })
+        repo = CuentaRepository(self.tmp / "cuentas.sqlite3")
+        repo.ensure_schema()
+        cuenta = repo.obtener_account("acc_" + __import__("hashlib").sha256(
+            "onboarding@example.com".encode()
+        ).hexdigest()[:24])
+        AuthRepository(self.tmp / "cuentas.sqlite3").marcar_verificada(cuenta.id)
+
+        login = self.client.post("/cuenta/login", json={
+            "email": "onboarding@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(login.status_code, 200)
+        csrf = login.json["csrf"]
+
+        perfil = self.client.post(
+            "/cuenta/perfiles",
+            json={"nombre": "Ana"},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(perfil.status_code, 201)
+        pid = perfil.json["perfil"]["id"]
+
+        selected = self.client.post(
+            "/cuenta/perfil",
+            json={"perfil_id": pid},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(selected.status_code, 200)
+
+        onboarding = self.client.post(
+            "/api/onboarding",
+            json={"nombre": "Marcos", "experiencia": "nunca", "meta_min": 5},
+            headers={"X-Tortu-Token": "test-token"},
+        )
+        self.assertEqual(onboarding.status_code, 200, onboarding.get_data(as_text=True))
+        self.assertTrue(onboarding.json["ok"])
+
+        progreso = self.client.get("/cuenta/progreso")
+        self.assertEqual(progreso.status_code, 200)
+        data = progreso.json["progreso"]["data"]
+        self.assertTrue(data["config"]["onboarding"])
+        self.assertEqual(data["config"]["nombre"], "Marcos")
+        self.assertEqual(data["config"]["experiencia"], "nunca")
+        self.assertEqual(data["config"]["meta_min"], 5)
+
+        inicio = self.client.get("/")
+        self.assertEqual(inicio.status_code, 200)
+
+
     def test_verificacion_y_recuperacion_http_no_exponen_token(self):
         registro = self.client.post("/cuenta/registro", json={
             "email": "seguridad@example.com",
