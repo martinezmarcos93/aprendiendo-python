@@ -30,6 +30,7 @@ class TestWeb(unittest.TestCase):
             ACCOUNT_COOKIE_SECURE=False,
             PROGRESS_DIR=self._dir / "progreso_perfiles",
         )
+        self._rutas_que_explotan()
         self.c = self.app.test_client()
         self.h = {"X-Tortu-Token": "secreto"}
         from fixtures_cuenta import preparar_sesion_educativa
@@ -157,6 +158,8 @@ class TestWeb(unittest.TestCase):
         self.assertEqual(self.c.post("/api/ejecutar", json={}).get_json()["error"], "Esto no se puede abrir desde acá")
 
     def _rutas_que_explotan(self):
+        if "explota" in self.app.view_functions:
+            return
         def explotar():
             raise RuntimeError("detalle interno /ruta/secreta")
         self.app.add_url_rule("/explota", "explota", explotar)
@@ -563,10 +566,22 @@ class TestWeb(unittest.TestCase):
         self.assertEqual(self.c.post("/api/tortuga", json={}).status_code, 403)
 
     def test_perfiles(self):
-        r = self.post("/api/perfil", {"nombre": "../../Lua"}).get_json()
-        self.assertEqual(r["actual"], "lua")
-        self.assertEqual(self.post("/api/perfil", {"nombre": "///"}).status_code, 400)
-        self.assertIn("lua", self.c.get("/api/perfiles", headers=self.h).get_json()["perfiles"])
+        inicial = self.c.get("/cuenta/me")
+        self.assertEqual(inicial.status_code, 200)
+        self.assertEqual([p["nombre"] for p in inicial.json["perfiles"]], ["Marcos"])
+
+        creado = self.c.post(
+            "/cuenta/perfiles",
+            json={"nombre": "Lua"},
+            headers={"X-Tortu-CSRF": self.csrf},
+        )
+        self.assertEqual(creado.status_code, 201)
+        me = self.c.get("/cuenta/me").json
+        self.assertEqual({p["nombre"] for p in me["perfiles"]}, {"Marcos", "Lua"})
+        perfiles_api = self.c.get("/api/perfiles", headers=self.h)
+        self.assertEqual(perfiles_api.status_code, 200)
+        self.assertEqual(perfiles_api.json["modo"], "cuenta")
+        self.assertEqual({p["nombre"] for p in perfiles_api.json["perfiles"]}, {"Marcos", "Lua"})
 
 
 if __name__ == "__main__":
