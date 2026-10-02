@@ -77,9 +77,17 @@ class TestPaginas(Base):
     def setUp(self):
         super().setUp()
         from web.app import create_app
-        self.c = create_app(token="t").test_client()
+        app = create_app(token="t")
+        app.config.update(
+            TESTING=True,
+            ACCOUNT_DB=self._dir / "cuentas.sqlite3",
+            ACCOUNT_COOKIE_SECURE=False,
+            PROGRESS_DIR=self._dir / "progreso_perfiles",
+        )
+        self.c = app.test_client()
         self.h = {"X-Tortu-Token": "t"}
-        progreso.guardar_config(persistencia_local.cargar_progreso(), onboarding=True)
+        from fixtures_cuenta import preparar_sesion_educativa
+        preparar_sesion_educativa(app, self.c, email="accesibilidad@example.com", nombre="Ana", token="t")
 
     def post(self, ruta, datos=None):
         return self.c.post(ruta, json=datos or {}, headers=self.h)
