@@ -25,6 +25,11 @@ La tabla original usaba `UNIQUE(account_id, display_name)`, sensible a mayúscul
 
 **Corrección aplicada en la rama:** el esquema sube a versión 3, agrega `display_name_key` con una clave canónica `NFKC + casefold()` y una restricción única por cuenta. La migración revisa duplicados históricos antes de imponer el índice y falla con un mensaje accionable en vez de elegir silenciosamente qué perfil conservar. Se agregó una regresión para el alias duplicado con mayúsculas. CI del commit de código `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` completó correctamente en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión; 0 fallos/errores). Ejecución: [37046712403](https://github.com/martinezmarcos93/tortuscript/actions/runs/37046712403). Se agregó una prueba automatizada de migración desde una base v2 sintética con conservación del perfil y verificación del índice. Sigue pendiente validar la migración con una copia de una base local real, porque los fixtures automatizados no sustituyen esa comprobación.
 
+### B3-03 — La migración podía dejar una columna nueva tras detectar duplicados
+**Severidad:** media; defecto de consistencia del esquema ante una base histórica conflictiva.
+
+La prueba de regresión para alias históricos equivalentes detectó que `ALTER TABLE` podía persistir antes de que la migración arrojara `CuentaError`. Los perfiles no se perdían, pero quedaba un esquema parcialmente alterado. La migración ahora calcula y valida todas las claves históricas antes de añadir la columna; la prueba comprueba que se conservan las dos filas y que la columna no se agrega cuando la migración debe abortar. El cambio está pendiente de CI tras la corrección.
+
 ### B2-01 — Cobertura insuficiente del ciclo de vida completo en un único contrato de integración
 **Severidad:** media; brecha de verificación.
 
@@ -47,7 +52,7 @@ El validador detecta permutaciones que producen la misma salida en «Dos variabl
 
 ## Secuencia propuesta
 
-1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La nueva cobertura NFKC, migración v2 → v3 y cambio de perfil pasó en Python 3.9 y 3.12 en los commits correspondientes; el último test de equivalencias de ordenamientos está en CI.
+1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La cobertura NFKC, migración v2 → v3, cambio de perfil y ordenamientos equivalentes pasó en Python 3.9 y 3.12 en el commit `3fe66f208424bfe9bbaf35f2317455ad482986c0` (593 tests, 2 omitidos por versión). La nueva regresión que detectó y motivó la corrección de migración parcial está pendiente de CI.
 2. Ejecutar y revisar el CI completo en Python 3.9 y 3.12 para los cambios más recientes.
 3. Validar la migración v2 → v3 con una copia local real, sin tocar la base original.
 4. Mantener consentimiento, exportación/supresión, retención y operación comercial como bloqueadores de un futuro lanzamiento remoto; no simular que están implementados.
