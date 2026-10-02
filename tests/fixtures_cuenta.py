@@ -1,10 +1,11 @@
 """Fixtures para pruebas HTTP del flujo comercial vigente de TortuScript."""
+import copy
 import hashlib
 
 from tortuscript.auth import AuthRepository
 
 
-def preparar_sesion_educativa(app, client, email="prueba@example.com", nombre="Ana", token="test-token"):
+def preparar_sesion_educativa(app, client, email="prueba@example.com", nombre="Ana", token="test-token", complete_onboarding=True):
     """Crea cuenta verificada, inicia sesión, selecciona ChildProfile y completa onboarding."""
     db = app.config["ACCOUNT_DB"]
     password = "una-clave-larga-123"
@@ -36,12 +37,29 @@ def preparar_sesion_educativa(app, client, email="prueba@example.com", nombre="A
     if seleccionado.status_code != 200:
         raise AssertionError(f"selección de fixture: {seleccionado.status_code} {seleccionado.get_data(as_text=True)}")
 
-    onboarding = client.post(
-        "/api/onboarding",
-        json={"nombre": nombre, "experiencia": "nunca", "meta_min": 15},
-        headers={"X-Tortu-Token": token},
-    )
-    if onboarding.status_code != 200:
-        raise AssertionError(f"onboarding de fixture: {onboarding.status_code} {onboarding.get_data(as_text=True)}")
+    profile_id = perfil.json["perfil"]["id"]
+    if complete_onboarding:
+        onboarding = client.post(
+            "/api/onboarding",
+            json={"nombre": nombre, "experiencia": "nunca", "meta_min": 15},
+            headers={"X-Tortu-Token": token},
+        )
+        if onboarding.status_code != 200:
+            raise AssertionError(f"onboarding de fixture: {onboarding.status_code} {onboarding.get_data(as_text=True)}")
+    else:
+        # Deja el perfil comercial en el estado real de primera visita, con snapshot persistido.
+        from tortuscript.progreso import PROGRESO_INICIAL
+        documento = {
+            "contract_version": 1,
+            "profile_id": profile_id,
+            "updated_at": "2026-10-02T00:00:00+00:00",
+            "data": copy.deepcopy(PROGRESO_INICIAL),
+        }
+        documento["data"]["config"]["onboarding"] = False
+        guardado = client.put(
+            "/cuenta/progreso", json=documento, headers={"X-Tortu-CSRF": csrf}
+        )
+        if guardado.status_code != 200:
+            raise AssertionError(f"snapshot inicial de fixture: {guardado.status_code} {guardado.get_data(as_text=True)}")
 
-    return {"csrf": csrf, "perfil_id": perfil.json["perfil"]["id"], "headers": {"X-Tortu-Token": token}}
+    return {"csrf": csrf, "perfil_id": profile_id, "headers": {"X-Tortu-Token": token}}
