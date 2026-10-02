@@ -386,6 +386,7 @@ class TestSaltearHasta(unittest.TestCase):
         p = persistencia_local.cargar_progreso()
         p["lecciones"]["b"] = {"pasos": {}, "completada": True, "perfecta": False}
         progreso.saltear_hasta(p, ["a", "b", "c", "d"], "c")
+        self.assertTrue(persistencia_local.guardar_progreso(p))
         self.assertEqual(sorted(persistencia_local.cargar_progreso()["salteadas"]), ["a"])
         with self.assertRaises(ValueError):
             progreso.saltear_hasta(p, ["a", "b"], "z")
