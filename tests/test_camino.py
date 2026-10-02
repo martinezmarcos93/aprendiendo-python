@@ -82,6 +82,7 @@ class TestOnboarding(Base):
     def test_una_vez_hecha_no_se_repite_y_persiste(self):
         p = persistencia_local.cargar_progreso()
         progreso.guardar_config(p, experiencia="poquito", meta_min=15, nombre="Lua", onboarding=True)
+        self.assertTrue(persistencia_local.guardar_progreso(p))
         again = persistencia_local.cargar_progreso()
         self.assertFalse(progreso.necesita_onboarding(again))
         self.assertEqual((again["config"]["experiencia"], again["config"]["meta_min"], again["config"]["nombre"]),
