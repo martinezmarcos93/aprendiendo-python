@@ -153,6 +153,7 @@ class CuentaRepositoryTests(unittest.TestCase):
         with sqlite3.connect(future_path) as con:
             con.executescript("""
                 CREATE TABLE schema_version (version INTEGER NOT NULL);
+                INSERT INTO schema_version(version) VALUES (3);
                 INSERT INTO schema_version(version) VALUES (4);
                 CREATE TABLE accounts (
                     id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE,
