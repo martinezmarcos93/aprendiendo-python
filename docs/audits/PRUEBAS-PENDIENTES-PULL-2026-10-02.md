@@ -43,6 +43,7 @@
 ## Estado de verificación automática
 
 - [ ] Confirmar el CI completo del último commit de `sweep/consolidacion-ux-v1` en Python 3.9 y 3.12.
+- [ ] Confirmar que la verificación de correo no consume el token al abrir el enlace (GET) y solo verifica tras confirmar por POST.
 - [ ] Confirmar que las regresiones de `tests/test_cuentas.py` pasen: ID opaco, alias equivalentes por mayúsculas/Unicode NFKC y migración de esquema v2 → v3.
 - [ ] Revisar los logs de migración del esquema v2 → v3; comprobar que los duplicados históricos abortan antes de alterar el esquema y no eliminan ni modifican perfiles.
 - [ ] Confirmar la prueba HTTP de cambio entre dos perfiles de una misma cuenta: cada perfil debe recuperar su propio XP tras alternar varias veces.
