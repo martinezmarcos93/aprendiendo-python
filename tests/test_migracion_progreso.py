@@ -10,6 +10,7 @@ from tortuscript.cuentas import CuentaRepository
 from tortuscript.perfil_educativo import PerfilEducativoService, ContextoEducativoError
 from tortuscript.progreso_childprofile import ProgresoChildProfile
 from tortuscript.progreso import PROGRESO_INICIAL
+from tortuscript import persistencia_local
 from tortuscript.progreso_contrato import nuevo_snapshot
 from tortuscript.migracion_progreso import MigracionProgresoError, MigracionProgresoLocal
 
@@ -32,17 +33,16 @@ class MigracionProgresoTests(unittest.TestCase):
         self.local.mkdir()
         self.old_cwd = Path.cwd()
         # El módulo legado usa su raíz de proyecto; parcheamos únicamente su directorio durante la prueba.
-        import tortuscript.progreso as progreso
-        self.progreso = progreso
-        self.old_dir = progreso.DIRECTORIO
-        progreso.DIRECTORIO = self.local
+        self.progreso = persistencia_local
+        self.old_dir = persistencia_local.DIRECTORIO
+        persistencia_local.DIRECTORIO = self.local
         self.service = PerfilEducativoService(
             self.cuentas, self.auth, ProgresoChildProfile(self.tmp / "commercial"), AccesoProducto(self.cuentas)
         )
         self.migracion = MigracionProgresoLocal(self.service)
 
     def tearDown(self):
-        self.progreso.DIRECTORIO = self.old_dir
+        persistencia_local.DIRECTORIO = self.old_dir
         shutil.rmtree(self.tmp)
 
     def test_importacion_expresa_copia_al_perfil_activo(self):
