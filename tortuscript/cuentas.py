@@ -150,9 +150,6 @@ class CuentaRepository:
                 """
             )
             cols = {r["name"] for r in con.execute("PRAGMA table_info(accounts)")}
-            if "role" not in cols:
-                con.execute("ALTER TABLE accounts ADD COLUMN role TEXT NOT NULL DEFAULT 'adult'")
-
             profile_cols = {r["name"] for r in con.execute("PRAGMA table_info(child_profiles)")}
             # Validar todos los alias históricos antes de tocar el esquema: ALTER TABLE
             # puede persistir aunque después abortemos la migración por duplicados.
@@ -171,6 +168,9 @@ class CuentaRepository:
                     )
                 claves[clave] = perfil["id"]
                 claves_por_id[perfil["id"]] = clave[1]
+            # No alterar ninguna tabla existente hasta validar todo el historial.
+            if "role" not in cols:
+                con.execute("ALTER TABLE accounts ADD COLUMN role TEXT NOT NULL DEFAULT 'adult'")
             if "display_name_key" not in profile_cols:
                 con.execute("ALTER TABLE child_profiles ADD COLUMN display_name_key TEXT")
             for perfil_id, clave in claves_por_id.items():
