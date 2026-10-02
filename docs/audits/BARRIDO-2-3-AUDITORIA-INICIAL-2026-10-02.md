@@ -76,6 +76,15 @@ Las rutas JSON y HTML de registro aceptaban solicitudes sin un límite, a difere
 
 **Límite residual:** el limitador sigue siendo en memoria y por proceso; no coordina workers ni instancias distintas. Antes de desplegar con múltiples workers debe migrarse a un backend compartido. El límite por IP también requiere calibración operativa detrás de proxies para no confiar en cabeceras reenviadas sin configuración explícita.
 
+### B4-01 — El runtime autenticado acepta puntuación y XP declarados por el cliente
+**Severidad:** alta si se usa como fuente fiable del progreso comercial.
+
+Las rutas `/cuenta/runtime/ejercicio` y `/cuenta/runtime/leccion/paso` reciben del cliente valores como `estrellas`, `xp_ganado`, `xp`, `perfecto` y `total_pasos`. `RuntimeEducativo` pasa esos valores al motor de progreso, que actualiza XP y finalización. La autenticación y CSRF evitan solicitudes anónimas o cross-site, pero no prueban que el alumno haya resuelto el ejercicio ni que la puntuación enviada sea legítima: un usuario autenticado puede modificar su propia petición.
+
+**Estado:** hallazgo confirmado por inspección del contrato entre rutas, runtime y motor. No se aplica una validación superficial de rangos como si resolviera el problema: limitar `xp` o `estrellas` no impide que el cliente solicite repetidamente el máximo permitido.
+
+**Corrección necesaria antes de confiar en estos datos para certificados, desbloqueos o analítica:** el servidor debe derivar los valores permitidos del ejercicio/paso conocido y validar la evidencia de resolución (por ejemplo, código y salida comparados contra el contrato del ejercicio) o marcar explícitamente estos endpoints como datos no autoritativos. La finalización debe derivar el número de pasos de la definición de la lección, no de `total_pasos` enviado por el cliente. Agregar pruebas negativas para XP arbitrario, índices desconocidos, pasos inexistentes y finalización prematura.
+
 ## Riesgos de arquitectura y límites de alcance
 
 1. **Privacidad/consentimiento:** `docs/FASE12_PRIVACIDAD_MENORES_V1.md` define minimización, consentimiento, retención y derechos, pero declara que es una base de diseño, no una habilitación legal ni una implementación completa. Antes de cualquier despliegue comercial hay que traducir cada requisito a flujos, persistencia, pruebas y revisión jurídica argentina.
