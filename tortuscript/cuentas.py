@@ -17,6 +17,7 @@ from __future__ import annotations
 import re
 import secrets
 import sqlite3
+import unicodedata
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -78,6 +79,11 @@ def _normalizar_nombre(nombre: str) -> str:
     if not 1 <= len(nombre) <= 30:
         raise CuentaError("El nombre del perfil debe tener entre 1 y 30 caracteres.")
     return nombre
+
+
+def _clave_nombre(nombre: str) -> str:
+    """Clave estable para unicidad: compatibilidad Unicode + comparación sin caso."""
+    return unicodedata.normalize("NFKC", _normalizar_nombre(nombre)).casefold()
 
 
 class CuentaRepository:
@@ -157,7 +163,7 @@ class CuentaRepository:
             ).fetchall()
             claves = {}
             for perfil in filas:
-                clave = (perfil["account_id"], _normalizar_nombre(perfil["display_name"]).casefold())
+                clave = (perfil["account_id"], _clave_nombre(perfil["display_name"]))
                 anterior = claves.get(clave)
                 if anterior is not None and anterior != perfil["id"]:
                     raise CuentaError(
@@ -246,7 +252,7 @@ class CuentaRepository:
         # El ID interno es opaco y no deriva del alias visible: renombrar/recrear
         # un perfil no debe volver a asociar accidentalmente progreso huérfano.
         profile_id = f"child_{secrets.token_hex(12)}"
-        display_name_key = display_name.casefold()
+        display_name_key = _clave_nombre(display_name)
         with self._conexion() as con:
             account = con.execute("SELECT 1 FROM accounts WHERE id=?", (account_id,)).fetchone()
             if not account:
