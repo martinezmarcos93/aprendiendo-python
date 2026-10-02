@@ -32,6 +32,11 @@ Hay pruebas unitarias separadas para cuenta, autenticación, selección de perfi
 
 **Acción:** inspeccionar la cobertura de rutas y añadir una regresión de recorrido integral solo para los pasos que hoy no estén cubiertos, evitando duplicar pruebas ya existentes.
 
+### B2-02 — Permutaciones de líneas con salida equivalente en tres ejercicios
+**Severidad:** baja; aviso editorial no bloqueante, con riesgo de evaluación demasiado estricta si el contrato no se prueba.
+
+El validador detecta permutaciones que producen la misma salida en «Dos variables», «Tabla del 2» y «Solo los pares». La lógica de lecciones ya admite ordenamientos alternativos cuando la ejecución genera la salida esperada; agregué una regresión que comprueba esos tres casos con el motor real. Los tres avisos del validador siguen siendo intencionales: informan al autor de que la consigna puede admitir más de un orden correcto, no indican un fallo de validación del curso.
+
 ## Riesgos de arquitectura y límites de alcance
 
 1. **Privacidad/consentimiento:** `docs/FASE12_PRIVACIDAD_MENORES_V1.md` define minimización, consentimiento, retención y derechos, pero declara que es una base de diseño, no una habilitación legal ni una implementación completa. Antes de cualquier despliegue comercial hay que traducir cada requisito a flujos, persistencia, pruebas y revisión jurídica argentina.
@@ -42,7 +47,7 @@ Hay pruebas unitarias separadas para cuenta, autenticación, selección de perfi
 
 ## Secuencia propuesta
 
-1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La nueva cobertura NFKC, migración v2 → v3 y cambio de perfil está pendiente de CI.
+1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La nueva cobertura NFKC, migración v2 → v3 y cambio de perfil pasó en Python 3.9 y 3.12 en los commits correspondientes; el último test de equivalencias de ordenamientos está en CI.
 2. Ejecutar y revisar el CI completo en Python 3.9 y 3.12 para los cambios más recientes.
 3. Validar la migración v2 → v3 con una copia local real, sin tocar la base original.
 4. Mantener consentimiento, exportación/supresión, retención y operación comercial como bloqueadores de un futuro lanzamiento remoto; no simular que están implementados.
