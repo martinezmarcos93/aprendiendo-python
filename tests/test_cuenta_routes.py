@@ -410,7 +410,7 @@ class CuentaRoutesTests(unittest.TestCase):
 
         proyecto = self.client.post(
             "/api/proyectos",
-            json={"nombre": "Proyecto UI", "tipo": "python", "codigo": "print(1)"},
+            json={"nombre": "Proyecto UI", "tipo": "experimentar", "codigo": "print(1)"},
             headers=api_headers,
         )
         self.assertEqual(proyecto.status_code, 200)
