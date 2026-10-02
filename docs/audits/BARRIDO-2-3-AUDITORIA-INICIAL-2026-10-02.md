@@ -67,6 +67,15 @@ El validador detecta permutaciones que producen la misma salida en «Dos variabl
 
 `_emitir_email` no falla si `ACCOUNT_EMAIL_SENDER` no está configurado: registro y recuperación pueden responder como aceptados sin entregar ningún enlace. La integración de correo no está configurada por defecto en el servidor local y no debe darse por operativa en producción. Antes del despliegue hay que incorporar un proveedor de correo, comprobar fallos de entrega, definir reintentos y verificar que los enlaces lleven a la nueva confirmación explícita por POST. No se simula ni se inventa un proveedor dentro de esta auditoría.
 
+### B3-09 — El registro de cuentas no tenía límite de intentos
+**Severidad:** media para cualquier exposición a tráfico no confiable; riesgo de abuso del endpoint y crecimiento de cuentas/tokens.
+
+Las rutas JSON y HTML de registro aceptaban solicitudes sin un límite, a diferencia de login y recuperación. Esto permitía automatizar altas y, cuando existe un remitente configurado, provocar un volumen elevado de correos de verificación.
+
+**Corrección aplicada en la rama:** ambas rutas comparten un límite de cinco intentos por IP por hora y responden HTTP 429 con `Retry-After` al excederlo. El limitador se guarda por instancia Flask para evitar compartir estado accidentalmente entre aplicaciones de prueba dentro del mismo proceso. Se añadió una regresión que comprueba el límite y que la ruta HTML no ofrece una vía alternativa para eludirlo.
+
+**Límite residual:** el limitador sigue siendo en memoria y por proceso; no coordina workers ni instancias distintas. Antes de desplegar con múltiples workers debe migrarse a un backend compartido. El límite por IP también requiere calibración operativa detrás de proxies para no confiar en cabeceras reenviadas sin configuración explícita.
+
 ## Riesgos de arquitectura y límites de alcance
 
 1. **Privacidad/consentimiento:** `docs/FASE12_PRIVACIDAD_MENORES_V1.md` define minimización, consentimiento, retención y derechos, pero declara que es una base de diseño, no una habilitación legal ni una implementación completa. Antes de cualquier despliegue comercial hay que traducir cada requisito a flujos, persistencia, pruebas y revisión jurídica argentina.
