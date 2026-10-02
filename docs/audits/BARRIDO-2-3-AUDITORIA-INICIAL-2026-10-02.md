@@ -25,6 +25,11 @@ La tabla original usaba `UNIQUE(account_id, display_name)`, sensible a mayúscul
 
 **Corrección aplicada en la rama:** el esquema sube a versión 3, agrega `display_name_key` con una clave canónica `NFKC + casefold()` y una restricción única por cuenta. La migración revisa duplicados históricos antes de imponer el índice y falla con un mensaje accionable en vez de elegir silenciosamente qué perfil conservar. Se agregó una regresión para el alias duplicado con mayúsculas. CI del commit de código `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` completó correctamente en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión; 0 fallos/errores). Ejecución: [37046712403](https://github.com/martinezmarcos93/tortuscript/actions/runs/37046712403). Se agregó una prueba automatizada de migración desde una base v2 sintética con conservación del perfil y verificación del índice. Sigue pendiente validar la migración con una copia de una base local real, porque los fixtures automatizados no sustituyen esa comprobación.
 
+### B3-04 — La verificación de correo consumía el token mediante GET
+**Severidad:** media; riesgo de activación accidental por escáneres automáticos de enlaces.
+
+La ruta `GET /cuenta/verificar-email` consumía el token de un solo uso. Algunos clientes de correo y filtros de seguridad visitan enlaces automáticamente, por lo que podían verificar la cuenta sin una acción explícita del usuario. La ruta GET ahora solo presenta la confirmación y el consumo se realiza mediante POST; se agregó una regresión que simula el GET y verifica que la cuenta siga sin verificar hasta el POST. Pendiente de CI.
+
 ### B3-03 — La migración podía dejar una columna nueva tras detectar duplicados
 **Severidad:** media; defecto de consistencia del esquema ante una base histórica conflictiva.
 
