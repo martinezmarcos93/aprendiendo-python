@@ -206,6 +206,14 @@ def create_app(token=None):
         return respuesta
 
     @app.before_request
+    def _proteger():
+        if request.host.split(":")[0] not in HOSTS_PERMITIDOS:
+            abort(403)
+        if request.path.startswith("/api/") and \
+                request.headers.get("X-Tortu-Token") != app.config["TOKEN"]:
+            abort(403)
+
+    @app.before_request
     def _requiere_contexto_educativo():
         if request.endpoint in (None, "static") or request.path.startswith("/cuenta"):
             return None
@@ -226,14 +234,6 @@ def create_app(token=None):
                 return redirect(url_for("cuenta.seleccionar_perfil_pagina", next=request.full_path))
             return redirect(url_for("cuenta.ingresar"))
         return None
-
-    @app.before_request
-    def _proteger():
-        if request.host.split(":")[0] not in HOSTS_PERMITIDOS:
-            abort(403)
-        if request.path.startswith("/api/") and \
-                request.headers.get("X-Tortu-Token") != app.config["TOKEN"]:
-            abort(403)
 
     @app.before_request
     def _de_a_uno():
