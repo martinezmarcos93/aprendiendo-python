@@ -137,6 +137,7 @@ def registrar_post():
         return render_template("cuenta/registrar.html", error="Correo y contraseña son obligatorios."), 400
     cuentas, auth = _repos()
     try:
+        auth.validar_password(password)
         cuenta = cuentas.crear_account(email)
         auth.set_password(cuenta.id, password)
     except CuentaError as exc:
@@ -157,6 +158,7 @@ def registro():
         return jsonify(ok=False, mensaje="Correo y contraseña son obligatorios."), 400
     cuentas, auth = _repos()
     try:
+        auth.validar_password(password)
         cuenta = cuentas.crear_account(email)
         auth.set_password(cuenta.id, password)
     except CuentaError as exc:
