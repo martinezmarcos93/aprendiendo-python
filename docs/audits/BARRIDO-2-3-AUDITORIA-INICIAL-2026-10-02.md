@@ -23,12 +23,12 @@ En la versión auditada, `crear_child_profile` derivaba el ID mediante `SHA-256(
 
 La tabla original usaba `UNIQUE(account_id, display_name)`, sensible a mayúsculas, mientras el ID se calculaba con el nombre en minúsculas. Esto permitía una colisión de ID para `Ana` y `ANA`.
 
-**Corrección aplicada en la rama:** el esquema sube a versión 3, agrega `display_name_key` con normalización `casefold()` y una restricción única por cuenta. La migración revisa duplicados históricos antes de imponer el índice y falla con un mensaje accionable en vez de elegir silenciosamente qué perfil conservar. Se agregó una regresión para el alias duplicado con mayúsculas. CI del commit de código `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` completó correctamente en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión; 0 fallos/errores). Ejecución: [37046712403](https://github.com/martinezmarcos93/tortuscript/actions/runs/37046712403). Sigue pendiente revisar el comportamiento de migración con una base local real y esperar CI del HEAD documental más reciente.
+**Corrección aplicada en la rama:** el esquema sube a versión 3, agrega `display_name_key` con una clave canónica `NFKC + casefold()` y una restricción única por cuenta. La migración revisa duplicados históricos antes de imponer el índice y falla con un mensaje accionable en vez de elegir silenciosamente qué perfil conservar. Se agregó una regresión para el alias duplicado con mayúsculas. CI del commit de código `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` completó correctamente en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión; 0 fallos/errores). Ejecución: [37046712403](https://github.com/martinezmarcos93/tortuscript/actions/runs/37046712403). Se agregó una prueba automatizada de migración desde una base v2 sintética con conservación del perfil y verificación del índice. Sigue pendiente validar la migración con una copia de una base local real, porque los fixtures automatizados no sustituyen esa comprobación.
 
 ### B2-01 — Cobertura insuficiente del ciclo de vida completo en un único contrato de integración
 **Severidad:** media; brecha de verificación.
 
-Hay pruebas unitarias separadas para cuenta, autenticación, selección de perfil, persistencia por ChildProfile, acceso y runtime. La suite también incluye una prueba de rutas de cuenta. Aun así, los contratos distribuidos entre servicios deben verificarse juntos: sesión válida → selección de perfil → carga de progreso → escritura educativa → cambio de perfil → confirmación de aislamiento → reanudación de sesión. Las pruebas existentes no deben considerarse sustituto de esa prueba de recorrido cruzado hasta confirmar qué cubre la suite de integración actual.
+Hay pruebas unitarias separadas para cuenta, autenticación, selección de perfil, persistencia por ChildProfile, acceso y runtime. La suite también incluye una prueba de rutas de cuenta. Aun así, los contratos distribuidos entre servicios deben verificarse juntos: sesión válida → selección de perfil → carga de progreso → escritura educativa → cambio de perfil → confirmación de aislamiento → reanudación de sesión. La prueba de rutas ahora cubre el cambio entre dos perfiles de una misma cuenta, la escritura de snapshots distintos y la recuperación de los valores correctos al volver a cada perfil.
 
 **Acción:** inspeccionar la cobertura de rutas y añadir una regresión de recorrido integral solo para los pasos que hoy no estén cubiertos, evitando duplicar pruebas ya existentes.
 
@@ -42,9 +42,9 @@ Hay pruebas unitarias separadas para cuenta, autenticación, selección de perfi
 
 ## Secuencia propuesta
 
-1. **Código verificado por CI:** B3-01/B3-02 y sus pruebas de regresión pasan en Python 3.9 y 3.12. Falta revisar la migración v2 → v3 con una base local real.
-2. Revisar la cobertura de integración B2 y agregar únicamente los pasos del recorrido cuenta → perfil → progreso → cambio de perfil que no estén cubiertos.
-3. Ejecutar el CI completo en Python 3.9 y 3.12 y revisar la migración de esquema v2 → v3.
+1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La nueva cobertura NFKC, migración v2 → v3 y cambio de perfil está pendiente de CI.
+2. Ejecutar y revisar el CI completo en Python 3.9 y 3.12 para los cambios más recientes.
+3. Validar la migración v2 → v3 con una copia local real, sin tocar la base original.
 4. Mantener consentimiento, exportación/supresión, retención y operación comercial como bloqueadores de un futuro lanzamiento remoto; no simular que están implementados.
 5. Actualizar el checklist de pruebas manuales sin pedir al usuario un pull antes de su ventana disponible.
 
