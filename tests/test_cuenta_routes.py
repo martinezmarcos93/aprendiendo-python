@@ -81,8 +81,9 @@ class CuentaRoutesTests(unittest.TestCase):
         })
         self.assertEqual(login.status_code, 200)
         csrf = login.json["csrf"]
-        self.assertIn("tortu_session=", login.headers.get("Set-Cookie", ""))
-        self.assertIn("tortu_csrf=", login.headers.get("Set-Cookie", ""))
+        cookies = "\\n".join(login.headers.getlist("Set-Cookie"))
+        self.assertIn("tortu_session=", cookies)
+        self.assertIn("tortu_csrf=", cookies)
 
         me = self.client.get("/cuenta/me")
         self.assertEqual(me.status_code, 200)
@@ -395,17 +396,19 @@ class CuentaRoutesTests(unittest.TestCase):
             headers={"X-Tortu-CSRF": csrf},
         )
 
-        estado = self.client.get("/api/estado")
+        api_headers = {"X-Tortu-Token": "test-token"}
+        estado = self.client.get("/api/estado", headers=api_headers)
         self.assertEqual(estado.status_code, 200)
         self.assertEqual(estado.json["nombre"], "Ana")
 
         proyecto = self.client.post(
             "/api/proyectos",
             json={"nombre": "Proyecto UI", "tipo": "python", "codigo": "print(1)"},
+            headers=api_headers,
         )
         self.assertEqual(proyecto.status_code, 200)
 
-        listado = self.client.get("/api/proyectos")
+        listado = self.client.get("/api/proyectos", headers=api_headers)
         self.assertEqual(listado.status_code, 200)
 
         snapshot = self.client.get("/cuenta/progreso")
