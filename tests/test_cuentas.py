@@ -54,6 +54,20 @@ class CuentaRepositoryTests(unittest.TestCase):
         with self.assertRaises(CuentaError):
             self.repo.crear_child_profile(cuenta.id, " Ana ")
 
+    def test_nombre_de_perfil_no_duplica_por_mayusculas(self):
+        cuenta = self.repo.crear_account("adulto@example.com")
+        self.repo.crear_child_profile(cuenta.id, "Ana")
+        with self.assertRaises(CuentaError):
+            self.repo.crear_child_profile(cuenta.id, "ANA")
+
+    def test_id_de_perfil_es_opaco_y_unico(self):
+        cuenta = self.repo.crear_account("adulto@example.com")
+        ana = self.repo.crear_child_profile(cuenta.id, "Ana")
+        beto = self.repo.crear_child_profile(cuenta.id, "Beto")
+        self.assertRegex(ana.id, r"^child_[a-f0-9]{24}$")
+        self.assertRegex(beto.id, r"^child_[a-f0-9]{24}$")
+        self.assertNotEqual(ana.id, beto.id)
+
     def test_esquema_es_reproducible(self):
         self.repo.ensure_schema()
         self.repo.ensure_schema()
