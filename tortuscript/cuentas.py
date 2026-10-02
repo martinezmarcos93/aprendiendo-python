@@ -15,6 +15,7 @@ Reglas:
 from __future__ import annotations
 
 import re
+import secrets
 import sqlite3
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -22,7 +23,7 @@ from pathlib import Path
 from typing import Optional
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 MAX_CHILD_PROFILES = 3
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
@@ -145,10 +146,38 @@ class CuentaRepository:
             cols = {r["name"] for r in con.execute("PRAGMA table_info(accounts)")}
             if "role" not in cols:
                 con.execute("ALTER TABLE accounts ADD COLUMN role TEXT NOT NULL DEFAULT 'adult'")
+
+            profile_cols = {r["name"] for r in con.execute("PRAGMA table_info(child_profiles)")}
+            if "display_name_key" not in profile_cols:
+                con.execute("ALTER TABLE child_profiles ADD COLUMN display_name_key TEXT")
+            # La clave canónica evita colisiones entre alias que solo difieren en mayúsculas,
+            # espacios o formas Unicode. Detectar duplicados históricos antes de imponer UNIQUE.
+            filas = con.execute(
+                "SELECT id,account_id,display_name FROM child_profiles ORDER BY created_at,id"
+            ).fetchall()
+            claves = {}
+            for perfil in filas:
+                clave = (perfil["account_id"], _normalizar_nombre(perfil["display_name"]).casefold())
+                anterior = claves.get(clave)
+                if anterior is not None and anterior != perfil["id"]:
+                    raise CuentaError(
+                        "Hay perfiles existentes con nombres equivalentes por mayúsculas o Unicode; "
+                        "resolvé esos duplicados antes de actualizar el esquema."
+                    )
+                claves[clave] = perfil["id"]
+                con.execute(
+                    "UPDATE child_profiles SET display_name_key=? WHERE id=?",
+                    (clave[1], perfil["id"]),
+                )
+            con.execute(
+                """CREATE UNIQUE INDEX IF NOT EXISTS idx_child_profiles_account_name_key
+                   ON child_profiles(account_id, display_name_key)"""
+            )
+
             row = con.execute("SELECT version FROM schema_version LIMIT 1").fetchone()
             if row is None:
                 con.execute("INSERT INTO schema_version(version) VALUES (?)", (SCHEMA_VERSION,))
-            elif row["version"] == 1:
+            elif row["version"] in (1, 2):
                 con.execute("UPDATE schema_version SET version=?", (SCHEMA_VERSION,))
             elif row["version"] != SCHEMA_VERSION:
                 raise CuentaError("Versión de esquema de cuentas no compatible.")
@@ -214,11 +243,20 @@ class CuentaRepository:
     def crear_child_profile(self, account_id: str, display_name: str) -> ChildProfile:
         display_name = _normalizar_nombre(display_name)
         now = _ahora()
-        profile_id = _id("child", f"{account_id}:{display_name.lower()}")
+        # El ID interno es opaco y no deriva del alias visible: renombrar/recrear
+        # un perfil no debe volver a asociar accidentalmente progreso huérfano.
+        profile_id = f"child_{secrets.token_hex(12)}"
+        display_name_key = display_name.casefold()
         with self._conexion() as con:
             account = con.execute("SELECT 1 FROM accounts WHERE id=?", (account_id,)).fetchone()
             if not account:
                 raise CuentaError("La cuenta no existe.")
+            duplicado = con.execute(
+                "SELECT 1 FROM child_profiles WHERE account_id=? AND display_name_key=?",
+                (account_id, display_name_key),
+            ).fetchone()
+            if duplicado:
+                raise CuentaError("Ya existe un perfil con ese nombre.")
             cantidad = con.execute(
                 "SELECT COUNT(*) AS n FROM child_profiles WHERE account_id=? AND active=1",
                 (account_id,),
@@ -227,8 +265,9 @@ class CuentaRepository:
                 raise CuentaError(f"Una cuenta admite como máximo {MAX_CHILD_PROFILES} perfiles.")
             try:
                 con.execute(
-                    "INSERT INTO child_profiles(id,account_id,display_name,created_at) VALUES (?,?,?,?)",
-                    (profile_id, account_id, display_name, now),
+                    """INSERT INTO child_profiles(id,account_id,display_name,created_at,display_name_key)
+                       VALUES (?,?,?,?,?)""",
+                    (profile_id, account_id, display_name, now, display_name_key),
                 )
             except sqlite3.IntegrityError as exc:
                 raise CuentaError("Ya existe un perfil con ese nombre.") from exc
