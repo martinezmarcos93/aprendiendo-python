@@ -21,6 +21,7 @@ class TestWeb(unittest.TestCase):
         self._dir = Path(tempfile.mkdtemp())
         self._orig = (persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL)
         persistencia_local.DIRECTORIO = self._dir
+        persistencia_local.PERFIL_ACTUAL = "default"
         from web.app import create_app
         self.app = create_app(token="secreto")
         self.app.config.update(
