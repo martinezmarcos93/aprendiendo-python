@@ -36,17 +36,19 @@
 | M18 | Migración | Revisar flujo de importación de progreso local | Solo ocurre por acción explícita; no reemplaza progreso comercial sin confirmación | Pendiente |
 | M19 | Responsive | Probar login, mapa, lección y proyectos en ventana angosta/móvil | Sin scroll horizontal ni botones inaccesibles | Pendiente |
 | M20 | Cierre | Cerrar la app normalmente y volver a abrir | No se pierde progreso; el comportamiento de sesión es coherente | Pendiente |
+| M21 | Alias de perfil | Intentar crear `Ana` y luego `ANA` en la misma cuenta | El segundo alias se rechaza como duplicado sin error 500 ni colisión de ID | Pendiente |
+| M22 | Migración de esquema | Con copia de seguridad previa, arrancar usando una base creada por la versión anterior | El esquema migra a v3 o informa claramente de duplicados históricos; no desaparecen perfiles ni progreso | Pendiente |
+| M23 | Aislamiento persistente | Guardar progreso en perfil A, cambiar a B, guardar otro avance, volver a A y reiniciar el servidor | Cada perfil recupera exactamente su propio progreso | Pendiente |
 
-## Pruebas automáticas pendientes de CI
+## Estado de verificación automática
 
-- [ ] Confirmar resultado nuevo del workflow tras corregir el fixture de `tests/test_migracion_progreso.py`.
-- [ ] Confirmar que las cuatro pruebas de `MigracionProgresoTests` superen el error `progreso.DIRECTORIO`.
-- [ ] Resolver el contrato de cookie CSRF de `test_login_cookie_me_csrf_perfil_y_logout`; verificar código y diseño antes de cambiar aserciones.
-- [ ] Revisar el 401 en `test_aislamiento_entre_cuentas_para_perfiles_y_progreso`.
-- [ ] Revisar el 403 en `test_pantallas_educativas_usan_childprofile_activo` y validar el Host/token del fixture.
-- [ ] Migrar fixtures de tests web y concurrencia al ciclo cuenta verificada + sesión + ChildProfile activo.
-- [ ] Reejecutar suite completa y clasificar cada fallo restante; no asumir que todos son tests obsoletos.
-- [ ] Revisar avisos del validador: 3 alternativas de orden en “Primeros pasos”, explicación larga en “Python real” y 2 usos de jerga “argumento” en “Web esencial”.
+- [ ] Confirmar el CI completo del último commit de `sweep/consolidacion-ux-v1` en Python 3.9 y 3.12.
+- [ ] Confirmar que las regresiones nuevas de `tests/test_cuentas.py` pasen: ID opaco de perfil y rechazo de alias equivalentes por mayúsculas.
+- [ ] Revisar los logs de migración del esquema v2 → v3; asegurar que la comprobación de duplicados históricos no elimina ni altera perfiles.
+- [ ] Auditar cobertura de integración B2: sesión válida → perfil activo → cargar/guardar progreso → cambiar de perfil → confirmar aislamiento → reanudar sesión. Añadir pruebas solo para huecos no cubiertos.
+- [ ] Confirmar que el validador de contenido no tiene errores bloqueantes. Los avisos editoriales deben quedar explicados y cubiertos por pruebas si representan respuestas equivalentes.
+- [ ] No fusionar a `main` hasta que CI esté verde, se revise el diff completo y Marcos complete las pruebas manuales relevantes.
+
 
 ## Registro de resultados
 
