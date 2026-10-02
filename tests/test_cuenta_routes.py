@@ -165,6 +165,67 @@ class CuentaRoutesTests(unittest.TestCase):
 
 
 
+    def test_cuenta_perfil_activo_abre_onboarding_y_progreso_persiste(self):
+        # Recorrido integrado mínimo del producto actual: cuenta adulta, perfil,
+        # sesión educativa, primera página y persistencia asociada al perfil.
+        registro = self.client.post("/cuenta/registro", json={
+            "email": "flujo@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(registro.status_code, 202)
+
+        repo = CuentaRepository(self.tmp / "cuentas.sqlite3")
+        repo.ensure_schema()
+        cuenta_id = "acc_" + __import__("hashlib").sha256(
+            "flujo@example.com".encode()
+        ).hexdigest()[:24]
+        AuthRepository(self.tmp / "cuentas.sqlite3").marcar_verificada(cuenta_id)
+
+        login = self.client.post("/cuenta/login", json={
+            "email": "flujo@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(login.status_code, 200)
+        csrf = login.json["csrf"]
+
+        creado = self.client.post(
+            "/cuenta/perfiles",
+            json={"nombre": "Perfil de prueba"},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(creado.status_code, 201)
+        perfil_id = creado.json["perfil"]["id"]
+
+        seleccionado = self.client.post(
+            "/cuenta/perfil",
+            json={"perfil_id": perfil_id},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(seleccionado.status_code, 200)
+
+        inicio = self.client.get("/", follow_redirects=False)
+        self.assertEqual(inicio.status_code, 302)
+        self.assertIn("/bienvenida", inicio.headers["Location"])
+        bienvenida = self.client.get("/bienvenida")
+        self.assertEqual(bienvenida.status_code, 200)
+
+        guardado = self.client.put(
+            "/cuenta/progreso",
+            json={
+                "contract_version": 1,
+                "profile_id": perfil_id,
+                "updated_at": "2026-10-02T12:00:00+00:00",
+                "data": {"xp_total": 37},
+            },
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(guardado.status_code, 200)
+
+        recuperado = self.client.get("/cuenta/progreso")
+        self.assertEqual(recuperado.status_code, 200)
+        self.assertEqual(recuperado.json["perfil"]["id"], perfil_id)
+        self.assertEqual(recuperado.json["progreso"]["data"]["xp_total"], 37)
+
     def test_aislamiento_entre_cuentas_para_perfiles_y_progreso(self):
         for email in ("a@example.com", "b@example.com"):
             respuesta = self.client.post("/cuenta/registro", json={
