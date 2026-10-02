@@ -141,8 +141,19 @@ class TestWebCamino(Base):
         super().setUp()
         from web.app import create_app
         self.app = create_app(token="t")
+        self.app.config.update(
+            TESTING=True,
+            ACCOUNT_DB=self._dir / "cuentas.sqlite3",
+            ACCOUNT_COOKIE_SECURE=False,
+            PROGRESS_DIR=self._dir / "progreso_perfiles",
+        )
         self.c = self.app.test_client()
         self.h = {"X-Tortu-Token": "t"}
+        from fixtures_cuenta import preparar_sesion_educativa
+        preparar_sesion_educativa(
+            self.app, self.c, email="camino@example.com", nombre="Lua", token="t",
+            complete_onboarding=False,
+        )
 
     def post(self, ruta, datos=None):
         return self.c.post(ruta, json=datos or {}, headers=self.h)
