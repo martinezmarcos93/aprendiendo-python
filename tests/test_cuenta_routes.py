@@ -417,8 +417,8 @@ class CuentaRoutesTests(unittest.TestCase):
 
         snapshot = self.client.get("/cuenta/progreso")
         self.assertEqual(snapshot.status_code, 200)
+        self.assertEqual(snapshot.json["perfil"]["nombre"], "Ana")
         data = snapshot.json["progreso"]["data"]
-        self.assertEqual(data["config"]["nombre"], "Ana")
         self.assertEqual(len(data["proyectos"]), 1)
 
         archivos = list((self.tmp / "progreso_perfiles").glob("progreso_*.json"))
