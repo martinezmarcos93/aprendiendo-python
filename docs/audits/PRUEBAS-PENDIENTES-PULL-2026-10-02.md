@@ -43,9 +43,9 @@
 ## Estado de verificación automática
 
 - [ ] Confirmar el CI completo del último commit de `sweep/consolidacion-ux-v1` en Python 3.9 y 3.12.
-- [ ] Confirmar que las regresiones nuevas de `tests/test_cuentas.py` pasen: ID opaco de perfil y rechazo de alias equivalentes por mayúsculas.
+- [ ] Confirmar que las regresiones de `tests/test_cuentas.py` pasen: ID opaco, alias equivalentes por mayúsculas/Unicode NFKC y migración de esquema v2 → v3.
 - [ ] Revisar los logs de migración del esquema v2 → v3; asegurar que la comprobación de duplicados históricos no elimina ni altera perfiles.
-- [ ] Auditar cobertura de integración B2: sesión válida → perfil activo → cargar/guardar progreso → cambiar de perfil → confirmar aislamiento → reanudar sesión. Añadir pruebas solo para huecos no cubiertos.
+- [ ] Confirmar la prueba HTTP de cambio entre dos perfiles de una misma cuenta: cada perfil debe recuperar su propio XP tras alternar varias veces.
 - [ ] Confirmar que el validador de contenido no tiene errores bloqueantes. Los avisos editoriales deben quedar explicados y cubiertos por pruebas si representan respuestas equivalentes.
 - [ ] No fusionar a `main` hasta que CI esté verde, se revise el diff completo y Marcos complete las pruebas manuales relevantes.
 
