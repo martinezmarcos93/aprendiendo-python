@@ -11,6 +11,7 @@
 - [ ] Guardar copia de la carpeta de datos/progreso antes de probar.
 - [ ] Usar una cuenta de prueba y perfiles infantiles ficticios; no borrar datos reales.
 - [ ] Arrancar siguiendo las instrucciones actuales del README y guardar el log de arranque.
+- [ ] Para cualquier prueba de cuenta fuera de fixtures, confirmar que `ACCOUNT_EMAIL_SENDER` está configurado y que verificación/recuperación entregan enlaces reales; no considerar respuestas HTTP 202 como prueba de entrega.
 
 ## Pruebas funcionales manuales
 
