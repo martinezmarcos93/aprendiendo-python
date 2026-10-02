@@ -108,7 +108,7 @@ class CuentaRepository:
             if existe_version:
                 try:
                     version_actual = con.execute(
-                        "SELECT version FROM schema_version LIMIT 1"
+                        "SELECT MAX(version) AS version FROM schema_version"
                     ).fetchone()
                 except sqlite3.DatabaseError as exc:
                     raise CuentaError("La versión del esquema de cuentas no es compatible.") from exc
