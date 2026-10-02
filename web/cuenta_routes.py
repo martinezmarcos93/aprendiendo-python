@@ -172,7 +172,22 @@ def registro():
 
 @bp.get("/verificar-email")
 def verificar_email():
+    # GET no consume tokens: los escáneres de enlaces de correo pueden abrirlos
+    # automáticamente. La confirmación efectiva requiere un POST explícito.
     token = request.args.get("token", "")
+    if not token:
+        if request.accept_mimetypes.best == "application/json":
+            return jsonify(ok=False, mensaje="El enlace no es válido o ya expiró."), 400
+        return render_template("cuenta/verificacion.html", ok=False), 400
+    if request.accept_mimetypes.best == "application/json":
+        return jsonify(ok=True, estado="confirmacion_requerida")
+    return render_template("cuenta/verificacion.html", confirmar=True, token=token)
+
+
+@bp.post("/verificar-email")
+def confirmar_verificacion_email():
+    datos = request.get_json(silent=True) or request.form
+    token = datos.get("token", "")
     try:
         _, auth = _repos()
         auth.verify_email_token(token)
