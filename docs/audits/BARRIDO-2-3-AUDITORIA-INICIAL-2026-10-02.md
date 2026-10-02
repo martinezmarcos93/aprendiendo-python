@@ -57,13 +57,19 @@ Hay pruebas unitarias separadas para cuenta, autenticación, selección de perfi
 
 El validador detecta permutaciones que producen la misma salida en «Dos variables», «Tabla del 2» y «Solo los pares». La lógica de lecciones ya admite ordenamientos alternativos cuando la ejecución genera la salida esperada; agregué una regresión que comprueba esos tres casos con el motor real. Los tres avisos del validador siguen siendo intencionales: informan al autor de que la consigna puede admitir más de un orden correcto, no indican un fallo de validación del curso.
 
+### B3-07 — El envío de correo depende de una integración opcional
+**Severidad:** bloqueante para un lanzamiento remoto; no bloqueante para pruebas locales.
+
+`_emitir_email` no falla si `ACCOUNT_EMAIL_SENDER` no está configurado: registro y recuperación pueden responder como aceptados sin entregar ningún enlace. La integración de correo no está configurada por defecto en el servidor local y no debe darse por operativa en producción. Antes del despliegue hay que incorporar un proveedor de correo, comprobar fallos de entrega, definir reintentos y verificar que los enlaces lleven a la nueva confirmación explícita por POST. No se simula ni se inventa un proveedor dentro de esta auditoría.
+
 ## Riesgos de arquitectura y límites de alcance
 
 1. **Privacidad/consentimiento:** `docs/FASE12_PRIVACIDAD_MENORES_V1.md` define minimización, consentimiento, retención y derechos, pero declara que es una base de diseño, no una habilitación legal ni una implementación completa. Antes de cualquier despliegue comercial hay que traducir cada requisito a flujos, persistencia, pruebas y revisión jurídica argentina.
 2. **Exportación y supresión:** los documentos de arquitectura futura enumeran estas operaciones; no se encontraron implementaciones en los módulos de identidad revisados. Se mantienen como trabajo futuro explícito, no como regresión del modo local actual. No habilitar borrado de perfiles sin resolver progreso huérfano y retención.
 3. **Pagos y suscripciones:** el esquema reserva tablas para suscripciones y derechos, pero el producto sigue local-first y la documentación excluye pagos, SaaS y sincronización. No conectar un proveedor ni presentar el estado de entitlement como prueba de pago hasta definir la autoridad que lo modifica y verificar webhooks/autenticidad en la fase comercial.
 4. **Concurrencia:** el runtime web serializa las operaciones en el proceso actual. Esto no constituye coordinación entre múltiples procesos o instancias; la sincronización remota requerirá un contrato transaccional y resolución de conflictos explícitos.
-5. **Borrado y restauración:** el adaptador de progreso crea una copia `.bak` antes de reemplazar un archivo. Debe documentarse su ciclo de vida y considerar su eliminación/exportación junto con el archivo principal al implementar derechos de datos.
+5. **Correo transaccional:** la configuración `ACCOUNT_EMAIL_SENDER` es opcional y no existe proveedor por defecto; ver B3-07. Registro y recuperación no están listos para uso remoto hasta configurar y probar entrega real.
+6. **Borrado y restauración:** el adaptador de progreso crea una copia `.bak` antes de reemplazar un archivo. Debe documentarse su ciclo de vida y considerar su eliminación/exportación junto con el archivo principal al implementar derechos de datos.
 
 ## Secuencia propuesta
 
