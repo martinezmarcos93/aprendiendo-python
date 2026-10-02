@@ -316,7 +316,7 @@ def create_app(token=None):
             "lecciones_total": len(planas),
             "xp_hoy": hoy_xp, "meta_xp": meta, "meta_min": p["config"]["meta_min"],
             "meta_pct": min(100, round(100 * hoy_xp / meta)) if meta else 0,
-            "nombre": p["config"].get("nombre") or _nombre_perfil_contexto(),
+            "nombre": _nombre_perfil_contexto(),
             "xp": xp, "nivel": nivel, "titulo": progreso.titulo_nivel(nivel),
             "color_tortuga": progreso.color_tortuga(nivel),
             "xp_actual": xp_actual, "xp_max": xp_max,
