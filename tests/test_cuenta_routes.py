@@ -274,6 +274,13 @@ class CuentaRoutesTests(unittest.TestCase):
         pid_a = perfil_a.json["perfil"]["id"]
         pid_b = perfil_b.json["perfil"]["id"]
 
+        seleccionado_b = cliente_b.post(
+            "/cuenta/perfil",
+            json={"perfil_id": pid_b},
+            headers={"X-Tortu-CSRF": csrf_b},
+        )
+        self.assertEqual(seleccionado_b.status_code, 200)
+
         seleccionado_a = cliente_a.post(
             "/cuenta/perfil",
             json={"perfil_id": pid_a},
