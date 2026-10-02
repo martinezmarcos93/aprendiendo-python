@@ -148,6 +148,37 @@ class CuentaRepositoryTests(unittest.TestCase):
         self.assertNotIn("display_name_key", columns)
         self.assertNotIn("role", account_columns)
 
+    def test_esquema_futuro_se_rechaza_sin_alterar_tablas_existentes(self):
+        future_path = self.tmp / "future.sqlite3"
+        with sqlite3.connect(future_path) as con:
+            con.executescript("""
+                CREATE TABLE schema_version (version INTEGER NOT NULL);
+                INSERT INTO schema_version(version) VALUES (4);
+                CREATE TABLE accounts (
+                    id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE,
+                    created_at TEXT NOT NULL
+                );
+                CREATE TABLE child_profiles (
+                    id TEXT PRIMARY KEY,
+                    account_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+                    display_name TEXT NOT NULL, created_at TEXT NOT NULL,
+                    active INTEGER NOT NULL DEFAULT 1,
+                    UNIQUE(account_id, display_name)
+                );
+            """)
+        with self.assertRaisesRegex(CuentaError, "no compatible"):
+            CuentaRepository(future_path).ensure_schema()
+        with sqlite3.connect(future_path) as con:
+            account_columns = {row[1] for row in con.execute("PRAGMA table_info(accounts)")}
+            profile_columns = {row[1] for row in con.execute("PRAGMA table_info(child_profiles)")}
+            tables = {row[0] for row in con.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'"
+            )}
+        self.assertNotIn("role", account_columns)
+        self.assertNotIn("display_name_key", profile_columns)
+        self.assertNotIn("subscriptions", tables)
+        self.assertNotIn("entitlements", tables)
+
     def test_esquema_es_reproducible(self):
         self.repo.ensure_schema()
         self.repo.ensure_schema()
