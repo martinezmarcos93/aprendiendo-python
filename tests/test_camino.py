@@ -598,6 +598,7 @@ class TestWebCamino(Base):
             headers={"X-Tortu-CSRF": self.csrf},
         )
         self.assertEqual(seleccionado.status_code, 200)
+        self.post("/api/onboarding", {"meta_min": 10})
         p = self._progreso_cuenta()["data"]
         progreso.sumar_xp(p, 500)
         self._guardar_progreso_cuenta(p)
