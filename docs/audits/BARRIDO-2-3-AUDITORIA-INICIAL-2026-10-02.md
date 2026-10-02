@@ -87,6 +87,15 @@ Las rutas `/cuenta/runtime/ejercicio` y `/cuenta/runtime/leccion/paso` reciben d
 
 **Límite residual:** el flujo canónico debe seguir cubierto por pruebas de integración en modo de cuenta autenticada para confirmar que cada tipo de contenido se evalúa y persiste en el ChildProfile activo. No se debe reactivar ninguno de los endpoints 410 como ruta de escritura confiable.
 
+### B4-02 — Escritura genérica de snapshots permitía falsificar todo el progreso
+**Severidad:** alta.
+
+Además de los endpoints de puntuación, `PUT /cuenta/progreso` aceptaba un snapshot completo enviado por el navegador. Aunque verificaba que el `profile_id` coincidiera con el perfil activo, no validaba semánticamente los campos de `data`: un usuario podía enviar directamente `xp_total`, ejercicios, lecciones completadas y otros valores arbitrarios. El control de propiedad impedía escribir en otro perfil, pero no impedía falsificar el progreso propio.
+
+**Mitigación aplicada:** la ruta conserva los controles de sesión y CSRF, pero rechaza escrituras genéricas con HTTP 410 y código `escritura_no_autoritativa`. La persistencia debe ocurrir desde las operaciones de servidor que evalúan onboarding, ejercicios, pasos y práctica. Se actualizaron pruebas para enviar XP falsificado, comprobar que no se guarda nada y comprobar que la configuración de onboarding sigue persistiendo por perfil.
+
+**Implicación funcional:** cualquier cliente que todavía dependiera de `PUT /cuenta/progreso` debe migrar a las operaciones evaluadas del servidor; no reactivar la escritura de snapshots como atajo. La importación de progreso local es un flujo separado y debe continuar verificando su origen y destino.
+
 ## Riesgos de arquitectura y límites de alcance
 
 1. **Privacidad/consentimiento:** `docs/FASE12_PRIVACIDAD_MENORES_V1.md` define minimización, consentimiento, retención y derechos, pero declara que es una base de diseño, no una habilitación legal ni una implementación completa. Antes de cualquier despliegue comercial hay que traducir cada requisito a flujos, persistencia, pruebas y revisión jurídica argentina.
