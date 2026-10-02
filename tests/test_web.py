@@ -267,10 +267,11 @@ class TestWeb(unittest.TestCase):
         )
         self.assertEqual(sin_csrf.status_code, 403)
 
-    def test_el_modal_de_perfiles_ofrece_guardar_y_traer(self):
+    def test_modal_de_perfil_refleja_el_contrato_comercial(self):
         html = self.c.get("/").get_data(as_text=True)
-        for id_ in ("pf-exportar", "pf-importar", "pf-archivo"):
+        for id_ in ("btn-perfil", "modal-perfil", "pf-lista", "pf-campo", "pf-exportar", "pf-ok"):
             self.assertIn(f'id="{id_}"', html)
+        self.assertIn("El progreso pertenece a tu perfil familiar", html)
 
     # ── ayuda ──
     def test_pagina_de_ayuda_en_el_menu_y_con_sus_preguntas(self):
@@ -504,7 +505,7 @@ class TestWeb(unittest.TestCase):
         self.assertTrue(self.comprobar(1, "pantalla").get_json()["puede_ver_respuesta"])
         r = self.post("/api/lecciones/hola-mundo/pasos/1/respuesta").get_json()
         self.assertEqual(r["respuesta"], "mostrar")
-        p = persistencia_local.cargar_progreso()
+        p = self._snapshot_cuenta()["data"]
         paso = p["lecciones"]["hola-mundo"]["pasos"]["1"]
         self.assertEqual((paso["xp"], paso["perfecto"]), (0, False))
         self.assertIn("fecha", paso)                                                        # desde acá parte la práctica del día
@@ -527,7 +528,7 @@ class TestWeb(unittest.TestCase):
         self.assertTrue(r["leccion"]["recien_completa"])
         self.assertFalse(r["leccion"]["perfecta"])                                 # hubo un reintento
         self.assertEqual(r["leccion"]["siguiente"], "texto-o-cuenta")
-        p = persistencia_local.cargar_progreso()
+        p = self._snapshot_cuenta()["data"]
         self.assertEqual(p["xp_total"], 5 + 2 + 2 + 5 + 30)                        # elegir, completar, ordenar, predecir + ejercicio
 
     def test_escribir_no_se_comprueba_por_la_api_de_pasos(self):
@@ -551,7 +552,7 @@ class TestWeb(unittest.TestCase):
         r = self.post("/api/lecciones/hola-mundo/pasos/5/evaluar", {"codigo": 'mostrar "Hola mundo"'}).get_json()
         self.assertEqual(r["evaluacion"]["estado"], "correcto")
         self.assertEqual((r["premio"]["estrellas"], r["premio"]["xp"], r["premio"]["mejora"]), (3, 30, True))
-        p = persistencia_local.cargar_progreso()
+        p = self._snapshot_cuenta()["data"]
         self.assertTrue(p["ejercicios"]["0"]["completado"])                    # clave histórica intacta
         self.assertIn("5", p["lecciones"]["hola-mundo"]["pasos"])
         self.assertEqual(self.post("/api/lecciones/hola-mundo/pasos/1/evaluar", {"codigo": "x"}).status_code, 400)
