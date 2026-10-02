@@ -32,9 +32,10 @@ class TestWeb(unittest.TestCase):
         self.c = self.app.test_client()
         self.h = {"X-Tortu-Token": "secreto"}
         from fixtures_cuenta import preparar_sesion_educativa
-        preparar_sesion_educativa(
+        fixture = preparar_sesion_educativa(
             self.app, self.c, email="web@example.com", nombre="Marcos", token="secreto"
         )
+        self.csrf = fixture["csrf"]
 
     def tearDown(self):
         persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
@@ -192,37 +193,52 @@ class TestWeb(unittest.TestCase):
         self.assertIn("Algo se rompió de nuestro lado", r.get_data(as_text=True))
 
     # ── exportar / importar ──
-    def test_exportar_pide_token_y_no_lleva_campos_internos(self):
-        self.assertEqual(self.c.get("/api/perfil/exportar").status_code, 403)
-        r = self.c.get("/api/perfil/exportar", headers=self.h).get_json()
-        self.assertRegex(r["archivo"], r"^tortuscript-default-\d{4}-\d{2}-\d{2}\.json$")
-        self.assertEqual(r["datos"]["formato"], "tortuscript-progreso")
-        self.assertNotIn("_perfil", r["datos"]["progreso"])
+    def test_snapshot_comercial_no_expone_campos_internos(self):
+        respuesta = self.c.get("/cuenta/progreso")
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertEqual(respuesta.json["perfil"]["nombre"], "Marcos")
+        self.assertIsNotNone(respuesta.json["progreso"])
+        self.assertEqual(respuesta.json["progreso"]["contract_version"], 1)
+        self.assertNotIn("_perfil", respuesta.json["progreso"]["data"])
 
-    def test_importar_crea_un_perfil_nuevo_sin_pisar_y_cambia_a_ese(self):
+    def test_importar_progreso_local_exige_reemplazo_explicito(self):
         p = persistencia_local.cargar_progreso()
         p["xp_total"] = 123
-        persistencia_local.guardar_progreso(p)
-        sobre = self.c.get("/api/perfil/exportar", headers=self.h).get_json()["datos"]
-        p["xp_total"] = 7                                                      # el perfil original sigue su vida
-        persistencia_local.guardar_progreso(p)
-        r = self.post("/api/perfil/importar", {"sobre": sobre}).get_json()
-        self.assertTrue(r["ok"])
-        self.assertEqual(r["actual"], "default_2")                              # "default" ya existía
-        self.assertEqual(persistencia_local.PERFIL_ACTUAL, "default_2")
-        self.assertEqual(persistencia_local.cargar_progreso("default_2")["xp_total"], 123)
-        self.assertEqual(persistencia_local.cargar_progreso("default")["xp_total"], 7)    # no se pisó
-        self.assertEqual(r["estado"]["xp"], 123)
+        self.assertTrue(persistencia_local.guardar_progreso(p))
+        locales = self.c.get("/cuenta/progreso/locales")
+        self.assertEqual(locales.status_code, 200)
+        self.assertIn("default", locales.json["perfiles"])
 
-    def test_importar_rechaza_archivos_invalidos_o_enormes(self):
-        r = self.post("/api/perfil/importar", {"sobre": {"formato": "otro"}})
-        self.assertEqual(r.status_code, 400)
-        self.assertIn("no es un progreso de TortuScript", r.get_json()["mensaje"])
-        enorme = self.post("/api/perfil/importar", {"sobre": {"relleno": "x" * 1_100_000}})
-        self.assertEqual(enorme.status_code, 400)
-        self.assertIn("demasiado grande", enorme.get_json()["mensaje"])
-        self.assertEqual(self.c.post("/api/perfil/importar", json={"sobre": {}}).status_code, 403)   # sin token
-        self.assertEqual(persistencia_local.obtener_perfiles(), ["default"])              # no se creó nada
+        rechazo = self.c.post(
+            "/cuenta/progreso/importar-local",
+            json={"perfil_local": "default", "reemplazar": False},
+            headers={"X-Tortu-CSRF": self.csrf},
+        )
+        self.assertEqual(rechazo.status_code, 400)
+        self.assertIn("reemplazo explícito", rechazo.json["mensaje"])
+
+        importado = self.c.post(
+            "/cuenta/progreso/importar-local",
+            json={"perfil_local": "default", "reemplazar": True},
+            headers={"X-Tortu-CSRF": self.csrf},
+        )
+        self.assertEqual(importado.status_code, 200)
+        self.assertEqual(importado.json["progreso"]["xp_total"], 123)
+        actual = self.c.get("/cuenta/progreso").json["progreso"]["data"]
+        self.assertEqual(actual["xp_total"], 123)
+
+    def test_importar_progreso_local_rechaza_nombre_invalido_y_sin_csrf(self):
+        invalido = self.c.post(
+            "/cuenta/progreso/importar-local",
+            json={"perfil_local": "../../etc", "reemplazar": True},
+            headers={"X-Tortu-CSRF": self.csrf},
+        )
+        self.assertEqual(invalido.status_code, 400)
+        sin_csrf = self.c.post(
+            "/cuenta/progreso/importar-local",
+            json={"perfil_local": "default", "reemplazar": True},
+        )
+        self.assertEqual(sin_csrf.status_code, 403)
 
     def test_el_modal_de_perfiles_ofrece_guardar_y_traer(self):
         html = self.c.get("/").get_data(as_text=True)
