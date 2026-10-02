@@ -381,19 +381,21 @@ class CuentaRoutesTests(unittest.TestCase):
         ejercicio = self.client.post("/cuenta/runtime/ejercicio", json={
             "indice": 0, "estrellas": 3, "xp_ganado": 10
         }, headers={"X-Tortu-CSRF": csrf})
-        self.assertEqual(ejercicio.status_code, 200)
+        self.assertEqual(ejercicio.status_code, 410)
+        self.assertEqual(ejercicio.json["codigo"], "evaluacion_requerida")
 
         leccion = self.client.post("/cuenta/runtime/leccion/paso", json={
-            "leccion_id": "leccion-runtime", "indice": 0, "xp": 5,
+            "leccion_id": "leccion-runtime", "indice": 0, "xp": 5000,
             "perfecto": True, "total_pasos": 1, "estrellas": 3
         }, headers={"X-Tortu-CSRF": csrf})
-        self.assertEqual(leccion.status_code, 200)
-        self.assertTrue(leccion.json["resultado"]["completa"])
+        self.assertEqual(leccion.status_code, 410)
+        self.assertEqual(leccion.json["codigo"], "evaluacion_requerida")
 
         practica = self.client.post("/cuenta/runtime/practica", json={
             "leccion_id": "leccion-runtime", "paso": 0, "acierto": True
         }, headers={"X-Tortu-CSRF": csrf})
-        self.assertEqual(practica.status_code, 200)
+        self.assertEqual(practica.status_code, 410)
+        self.assertEqual(practica.json["codigo"], "comprobacion_requerida")
 
         proyecto = self.client.post("/cuenta/runtime/proyectos", json={
             "nombre": "Mi proyecto", "tipo": "experimentar", "codigo": "print('hola')"
@@ -406,8 +408,9 @@ class CuentaRoutesTests(unittest.TestCase):
 
         progreso = self.client.get("/cuenta/runtime/progreso")
         self.assertEqual(progreso.status_code, 200)
-        self.assertGreater(progreso.json["progreso"]["data"]["xp_total"], 0)
-        self.assertIn("leccion-runtime", progreso.json["progreso"]["data"]["lecciones"])
+        # Las peticiones de puntuación falsificada no deben mutar el progreso.
+        self.assertEqual(progreso.json["progreso"]["data"]["xp_total"], 0)
+        self.assertNotIn("leccion-runtime", progreso.json["progreso"]["data"]["lecciones"])
         self.assertEqual(len(progreso.json["progreso"]["data"]["proyectos"]), 1)
 
 
