@@ -154,14 +154,13 @@ class CuentaRepository:
                 con.execute("ALTER TABLE accounts ADD COLUMN role TEXT NOT NULL DEFAULT 'adult'")
 
             profile_cols = {r["name"] for r in con.execute("PRAGMA table_info(child_profiles)")}
-            if "display_name_key" not in profile_cols:
-                con.execute("ALTER TABLE child_profiles ADD COLUMN display_name_key TEXT")
-            # La clave canónica evita colisiones entre alias que solo difieren en mayúsculas,
-            # espacios o formas Unicode. Detectar duplicados históricos antes de imponer UNIQUE.
+            # Validar todos los alias históricos antes de tocar el esquema: ALTER TABLE
+            # puede persistir aunque después abortemos la migración por duplicados.
             filas = con.execute(
                 "SELECT id,account_id,display_name FROM child_profiles ORDER BY created_at,id"
             ).fetchall()
             claves = {}
+            claves_por_id = {}
             for perfil in filas:
                 clave = (perfil["account_id"], _clave_nombre(perfil["display_name"]))
                 anterior = claves.get(clave)
@@ -171,9 +170,13 @@ class CuentaRepository:
                         "resolvé esos duplicados antes de actualizar el esquema."
                     )
                 claves[clave] = perfil["id"]
+                claves_por_id[perfil["id"]] = clave[1]
+            if "display_name_key" not in profile_cols:
+                con.execute("ALTER TABLE child_profiles ADD COLUMN display_name_key TEXT")
+            for perfil_id, clave in claves_por_id.items():
                 con.execute(
                     "UPDATE child_profiles SET display_name_key=? WHERE id=?",
-                    (clave[1], perfil["id"]),
+                    (clave, perfil_id),
                 )
             con.execute(
                 """CREATE UNIQUE INDEX IF NOT EXISTS idx_child_profiles_account_name_key
