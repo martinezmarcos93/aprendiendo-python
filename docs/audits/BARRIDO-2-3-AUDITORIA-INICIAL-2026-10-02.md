@@ -25,6 +25,11 @@ La tabla original usaba `UNIQUE(account_id, display_name)`, sensible a mayúscul
 
 **Corrección aplicada en la rama:** el esquema sube a versión 3, agrega `display_name_key` con una clave canónica `NFKC + casefold()` y una restricción única por cuenta. La migración revisa duplicados históricos antes de imponer el índice y falla con un mensaje accionable en vez de elegir silenciosamente qué perfil conservar. Se agregó una regresión para el alias duplicado con mayúsculas. CI del commit de código `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` completó correctamente en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión; 0 fallos/errores). Ejecución: [37046712403](https://github.com/martinezmarcos93/tortuscript/actions/runs/37046712403). Se agregó una prueba automatizada de migración desde una base v2 sintética con conservación del perfil y verificación del índice. Sigue pendiente validar la migración con una copia de una base local real, porque los fixtures automatizados no sustituyen esa comprobación.
 
+### B3-06 — El inicializador podía modificar un esquema de versión futura antes de rechazarlo
+**Severidad:** media; riesgo de alterar una base incompatible.
+
+`ensure_schema` comprobaba la versión guardada después de crear tablas e índices y aplicar migraciones. Si una versión más nueva de TortuScript había creado la base, la versión antigua podía modificarla antes de emitir el error de incompatibilidad. Ahora la versión se comprueba antes de ejecutar cambios de esquema; una regresión verifica que una base v4 sea rechazada sin añadir columnas ni tablas. Pendiente de CI.
+
 ### B3-05 — Entradas inválidas podían inutilizar la recuperación o reservar una cuenta
 **Severidad:** media; fallos de consistencia y recuperación ante errores de entrada.
 
@@ -62,7 +67,7 @@ El validador detecta permutaciones que producen la misma salida en «Dos variabl
 
 ## Secuencia propuesta
 
-1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La cobertura NFKC, migración v2 → v3, cambio de perfil y ordenamientos equivalentes pasó en Python 3.9 y 3.12 en el commit `3fe66f208424bfe9bbaf35f2317455ad482986c0` (593 tests, 2 omitidos por versión). Las nuevas regresiones para migración parcial, contraseña inválida y verificación explícita de correo están pendientes de CI.
+1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La cobertura NFKC, migración v2 → v3, cambio de perfil y ordenamientos equivalentes pasó en Python 3.9 y 3.12 en el commit `3fe66f208424bfe9bbaf35f2317455ad482986c0` (593 tests, 2 omitidos por versión). Las nuevas regresiones para migración parcial, versión futura, contraseña inválida y verificación explícita de correo están pendientes de CI.
 2. Ejecutar y revisar el CI completo en Python 3.9 y 3.12 para los cambios más recientes.
 3. Validar la migración v2 → v3 con una copia local real, sin tocar la base original.
 4. Mantener consentimiento, exportación/supresión, retención y operación comercial como bloqueadores de un futuro lanzamiento remoto; no simular que están implementados.
