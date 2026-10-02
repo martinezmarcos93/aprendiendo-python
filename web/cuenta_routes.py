@@ -223,7 +223,8 @@ def login():
     password = datos.get("password")
     if not isinstance(email, str) or not isinstance(password, str):
         return jsonify(ok=False, mensaje="Correo o contraseña incorrectos."), 401
-    limit = _limit_or_429(f"login:{request.remote_addr}:{(email or "").strip().lower()}", 10, 900)
+    email_normalizado = email.strip().lower()
+    limit = _limit_or_429(f"login:{request.remote_addr}:{email_normalizado}", 10, 900)
     if limit:
         return limit
     _, auth = _repos()
