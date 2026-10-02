@@ -101,6 +101,19 @@ class CuentaRepository:
 
     def ensure_schema(self) -> None:
         with self._conexion() as con:
+            # Nunca modificar una base creada por una versión futura del programa.
+            existe_version = con.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='schema_version'"
+            ).fetchone()
+            if existe_version:
+                try:
+                    version_actual = con.execute(
+                        "SELECT version FROM schema_version LIMIT 1"
+                    ).fetchone()
+                except sqlite3.DatabaseError as exc:
+                    raise CuentaError("La versión del esquema de cuentas no es compatible.") from exc
+                if version_actual and version_actual["version"] not in (1, 2, SCHEMA_VERSION):
+                    raise CuentaError("Versión de esquema de cuentas no compatible.")
             con.executescript(
                 """
                 CREATE TABLE IF NOT EXISTS schema_version (
