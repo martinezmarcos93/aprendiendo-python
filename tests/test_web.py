@@ -23,9 +23,18 @@ class TestWeb(unittest.TestCase):
         persistencia_local.DIRECTORIO = self._dir
         from web.app import create_app
         self.app = create_app(token="secreto")
+        self.app.config.update(
+            TESTING=True,
+            ACCOUNT_DB=self._dir / "cuentas.sqlite3",
+            ACCOUNT_COOKIE_SECURE=False,
+            PROGRESS_DIR=self._dir / "progreso_perfiles",
+        )
         self.c = self.app.test_client()
         self.h = {"X-Tortu-Token": "secreto"}
-        progreso.guardar_config(persistencia_local.cargar_progreso(), onboarding=True)   # sin pasar por la bienvenida
+        from fixtures_cuenta import preparar_sesion_educativa
+        preparar_sesion_educativa(
+            self.app, self.c, email="web@example.com", nombre="Marcos", token="secreto"
+        )
 
     def tearDown(self):
         persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
