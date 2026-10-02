@@ -14,16 +14,16 @@ Auditar en paralelo el recorrido educativo autenticado (B2) y los límites de id
 ### B3-01 — Identificador de ChildProfile determinista y derivado del nombre visible
 **Severidad:** alta para el ciclo de vida futuro; media en el modo actual.
 
-En `tortuscript/cuentas.py`, `crear_child_profile` deriva el ID mediante `SHA-256(account_id + display_name.lower())`. El identificador interno depende así del nombre visible. Si una cuenta/perfil se elimina y posteriormente se recrea con el mismo correo y nombre, el identificador puede repetirse. Como el progreso se almacena en archivos separados por ID (`ProgresoChildProfile`), una operación futura de borrado/recreación podría volver a asociar progreso huérfano al perfil nuevo. La API de borrado aún no está implementada, por lo que esto se registra como defecto de diseño a resolver antes de habilitar borrado, recuperación o sincronización comercial.
+En la versión auditada, `crear_child_profile` derivaba el ID mediante `SHA-256(account_id + display_name.lower())`. El identificador interno dependía del nombre visible, por lo que una futura eliminación y recreación con el mismo correo y alias podía volver a asociar progreso huérfano. La API de borrado aún no está implementada.
 
-**Acción:** usar identificadores opacos aleatorios para nuevos perfiles y probar que los IDs no dependen del alias. Definir además una política explícita de eliminación/retención para los archivos de progreso antes de exponer el borrado de perfiles.
+**Corrección aplicada en la rama:** los nuevos perfiles reciben IDs opacos aleatorios (`child_<24 hex>`), independientes del alias. Se agregaron pruebas para validar formato y unicidad. La corrección queda pendiente del CI de la revisión actual; todavía no se afirma que esté verificada por CI. Antes de exponer el borrado sigue siendo necesaria una política de eliminación/retención de los archivos de progreso.
 
 ### B3-02 — La unicidad de nombres no coincide con la generación de IDs
 **Severidad:** media; reproducible por inspección del contrato SQLite.
 
-La tabla usa `UNIQUE(account_id, display_name)`, sensible a mayúsculas en SQLite por defecto, pero el ID se calcula con `display_name.lower()`. Por eso `Ana` y `ANA` pueden superar la restricción de unicidad, producir el mismo ID y fallar más tarde por colisión de clave primaria; el usuario recibe un mensaje genérico de duplicado aunque la restricción que se activó no sea la de nombre. La validación de duplicados debe ser coherente con la normalización del alias y estar respaldada por una restricción persistente.
+La tabla original usaba `UNIQUE(account_id, display_name)`, sensible a mayúsculas, mientras el ID se calculaba con el nombre en minúsculas. Esto permitía una colisión de ID para `Ana` y `ANA`.
 
-**Acción:** establecer una regla única de comparación de alias, aplicarla antes de insertar y cubrir variantes de mayúsculas/espacios con regresiones. Revisar datos existentes antes de añadir una restricción de esquema que pueda fallar sobre bases antiguas.
+**Corrección aplicada en la rama:** el esquema sube a versión 3, agrega `display_name_key` con normalización `casefold()` y una restricción única por cuenta. La migración revisa duplicados históricos antes de imponer el índice y falla con un mensaje accionable en vez de elegir silenciosamente qué perfil conservar. Se agregó una regresión para el alias duplicado con mayúsculas. Pendiente de CI y revisión del comportamiento de migración con una base local real.
 
 ### B2-01 — Cobertura insuficiente del ciclo de vida completo en un único contrato de integración
 **Severidad:** media; brecha de verificación.
@@ -42,9 +42,9 @@ Hay pruebas unitarias separadas para cuenta, autenticación, selección de perfi
 
 ## Secuencia propuesta
 
-1. Corregir B3-01/B3-02 con pruebas de regresión, preservando compatibilidad del esquema existente.
-2. Revisar la suite de integración y completar las pruebas cruzadas B2 que realmente falten.
-3. Ejecutar el CI completo en Python 3.9 y 3.12.
+1. **En curso:** validar por CI las correcciones B3-01/B3-02 y sus pruebas de regresión.
+2. Revisar la cobertura de integración B2 y agregar únicamente los pasos del recorrido cuenta → perfil → progreso → cambio de perfil que no estén cubiertos.
+3. Ejecutar el CI completo en Python 3.9 y 3.12 y revisar la migración de esquema v2 → v3.
 4. Mantener consentimiento, exportación/supresión, retención y operación comercial como bloqueadores de un futuro lanzamiento remoto; no simular que están implementados.
 5. Actualizar el checklist de pruebas manuales sin pedir al usuario un pull antes de su ventana disponible.
 
