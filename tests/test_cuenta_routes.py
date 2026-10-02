@@ -51,6 +51,19 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(registro_page.status_code, 200)
         self.assertIn("Crear cuenta adulta", registro_page.get_data(as_text=True))
 
+    def test_registro_password_invalida_no_reserva_email(self):
+        invalido = self.client.post("/cuenta/registro", json={
+            "email": "reintento@example.com",
+            "password": "corta",
+        })
+        self.assertEqual(invalido.status_code, 400)
+        valido = self.client.post("/cuenta/registro", json={
+            "email": "reintento@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(valido.status_code, 202)
+        self.assertEqual(valido.json["estado"], "pendiente_verificacion")
+
     def test_registro_queda_pendiente_de_verificacion(self):
         r = self.client.post("/cuenta/registro", json={
             "email": "adulto@example.com",
