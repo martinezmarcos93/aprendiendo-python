@@ -662,7 +662,7 @@
           "pasos": [
             {
               "tipo": "explicacion",
-              "texto": "Programar no es solo conocer instrucciones. También hay que separar un problema en datos, decisiones y pasos. Vamos a combinar variables, condiciones, listas y repetición.",
+              "texto": "Programar también es dividir un problema en datos, decisiones y pasos. Vamos a combinar variables, condiciones, listas y repetición.",
               "codigo": "numeros = [3, 8, 5]\nmayores = 0\nfor n in numeros:\n    if n >= 5:\n        mayores = mayores + 1\nprint(mayores)",
               "lenguaje": "python"
             },
