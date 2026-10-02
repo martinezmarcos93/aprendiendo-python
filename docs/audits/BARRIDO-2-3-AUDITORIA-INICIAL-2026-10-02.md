@@ -1,0 +1,56 @@
+# Barrido 2 + 3 — auditoría inicial de runtime educativo, cuentas y privacidad
+
+**Fecha:** 2026-10-02  
+**Rama:** `sweep/consolidacion-ux-v1`  
+**Base de trabajo:** HEAD de la rama tras cerrar los barridos 0 + 1.  
+**Estado:** auditoría en curso; no autoriza merge a `main`.
+
+## Objetivo
+
+Auditar en paralelo el recorrido educativo autenticado (B2) y los límites de identidad, perfiles, progreso y acceso comercial (B3). La auditoría distingue defectos actuales, riesgos de diseño para la siguiente etapa y funciones que la documentación declara explícitamente fuera del alcance local-first.
+
+## Hallazgos confirmados
+
+### B3-01 — Identificador de ChildProfile determinista y derivado del nombre visible
+**Severidad:** alta para el ciclo de vida futuro; media en el modo actual.
+
+En `tortuscript/cuentas.py`, `crear_child_profile` deriva el ID mediante `SHA-256(account_id + display_name.lower())`. El identificador interno depende así del nombre visible. Si una cuenta/perfil se elimina y posteriormente se recrea con el mismo correo y nombre, el identificador puede repetirse. Como el progreso se almacena en archivos separados por ID (`ProgresoChildProfile`), una operación futura de borrado/recreación podría volver a asociar progreso huérfano al perfil nuevo. La API de borrado aún no está implementada, por lo que esto se registra como defecto de diseño a resolver antes de habilitar borrado, recuperación o sincronización comercial.
+
+**Acción:** usar identificadores opacos aleatorios para nuevos perfiles y probar que los IDs no dependen del alias. Definir además una política explícita de eliminación/retención para los archivos de progreso antes de exponer el borrado de perfiles.
+
+### B3-02 — La unicidad de nombres no coincide con la generación de IDs
+**Severidad:** media; reproducible por inspección del contrato SQLite.
+
+La tabla usa `UNIQUE(account_id, display_name)`, sensible a mayúsculas en SQLite por defecto, pero el ID se calcula con `display_name.lower()`. Por eso `Ana` y `ANA` pueden superar la restricción de unicidad, producir el mismo ID y fallar más tarde por colisión de clave primaria; el usuario recibe un mensaje genérico de duplicado aunque la restricción que se activó no sea la de nombre. La validación de duplicados debe ser coherente con la normalización del alias y estar respaldada por una restricción persistente.
+
+**Acción:** establecer una regla única de comparación de alias, aplicarla antes de insertar y cubrir variantes de mayúsculas/espacios con regresiones. Revisar datos existentes antes de añadir una restricción de esquema que pueda fallar sobre bases antiguas.
+
+### B2-01 — Cobertura insuficiente del ciclo de vida completo en un único contrato de integración
+**Severidad:** media; brecha de verificación.
+
+Hay pruebas unitarias separadas para cuenta, autenticación, selección de perfil, persistencia por ChildProfile, acceso y runtime. La suite también incluye una prueba de rutas de cuenta. Aun así, los contratos distribuidos entre servicios deben verificarse juntos: sesión válida → selección de perfil → carga de progreso → escritura educativa → cambio de perfil → confirmación de aislamiento → reanudación de sesión. Las pruebas existentes no deben considerarse sustituto de esa prueba de recorrido cruzado hasta confirmar qué cubre la suite de integración actual.
+
+**Acción:** inspeccionar la cobertura de rutas y añadir una regresión de recorrido integral solo para los pasos que hoy no estén cubiertos, evitando duplicar pruebas ya existentes.
+
+## Riesgos de arquitectura y límites de alcance
+
+1. **Privacidad/consentimiento:** `docs/FASE12_PRIVACIDAD_MENORES_V1.md` define minimización, consentimiento, retención y derechos, pero declara que es una base de diseño, no una habilitación legal ni una implementación completa. Antes de cualquier despliegue comercial hay que traducir cada requisito a flujos, persistencia, pruebas y revisión jurídica argentina.
+2. **Exportación y supresión:** los documentos de arquitectura futura enumeran estas operaciones; no se encontraron implementaciones en los módulos de identidad revisados. Se mantienen como trabajo futuro explícito, no como regresión del modo local actual. No habilitar borrado de perfiles sin resolver progreso huérfano y retención.
+3. **Pagos y suscripciones:** el esquema reserva tablas para suscripciones y derechos, pero el producto sigue local-first y la documentación excluye pagos, SaaS y sincronización. No conectar un proveedor ni presentar el estado de entitlement como prueba de pago hasta definir la autoridad que lo modifica y verificar webhooks/autenticidad en la fase comercial.
+4. **Concurrencia:** el runtime web serializa las operaciones en el proceso actual. Esto no constituye coordinación entre múltiples procesos o instancias; la sincronización remota requerirá un contrato transaccional y resolución de conflictos explícitos.
+5. **Borrado y restauración:** el adaptador de progreso crea una copia `.bak` antes de reemplazar un archivo. Debe documentarse su ciclo de vida y considerar su eliminación/exportación junto con el archivo principal al implementar derechos de datos.
+
+## Secuencia propuesta
+
+1. Corregir B3-01/B3-02 con pruebas de regresión, preservando compatibilidad del esquema existente.
+2. Revisar la suite de integración y completar las pruebas cruzadas B2 que realmente falten.
+3. Ejecutar el CI completo en Python 3.9 y 3.12.
+4. Mantener consentimiento, exportación/supresión, retención y operación comercial como bloqueadores de un futuro lanzamiento remoto; no simular que están implementados.
+5. Actualizar el checklist de pruebas manuales sin pedir al usuario un pull antes de su ventana disponible.
+
+## Seguridad y control de cambios
+
+- No se modifica `main`.
+- No se habilitan pagos, despliegue remoto ni sincronización.
+- No se relajan autenticación, CSRF, rate limiting ni aislamiento de perfiles.
+- Todo cambio de persistencia debe incluir prueba de migración/esquema y regresión.
