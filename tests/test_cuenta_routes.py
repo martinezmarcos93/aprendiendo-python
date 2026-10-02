@@ -579,5 +579,53 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(bloqueado.status_code, 429)
         self.assertIn("Retry-After", bloqueado.headers)
 
+    def test_cambiar_perfil_mantiene_progreso_independiente_por_perfil(self):
+        self.client.post("/cuenta/registro", json={
+            "email": "aislamiento@example.com",
+            "password": "una-clave-larga-123",
+        })
+        repo = CuentaRepository(self.tmp / "cuentas.sqlite3")
+        repo.ensure_schema()
+        cuenta_id = "acc_" + __import__("hashlib").sha256(
+            "aislamiento@example.com".encode()
+        ).hexdigest()[:24]
+        AuthRepository(self.tmp / "cuentas.sqlite3").marcar_verificada(cuenta_id)
+        login = self.client.post("/cuenta/login", json={
+            "email": "aislamiento@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(login.status_code, 200)
+        csrf = login.json["csrf"]
+        headers = {"X-Tortu-CSRF": csrf}
+
+        perfiles = []
+        for nombre in ("Ana", "Beto"):
+            respuesta = self.client.post(
+                "/cuenta/perfiles", json={"nombre": nombre}, headers=headers
+            )
+            self.assertEqual(respuesta.status_code, 201)
+            perfiles.append(respuesta.json["perfil"]["id"])
+
+        def seleccionar_y_guardar(pid, xp, timestamp):
+            seleccionado = self.client.post(
+                "/cuenta/perfil", json={"perfil_id": pid}, headers=headers
+            )
+            self.assertEqual(seleccionado.status_code, 200)
+            guardado = self.client.put("/cuenta/progreso", json={
+                "contract_version": 1,
+                "profile_id": pid,
+                "updated_at": timestamp,
+                "data": {"xp_total": xp},
+            }, headers=headers)
+            self.assertEqual(guardado.status_code, 200, guardado.get_data(as_text=True))
+            cargado = self.client.get("/cuenta/progreso")
+            self.assertEqual(cargado.status_code, 200)
+            self.assertEqual(cargado.json["progreso"]["data"]["xp_total"], xp)
+
+        seleccionar_y_guardar(perfiles[0], 11, "2026-10-02T12:00:00+00:00")
+        seleccionar_y_guardar(perfiles[1], 22, "2026-10-02T12:01:00+00:00")
+        seleccionar_y_guardar(perfiles[0], 11, "2026-10-02T12:00:00+00:00")
+        seleccionar_y_guardar(perfiles[1], 22, "2026-10-02T12:01:00+00:00")
+
 if __name__ == "__main__":
     unittest.main()
