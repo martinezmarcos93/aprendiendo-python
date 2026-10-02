@@ -35,6 +35,7 @@ class TestAjustes(Base):
     def test_guardar_y_recordar(self):
         p = persistencia_local.cargar_progreso()
         self.assertTrue(progreso.guardar_ajustes(p, tam="grande", contraste="alto", voz="si"))
+        self.assertTrue(persistencia_local.guardar_progreso(p))
         again = progreso.ajustes_de(persistencia_local.cargar_progreso())
         self.assertEqual((again["tam"], again["contraste"], again["voz"], again["letra"]), ("grande", "alto", "si", "normal"))
 
@@ -62,6 +63,7 @@ class TestAjustes(Base):
     def test_cada_perfil_tiene_los_suyos(self):
         a = persistencia_local.cargar_progreso("lua")
         progreso.guardar_ajustes(a, tam="enorme")
+        self.assertTrue(persistencia_local.guardar_progreso(a))
         self.assertEqual(progreso.ajustes_de(persistencia_local.cargar_progreso("lua"))["tam"], "enorme")
         self.assertEqual(progreso.ajustes_de(persistencia_local.cargar_progreso("tomi"))["tam"], "normal")
 
