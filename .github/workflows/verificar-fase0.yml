@@ -29,6 +29,9 @@ jobs:
         run: python -m pip install --require-hashes -r requirements.lock
       - name: Compilar módulos Python
         run: python -m compileall -q tortuscript web herramientas
+      - name: Contrato comercial y educativo
+        continue-on-error: true
+        run: python -m unittest discover -s tests -p 'test_cuenta_routes.py'
       - name: Tests Python y JavaScript
         run: python -m unittest discover -s tests
       - name: Validador de contenido
