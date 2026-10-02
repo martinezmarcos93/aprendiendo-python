@@ -17,7 +17,10 @@ from tortuscript.progreso_contrato import importar_snapshot
 from tortuscript.runtime_educativo import RuntimeEducativo
 from tortuscript.rate_limit import RateLimiter
 
-_RATE_LIMITER = RateLimiter()
+def _rate_limiter():
+    # Cada instancia Flask mantiene su propio limitador. Evita compartir estado
+    # entre aplicaciones de prueba o instancias WSGI distintas en el mismo proceso.
+    return current_app.extensions.setdefault("tortu_rate_limiter", RateLimiter())
 
 bp = Blueprint("cuenta", __name__, url_prefix="/cuenta")
 
@@ -40,7 +43,7 @@ def _educativo():
 
 
 def _limit_or_429(key, limit, window):
-    allowed, retry_after = _RATE_LIMITER.allow(key, limit, window)
+    allowed, retry_after = _rate_limiter().allow(key, limit, window)
     if allowed:
         return None
     respuesta = jsonify(ok=False, mensaje="Demasiados intentos. Probá nuevamente más tarde.")
@@ -130,6 +133,9 @@ def seleccionar_perfil_pagina():
 
 @bp.post("/registrar")
 def registrar_post():
+    limit = _limit_or_429(f"register:{request.remote_addr or 'unknown'}", 5, 3600)
+    if limit:
+        return limit
     datos = request.form if request.form else (request.get_json(silent=True) or {})
     email = datos.get("email")
     password = datos.get("password")
@@ -151,6 +157,9 @@ def registrar_post():
 
 @bp.post("/registro")
 def registro():
+    limit = _limit_or_429(f"register:{request.remote_addr or 'unknown'}", 5, 3600)
+    if limit:
+        return limit
     datos = request.get_json(silent=True) or {}
     email = datos.get("email")
     password = datos.get("password")
