@@ -26,6 +26,18 @@ class CuentaRoutesTests(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmp)
 
+    def test_api_valida_token_antes_de_resolver_la_sesion_educativa(self):
+        # El token de la app local y la sesión de cuenta son controles distintos.
+        # Sin token, la petición debe rechazarse por el gateway; con token pero sin
+        # sesión, debe rechazarse por identidad educativa.
+        sin_token = self.client.get("/api/estado")
+        self.assertEqual(sin_token.status_code, 403)
+
+        con_token_sin_sesion = self.client.get(
+            "/api/estado", headers={"X-Tortu-Token": "test-token"}
+        )
+        self.assertEqual(con_token_sin_sesion.status_code, 401)
+
     def test_gateway_web_redirige_al_login_y_perfil(self):
         inicio = self.client.get("/", follow_redirects=False)
         self.assertEqual(inicio.status_code, 302)
