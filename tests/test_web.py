@@ -4,6 +4,7 @@ import re
 import shutil
 import tempfile
 import unittest
+from datetime import datetime, timezone
 from pathlib import Path
 
 try:
@@ -46,15 +47,37 @@ class TestWeb(unittest.TestCase):
     def post(self, ruta, datos=None, **kw):
         return self.c.post(ruta, json=datos or {}, headers=self.h, **kw)
 
+    def _snapshot_cuenta(self):
+        respuesta = self.c.get("/cuenta/progreso")
+        if respuesta.status_code != 200 or not respuesta.json.get("progreso"):
+            raise AssertionError(f"no se pudo leer el snapshot: {respuesta.status_code} {respuesta.get_data(as_text=True)}")
+        return respuesta.json["progreso"]
+
+    def _guardar_snapshot_cuenta(self, snapshot):
+        respuesta = self.c.put(
+            "/cuenta/progreso",
+            json={
+                "contract_version": snapshot["contract_version"],
+                "profile_id": snapshot["profile_id"],
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "data": snapshot["data"],
+            },
+            headers={"X-Tortu-CSRF": self.csrf},
+        )
+        if respuesta.status_code != 200:
+            raise AssertionError(f"no se pudo guardar el snapshot: {respuesta.status_code} {respuesta.get_data(as_text=True)}")
+        return respuesta
+
     # ── recorridos curriculares ──
     def _completar_curso(self, curso_id):
         from tortuscript import contenido
         curso = contenido.cargar_curso(curso_id)
-        p = persistencia_local.cargar_progreso()
+        snapshot = self._snapshot_cuenta()
+        p = snapshot["data"]
         for _, lec in contenido.lecciones(curso):
             for i in range(len(lec["pasos"])):
                 progreso.registrar_paso_leccion(p, lec["id"], i, 0, True, len(lec["pasos"]))
-        persistencia_local.guardar_progreso(p)
+        self._guardar_snapshot_cuenta(snapshot)
 
     def test_mapa_muestra_todos_los_recorridos_y_sql_bloqueado(self):
         html = self.c.get("/mapa").get_data(as_text=True)
@@ -79,7 +102,7 @@ class TestWeb(unittest.TestCase):
         r = self.c.post("/elegir-recorrido", data={"recorrido": "python"})
         self.assertEqual(r.status_code, 302)
         self.assertTrue(r.headers["Location"].endswith("/leccion/py-print"))
-        self.assertEqual(persistencia_local.cargar_progreso()["recorrido_inicial"], "python")
+        self.assertEqual(self._snapshot_cuenta()["data"]["recorrido_inicial"], "python")
 
     def test_sql_se_desbloquea_al_completar_web(self):
         self._completar_curso("alfabetizacion-digital")
@@ -377,9 +400,11 @@ class TestWeb(unittest.TestCase):
 
     # ── mapa, resumen, referencia y repaso ──
     def _completar(self, *indices_estrellas):
-        p = persistencia_local.cargar_progreso()
+        snapshot = self._snapshot_cuenta()
+        p = snapshot["data"]
         for i, e in indices_estrellas:
             progreso.registrar_ejercicio(p, i, e, {1: 5, 2: 20, 3: 30}[e])
+        self._guardar_snapshot_cuenta(snapshot)
 
     def test_paginas_nuevas(self):
         for ruta in ("/mapa", "/resumen", "/referencia", "/repaso"):
