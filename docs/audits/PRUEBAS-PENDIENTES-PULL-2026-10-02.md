@@ -1,0 +1,57 @@
+# Pruebas pendientes tras el pull — TortuScript
+
+**Fecha de preparación:** 2026-10-02  
+**Rama:** `sweep/consolidacion-ux-v1`  
+**Objetivo:** ejecutar estas comprobaciones en el entorno local de Marcos después de hacer pull. No hacer merge a `main` hasta revisar resultados.
+
+## Antes de probar
+
+- [ ] Confirmar rama: `git branch --show-current` → `sweep/consolidacion-ux-v1`.
+- [ ] Confirmar último commit: `git log -1 --oneline`.
+- [ ] Guardar copia de la carpeta de datos/progreso antes de probar.
+- [ ] Usar una cuenta de prueba y perfiles infantiles ficticios; no borrar datos reales.
+- [ ] Arrancar siguiendo las instrucciones actuales del README y guardar el log de arranque.
+
+## Pruebas funcionales manuales
+
+| ID | Área | Acción | Resultado esperado | Estado/evidencia |
+|---|---|---|---|---|
+| M01 | Arranque | Iniciar el servidor desde cero | Arranca sin traceback ni error de configuración | Pendiente |
+| M02 | Cuenta | Abrir la app sin sesión | Muestra login; no muestra datos educativos | Pendiente |
+| M03 | Registro | Registrar cuenta de prueba | Queda pendiente de verificación, sin permitir acceso educativo prematuro | Pendiente |
+| M04 | Login | Iniciar sesión con cuenta verificada | Cookie de sesión emitida y acceso a selección/creación de perfil | Pendiente |
+| M05 | Sesión | Recargar y navegar entre páginas | Sesión se mantiene de forma consistente | Pendiente |
+| M06 | Perfiles | Crear dos perfiles infantiles | Ambos aparecen y pueden seleccionarse | Pendiente |
+| M07 | Aislamiento | Cambiar de perfil A a B | Nombre, onboarding, XP, lecciones y proyectos no se mezclan | Pendiente |
+| M08 | Onboarding | Entrar con perfil nuevo | Redirige a bienvenida antes del contenido educativo | Pendiente |
+| M09 | Onboarding | Completar bienvenida y volver a entrar | No repite bienvenida para ese perfil | Pendiente |
+| M10 | Lecciones | Completar un paso correctamente | Se refleja feedback, XP/estrellas y avance esperados | Pendiente |
+| M11 | Persistencia | Recargar la lección y reiniciar el servidor | El progreso completado persiste | Pendiente |
+| M12 | Sesión | Cerrar sesión y volver a una URL educativa | Se solicita login; no se filtran datos previos | Pendiente |
+| M13 | API | Solicitar endpoint API sin token local | Rechazo 403 antes de resolver identidad educativa | Pendiente |
+| M14 | API | Enviar token local válido sin sesión educativa | Rechazo 401 por ausencia de sesión | Pendiente |
+| M15 | API | Enviar token, sesión y perfil activo | Endpoint permitido y funcional | Pendiente |
+| M16 | Proyectos | Crear/editar/guardar un proyecto de prueba | Cambios persisten al recargar | Pendiente |
+| M17 | Integrador | Abrir un proyecto integrador, editar y guardar | Estado y archivos se guardan en el perfil correcto | Pendiente |
+| M18 | Migración | Revisar flujo de importación de progreso local | Solo ocurre por acción explícita; no reemplaza progreso comercial sin confirmación | Pendiente |
+| M19 | Responsive | Probar login, mapa, lección y proyectos en ventana angosta/móvil | Sin scroll horizontal ni botones inaccesibles | Pendiente |
+| M20 | Cierre | Cerrar la app normalmente y volver a abrir | No se pierde progreso; el comportamiento de sesión es coherente | Pendiente |
+
+## Pruebas automáticas pendientes de CI
+
+- [ ] Confirmar resultado nuevo del workflow tras corregir el fixture de `tests/test_migracion_progreso.py`.
+- [ ] Confirmar que las cuatro pruebas de `MigracionProgresoTests` superen el error `progreso.DIRECTORIO`.
+- [ ] Resolver el contrato de cookie CSRF de `test_login_cookie_me_csrf_perfil_y_logout`; verificar código y diseño antes de cambiar aserciones.
+- [ ] Revisar el 401 en `test_aislamiento_entre_cuentas_para_perfiles_y_progreso`.
+- [ ] Revisar el 403 en `test_pantallas_educativas_usan_childprofile_activo` y validar el Host/token del fixture.
+- [ ] Migrar fixtures de tests web y concurrencia al ciclo cuenta verificada + sesión + ChildProfile activo.
+- [ ] Reejecutar suite completa y clasificar cada fallo restante; no asumir que todos son tests obsoletos.
+- [ ] Revisar avisos del validador: 3 alternativas de orden en “Primeros pasos”, explicación larga en “Python real” y 2 usos de jerga “argumento” en “Web esencial”.
+
+## Registro de resultados
+
+Anotar por prueba: **OK / FALLA / BLOQUEADA**, commit probado, pasos exactos, resultado observado y captura/log si corresponde. No poner solo “anda/no anda”: especificar URL, código HTTP, perfil usado y si el resultado persistió tras recarga.
+
+## Regla de seguridad
+
+No desactivar autenticación, token local, aislamiento por perfil ni protección CSRF para conseguir que pasen tests antiguos. Si una expectativa de test contradice el contrato vigente, actualizar el fixture o documentar la incompatibilidad después de verificar el comportamiento esperado.
