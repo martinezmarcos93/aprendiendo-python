@@ -150,10 +150,12 @@ class TestWebCamino(Base):
         self.c = self.app.test_client()
         self.h = {"X-Tortu-Token": "t"}
         from fixtures_cuenta import preparar_sesion_educativa
-        preparar_sesion_educativa(
+        fixture = preparar_sesion_educativa(
             self.app, self.c, email="camino@example.com", nombre="Lua", token="t",
             complete_onboarding=False,
         )
+        self.csrf = fixture["csrf"]
+        self.perfil_id = fixture["perfil_id"]
 
     def post(self, ruta, datos=None):
         return self.c.post(ruta, json=datos or {}, headers=self.h)
@@ -172,17 +174,17 @@ class TestWebCamino(Base):
     def test_onboarding_completo(self):
         r = self.post("/api/onboarding", {"nombre": "Lua Pérez", "experiencia": "nunca", "meta_min": 15}).get_json()
         self.assertTrue(r["ok"])
-        self.assertEqual(r["actual"], "lua_pérez")
+        self.assertEqual(r["actual"], self.perfil_id)
         self.assertEqual(r["estado"]["meta_xp"], 60)
-        self.assertEqual(r["estado"]["nombre"], "Lua Pérez")
+        self.assertEqual(r["estado"]["nombre"], "Lua")
         html = self.c.get("/").get_data(as_text=True)
-        self.assertIn("¡Hola, Lua Pérez!", html)
+        self.assertIn("¡Hola, Lua!", html)
         self.assertIn("Meta de hoy", html)
         self.assertEqual(self.c.get("/bienvenida").status_code, 200)              # se puede volver a ver
 
     def test_onboarding_sin_nombre_usa_el_perfil_actual(self):
         r = self.post("/api/onboarding", {"nombre": "", "experiencia": "bastante", "meta_min": 5}).get_json()
-        self.assertEqual(r["actual"], "default")
+        self.assertEqual(r["actual"], self.perfil_id)
         self.assertEqual(self.c.get("/").status_code, 200)
 
     def test_onboarding_rechaza_valores_invalidos(self):
@@ -372,7 +374,7 @@ class TestWebCamino(Base):
         self.assertEqual(self.post("/api/diagnostico", {"respuestas": ["x"]}).status_code, 400)
         ok = self.post("/api/onboarding", {"meta_min": 10, "experiencia": "bastante", "entrada": "tu-primera-funcion"})
         self.assertTrue(ok.get_json()["ok"])
-        self.assertIn("repetir", persistencia_local.cargar_progreso()["salteadas"])
+        self.assertIn("repetir", self._progreso_cuenta()["data"]["salteadas"])
 
     def test_la_entrada_tiene_que_corresponder_a_la_experiencia(self):
         for datos in ({"experiencia": "nunca", "entrada": "tu-primera-variable"},
@@ -381,7 +383,7 @@ class TestWebCamino(Base):
                       {"experiencia": "bastante", "entrada": "hola-mundo"}):
             with self.subTest(datos):
                 self.assertEqual(self.post("/api/onboarding", {"meta_min": 10, **datos}).status_code, 400)
-        self.assertEqual(persistencia_local.cargar_progreso()["salteadas"], {})
+        self.assertEqual(self._progreso_cuenta()["data"]["salteadas"], {})
 
     def test_la_bienvenida_ofrece_empezar_mas_adelante(self):
         html = self.c.get("/bienvenida").get_data(as_text=True)
@@ -399,7 +401,7 @@ class TestWebCamino(Base):
         self.assertIn("¿Qué te gustaría crear ahora?", html)
         r = self.post("/api/intereses/que-crear", {"respuestas": ["rpg", "dibujos"]})
         self.assertTrue(r.get_json()["ok"])
-        self.assertEqual(persistencia_local.cargar_progreso()["intereses"]["que-crear"]["respuestas"], ["rpg", "dibujos"])
+        self.assertEqual(self._progreso_cuenta()["data"]["intereses"]["que-crear"]["respuestas"], ["rpg", "dibujos"])
         self.assertNotIn('id="encuesta"', self.c.get("/").get_data(as_text=True))       # no se repite ni encadena otra
 
     def test_intereses_rechaza_lo_invalido_y_pide_token(self):
@@ -520,17 +522,17 @@ class TestWebCamino(Base):
         self.assertNotIn("objetivo", mal["evaluacion"])
         self.assertEqual(self.post(ruta, {"codigo": "girar_der 90"}).get_json()["evaluacion"]["estado"], "sin_dibujo")
         self.assertEqual(len(mal["ordenes"]), 1)
-        antes = persistencia_local.cargar_progreso()["xp_total"]
+        antes = self._progreso_cuenta()["data"]["xp_total"]
         ok = self.post(ruta, {"codigo": "avanzar 60\navanzar 60"}).get_json()            # otra forma de dibujar lo mismo
         self.assertEqual(ok["evaluacion"]["estado"], "correcto")
         self.assertEqual((ok["premio"]["estrellas"], ok["premio"]["xp"], ok["premio"]["mejora"]), (3, 30, True))
-        self.assertEqual(persistencia_local.cargar_progreso()["xp_total"], antes + 30)
+        self.assertEqual(self._progreso_cuenta()["data"]["xp_total"], antes + 30)
         p = persistencia_local.cargar_progreso()
         self.assertEqual(p["lecciones"]["tortuga-avanzar"]["pasos"]["4"]["estrellas"], 3)
         self.assertNotIn("4", p["ejercicios"])                                              # no toca la clave de ejercicios
         repetido = self.post(ruta, {"codigo": "avanzar 120"}).get_json()
         self.assertFalse(repetido["premio"]["mejora"])                                       # sin XP doble
-        self.assertEqual(persistencia_local.cargar_progreso()["xp_total"], antes + 30)
+        self.assertEqual(self._progreso_cuenta()["data"]["xp_total"], antes + 30)
 
     def test_pasos_de_dibujo_de_completar_y_ordenar_por_la_api(self):
         self.post("/api/onboarding", {"meta_min": 10})
@@ -557,7 +559,7 @@ class TestWebCamino(Base):
         html = self.c.get("/logros").get_data(as_text=True)
         self.assertIn("Primer paso", html)
         self.assertIn("Ganado el", html)
-        self.assertEqual(persistencia_local.cargar_progreso()["avisos"], [])
+        self.assertEqual(self._progreso_cuenta()["data"]["avisos"], [])
 
     def test_la_meta_diaria_se_avisa_al_cumplirla(self):
         self.post("/api/onboarding", {"meta_min": 5})                      # 20 XP
@@ -566,7 +568,7 @@ class TestWebCamino(Base):
         r = self._paso(4, "Buen día")
         self.assertIn("meta_cumplida", [a["tipo"] for a in r["avisos"]])
         self.assertEqual(r["estado_juego"]["meta_pct"], 100)
-        self.assertIn("meta-diaria", persistencia_local.cargar_progreso()["logros"])
+        self.assertIn("meta-diaria", self._progreso_cuenta()["data"]["logros"])
 
     def test_estado_y_paginas_de_gamificacion(self):
         self.post("/api/onboarding", {"meta_min": 10})
@@ -604,7 +606,7 @@ class TestWebCamino(Base):
         html = self.c.get("/").get_data(as_text=True)
         self.assertIn("liga_asciende", html)
         self.assertIn("Plata", html)
-        self.assertEqual(persistencia_local.cargar_progreso()["liga"], {"nivel": 1, "semana": liga.clave_semana(hoy)})
+        self.assertEqual(self._progreso_cuenta()["data"]["liga"], {"nivel": 1, "semana": liga.clave_semana(hoy)})
         self.assertNotIn("liga_asciende", self.c.get("/").get_data(as_text=True))       # el aviso se cuenta una sola vez
 
     # ── práctica del día ──
@@ -640,7 +642,7 @@ class TestWebCamino(Base):
     def test_acertar_sube_la_tarjeta_da_xp_y_la_saca_de_las_pendientes(self):
         self._con_pasos_viejos()
         self.c.get("/practica")
-        antes = persistencia_local.cargar_progreso()["xp_total"]
+        antes = self._progreso_cuenta()["data"]["xp_total"]
         r = self._practica(1, "mostrar")
         self.assertEqual((r["ok"], r["xp"], r["perfecto"]), (True, 2, True))
         p = persistencia_local.cargar_progreso()
