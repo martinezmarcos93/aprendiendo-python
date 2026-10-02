@@ -46,6 +46,7 @@
 - [ ] Confirmar que la verificación de correo no consume el token al abrir el enlace (GET) y solo verifica tras confirmar por POST.
 - [ ] Confirmar que un registro con contraseña inválida permite reintentar con el mismo correo y que una contraseña inválida no consume el token de recuperación.
 - [ ] Confirmar que las regresiones de `tests/test_cuentas.py` pasen: ID opaco, alias equivalentes por mayúsculas/Unicode NFKC y migración de esquema v2 → v3.
+- [ ] Confirmar que una base con versión de esquema futura se rechaza sin crear tablas ni alterar columnas existentes.
 - [ ] Revisar los logs de migración del esquema v2 → v3; comprobar que los duplicados históricos abortan antes de alterar el esquema y no eliminan ni modifican perfiles.
 - [ ] Confirmar la prueba HTTP de cambio entre dos perfiles de una misma cuenta: cada perfil debe recuperar su propio XP tras alternar varias veces.
 - [ ] Confirmar que el validador de contenido no tiene errores bloqueantes. Los tres avisos de ordenamientos equivalentes están explicados y cubiertos por `test_tres_ordenamientos_equivalentes_del_curso_se_aceptan`; revisar si las consignas deberían precisar mejor el objetivo pedagógico.
