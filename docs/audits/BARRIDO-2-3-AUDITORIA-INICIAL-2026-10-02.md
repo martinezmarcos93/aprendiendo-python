@@ -28,22 +28,22 @@ La tabla original usaba `UNIQUE(account_id, display_name)`, sensible a mayúscul
 ### B3-06 — El inicializador podía modificar un esquema de versión futura antes de rechazarlo
 **Severidad:** media; riesgo de alterar una base incompatible.
 
-`ensure_schema` comprobaba la versión guardada después de crear tablas e índices y aplicar migraciones. Si una versión más nueva de TortuScript había creado la base, la versión antigua podía modificarla antes de emitir el error de incompatibilidad. Ahora la versión se comprueba antes de ejecutar cambios de esquema; una regresión verifica que una base v4 sea rechazada sin añadir columnas ni tablas. Pendiente de CI.
+`ensure_schema` comprobaba la versión guardada después de crear tablas e índices y aplicar migraciones. Si una versión más nueva de TortuScript había creado la base, la versión antigua podía modificarla antes de emitir el error de incompatibilidad. Ahora la versión se comprueba antes de ejecutar cambios de esquema; una regresión verifica que una base v4 sea rechazada sin añadir columnas ni tablas. Verificado en CI.
 
 ### B3-05 — Entradas inválidas podían inutilizar la recuperación o reservar una cuenta
 **Severidad:** media; fallos de consistencia y recuperación ante errores de entrada.
 
-`reset_password` consumía el token antes de validar la longitud de la nueva contraseña; un error de validación dejaba al usuario sin poder reutilizar el enlace. Además, el registro creaba la cuenta antes de validar la política de contraseña, por lo que un intento inválido podía reservar el correo y bloquear un reintento. Ahora la validación ocurre antes de consumir el token o crear la cuenta. Se agregaron pruebas para ambos recorridos; queda pendiente confirmar CI.
+`reset_password` consumía el token antes de validar la longitud de la nueva contraseña; un error de validación dejaba al usuario sin poder reutilizar el enlace. Además, el registro creaba la cuenta antes de validar la política de contraseña, por lo que un intento inválido podía reservar el correo y bloquear un reintento. Ahora la validación ocurre antes de consumir el token o crear la cuenta. Se agregaron pruebas para ambos recorridos; CI confirmó el comportamiento.
 
 ### B3-04 — La verificación de correo consumía el token mediante GET
 **Severidad:** media; riesgo de activación accidental por escáneres automáticos de enlaces.
 
-La ruta `GET /cuenta/verificar-email` consumía el token de un solo uso. Algunos clientes de correo y filtros de seguridad visitan enlaces automáticamente, por lo que podían verificar la cuenta sin una acción explícita del usuario. La ruta GET ahora solo presenta la confirmación y el consumo se realiza mediante POST; se agregó una regresión que simula el GET y verifica que la cuenta siga sin verificar hasta el POST. Pendiente de CI.
+La ruta `GET /cuenta/verificar-email` consumía el token de un solo uso. Algunos clientes de correo y filtros de seguridad visitan enlaces automáticamente, por lo que podían verificar la cuenta sin una acción explícita del usuario. La ruta GET ahora solo presenta la confirmación y el consumo se realiza mediante POST; se agregó una regresión que simula el GET y verifica que la cuenta siga sin verificar hasta el POST. Verificado en CI.
 
 ### B3-03 — La migración podía dejar una columna nueva tras detectar duplicados
 **Severidad:** media; defecto de consistencia del esquema ante una base histórica conflictiva.
 
-La prueba de regresión para alias históricos equivalentes detectó que `ALTER TABLE` podía persistir antes de que la migración arrojara `CuentaError`. Los perfiles no se perdían, pero quedaba un esquema parcialmente alterado. La migración ahora calcula y valida todas las claves históricas antes de añadir la columna; la prueba comprueba que se conservan las dos filas y que la columna no se agrega cuando la migración debe abortar. El cambio está pendiente de CI tras la corrección.
+La prueba de regresión para alias históricos equivalentes detectó que `ALTER TABLE` podía persistir antes de que la migración arrojara `CuentaError`. Los perfiles no se perdían, pero quedaba un esquema parcialmente alterado. La migración ahora calcula y valida todas las claves históricas antes de añadir la columna; la prueba comprueba que se conservan las dos filas y que la columna no se agrega cuando la migración debe abortar. La corrección quedó verificada en CI.
 
 ### B2-01 — Cobertura insuficiente del ciclo de vida completo en un único contrato de integración
 **Severidad:** media; brecha de verificación.
@@ -67,8 +67,8 @@ El validador detecta permutaciones que producen la misma salida en «Dos variabl
 
 ## Secuencia propuesta
 
-1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La cobertura NFKC, migración v2 → v3, cambio de perfil y ordenamientos equivalentes pasó en Python 3.9 y 3.12 en el commit `3fe66f208424bfe9bbaf35f2317455ad482986c0` (593 tests, 2 omitidos por versión). Las nuevas regresiones para migración parcial, versión futura, contraseña inválida y verificación explícita de correo están pendientes de CI.
-2. Ejecutar y revisar el CI completo en Python 3.9 y 3.12 para los cambios más recientes.
+1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La cobertura NFKC, migración v2 → v3, cambio de perfil y ordenamientos equivalentes pasó en Python 3.9 y 3.12 en el commit `3fe66f208424bfe9bbaf35f2317455ad482986c0` (593 tests, 2 omitidos por versión). CI del HEAD `22a3d697fbe28b29cc5190069b2118db058fb8e1` pasó en Python 3.9 y 3.12: 597 tests, 2 omitidos por versión, sin fallos ni errores. Incluye las regresiones de migración parcial, rechazo de esquema futuro, contraseña inválida y verificación explícita de correo. [Ejecución](https://github.com/martinezmarcos93/tortuscript/actions/runs/37051187720).
+2. **CI actual verificado:** Python 3.9 y 3.12 pasan en el HEAD `22a3d697fbe28b29cc5190069b2118db058fb8e1` (597 tests, 2 omitidos por versión).
 3. Validar la migración v2 → v3 con una copia local real, sin tocar la base original.
 4. Mantener consentimiento, exportación/supresión, retención y operación comercial como bloqueadores de un futuro lanzamiento remoto; no simular que están implementados.
 5. Actualizar el checklist de pruebas manuales sin pedir al usuario un pull antes de su ventana disponible.
