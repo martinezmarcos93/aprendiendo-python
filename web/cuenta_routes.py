@@ -390,6 +390,9 @@ def obtener_progreso():
 
 @bp.put("/progreso")
 def guardar_progreso():
+    # Un snapshot completo enviado por el navegador permite falsificar XP,
+    # ejercicios y finalización de lecciones. La persistencia se realiza desde
+    # operaciones evaluadas en el servidor; no se aceptan escrituras genéricas.
     raw = request.cookies.get("tortu_session")
     resultado = _require_session()
     if not resultado:
@@ -397,13 +400,11 @@ def guardar_progreso():
     _, auth, _ = resultado
     if not _require_csrf(auth, raw):
         return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
-    documento = request.get_json(silent=True)
-    try:
-        snapshot = importar_snapshot(documento)
-        _educativo().guardar_progreso(raw, snapshot)
-    except (ContextoEducativoError, ValueError) as exc:
-        return jsonify(ok=False, mensaje=str(exc)), 400
-    return jsonify(ok=True, profile_id=snapshot.profile_id, updated_at=snapshot.updated_at)
+    return jsonify(
+        ok=False,
+        codigo="escritura_no_autoritativa",
+        mensaje="No se aceptan snapshots de progreso enviados por el cliente.",
+    ), 410
 
 
 @bp.get("/acceso")
