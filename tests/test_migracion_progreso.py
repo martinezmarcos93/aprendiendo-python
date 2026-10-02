@@ -63,6 +63,7 @@ class MigracionProgresoTests(unittest.TestCase):
     def test_reemplazo_debe_ser_explicito(self):
         datos = dict(PROGRESO_INICIAL)
         datos["xp_total"] = 123
+        datos["_perfil"] = "ana"
         self.progreso.guardar_progreso(datos)
         self.service.guardar_progreso(self.session, nuevo_snapshot(self.perfil.id, {"xp_total": 999}))
         snapshot = self.migracion.importar_local(self.session, "ana", reemplazar=True)
