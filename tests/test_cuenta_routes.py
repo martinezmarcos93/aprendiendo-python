@@ -543,6 +543,16 @@ class CuentaRoutesTests(unittest.TestCase):
 
         verificado = self.client.get("/cuenta/verificar-email", query_string={"token": token})
         self.assertEqual(verificado.status_code, 200)
+        self.assertIn("Confirmar correo", verificado.get_data(as_text=True))
+
+        # Un GET de escáner no debe consumir el token.
+        repo = CuentaRepository(self.tmp / "cuentas.sqlite3")
+        cuenta = repo.obtener_account_por_email("seguridad@example.com")
+        self.assertIsNone(cuenta.verified_at)
+
+        confirmado = self.client.post("/cuenta/verificar-email", data={"token": token})
+        self.assertEqual(confirmado.status_code, 200)
+        self.assertIsNotNone(repo.obtener_account(cuenta.id).verified_at)
 
         login = self.client.post("/cuenta/login", json={
             "email": "seguridad@example.com",
