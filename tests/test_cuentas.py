@@ -83,7 +83,7 @@ class CuentaRepositoryTests(unittest.TestCase):
                 INSERT INTO schema_version(version) VALUES (2);
                 CREATE TABLE accounts (
                     id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE,
-                    created_at TEXT NOT NULL
+                    created_at TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'adult'
                 );
                 CREATE TABLE child_profiles (
                     id TEXT PRIMARY KEY,
