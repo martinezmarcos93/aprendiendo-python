@@ -47,9 +47,10 @@
 - [x] Regresión automatizada: abrir el enlace (GET) no consume el token; la verificación solo se completa tras confirmar por POST.
 - [x] Regresiones automatizadas: registro con contraseña inválida permite reintentar con el mismo correo; contraseña inválida no consume el token de recuperación.
 - [x] CI confirma las regresiones de `tests/test_cuentas.py`: ID opaco, alias equivalentes por mayúsculas/Unicode NFKC, migración v2 → v3, aborto sin mutación parcial y rechazo de versión futura. ID opaco, alias equivalentes por mayúsculas/Unicode NFKC y migración de esquema v2 → v3.
-- [ ] Confirmar que una base con versión de esquema futura se rechaza sin crear tablas ni alterar columnas existentes.
+- [x] CI confirma que una base con versión de esquema futura se rechaza sin crear tablas ni alterar columnas existentes.
 - [ ] Revisar los logs de migración del esquema v2 → v3; comprobar que los duplicados históricos abortan antes de alterar el esquema y no eliminan ni modifican perfiles.
 - [x] CI confirma la prueba HTTP de cambio entre dos perfiles de una misma cuenta: cada perfil recupera su propio XP tras alternar varias veces.
+- [ ] Confirmar que `tests/test_rate_limit.py` pasa: límites por clave, `Retry-After` y limpieza de claves expiradas.
 - [x] CI confirma que el validador de contenido no tiene errores bloqueantes. Los tres avisos de ordenamientos equivalentes están explicados y cubiertos por `test_tres_ordenamientos_equivalentes_del_curso_se_aceptan`; revisar si las consignas deberían precisar mejor el objetivo pedagógico.
 - [ ] No fusionar a `main` hasta que CI esté verde, se revise el diff completo y Marcos complete las pruebas manuales relevantes.
 
