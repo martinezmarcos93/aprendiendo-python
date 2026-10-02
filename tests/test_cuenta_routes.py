@@ -64,6 +64,28 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(valido.status_code, 202)
         self.assertEqual(valido.json["estado"], "pendiente_verificacion")
 
+    def test_registro_aplica_rate_limit_por_ip_y_devuelve_retry_after(self):
+        for indice in range(5):
+            respuesta = self.client.post("/cuenta/registro", json={
+                "email": f"registro-{indice}@example.com",
+                "password": "una-clave-larga-123",
+            })
+            self.assertEqual(respuesta.status_code, 202)
+
+        bloqueado = self.client.post("/cuenta/registro", json={
+            "email": "registro-extra@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(bloqueado.status_code, 429)
+        self.assertIn("Retry-After", bloqueado.headers)
+
+        # Las rutas HTML y JSON comparten el mismo límite por IP.
+        bloqueado_html = self.client.post("/cuenta/registrar", data={
+            "email": "registro-html@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(bloqueado_html.status_code, 429)
+
     def test_registro_queda_pendiente_de_verificacion(self):
         r = self.client.post("/cuenta/registro", json={
             "email": "adulto@example.com",
