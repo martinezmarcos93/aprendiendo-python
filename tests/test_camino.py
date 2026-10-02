@@ -2,7 +2,7 @@
 import shutil
 import tempfile
 import unittest
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from tortuscript import persistencia_local, contenido, leccion, liga, logros, progreso
@@ -216,10 +216,32 @@ class TestWebCamino(Base):
         self.assertTrue(self.c.get("/aprender").headers["Location"].endswith("/leccion/nivel0-lenguaje"))
 
     # ── curso de la tortuga ──
+    def _progreso_cuenta(self):
+        respuesta = self.c.get("/cuenta/progreso")
+        if respuesta.status_code != 200 or not respuesta.json.get("progreso"):
+            raise AssertionError(f"no se pudo leer el progreso del ChildProfile: {respuesta.status_code} {respuesta.get_data(as_text=True)}")
+        return respuesta.json["progreso"]
+
+    def _guardar_progreso_cuenta(self, datos):
+        snapshot = self._progreso_cuenta()
+        respuesta = self.c.put(
+            "/cuenta/progreso",
+            json={
+                "contract_version": snapshot["contract_version"],
+                "profile_id": snapshot["profile_id"],
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "data": datos,
+            },
+            headers={"X-Tortu-CSRF": self.csrf},
+        )
+        if respuesta.status_code != 200:
+            raise AssertionError(f"no se pudo guardar el progreso del ChildProfile: {respuesta.status_code} {respuesta.get_data(as_text=True)}")
+        return respuesta
+
     def _terminar_hasta(self, leccion_id):
-        """Da por completada (con el formato del motor) cada lección del curso 1 hasta `leccion_id` inclusive."""
+        """Prepara el snapshot comercial con las lecciones previas ya completadas."""
         curso = contenido.cargar_curso()
-        p = persistencia_local.cargar_progreso()
+        p = self._progreso_cuenta()["data"]
         for lec in leccion.lista_lecciones(curso):
             progreso.registrar_paso_leccion(p, lec["id"], 0, 0, True, 1)
             if lec["id"] == leccion_id:
@@ -230,10 +252,12 @@ class TestWebCamino(Base):
                 for i in range(len(nivel0_lec["pasos"])):
                     progreso.registrar_paso_leccion(p, nivel0_lec["id"], i, 0, True, len(nivel0_lec["pasos"]))
             p["recorrido_inicial"] = "python"
-            persistencia_local.guardar_progreso(p)
+        self._guardar_progreso_cuenta(p)
 
     def _dar_por_completa(self, leccion_id):
-        progreso.registrar_paso_leccion(persistencia_local.cargar_progreso(), leccion_id, 0, 0, True, 1)
+        p = self._progreso_cuenta()["data"]
+        progreso.registrar_paso_leccion(p, leccion_id, 0, 0, True, 1)
+        self._guardar_progreso_cuenta(p)
 
     def _abrir_laberintos(self):
         self.post("/api/onboarding", {"meta_min": 10})
