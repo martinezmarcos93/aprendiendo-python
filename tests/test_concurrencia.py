@@ -102,8 +102,9 @@ class TestConcurrencia(unittest.TestCase):
             time.sleep(1.5)
             return original(*_a, **_k)
 
-        original = progreso.registrar_paso_leccion
-        progreso.registrar_paso_leccion = lento
+        from tortuscript.runtime_educativo import RuntimeEducativo
+        original = RuntimeEducativo.registrar_paso_leccion
+        RuntimeEducativo.registrar_paso_leccion = lento
         try:
             hilo = threading.Thread(target=lambda: self.nuevo_cliente().post(
                 "/api/lecciones/hola-mundo/pasos/1/comprobar", json={"respuesta": "mostrar"}, headers=self.h))
@@ -113,7 +114,7 @@ class TestConcurrencia(unittest.TestCase):
                 terminado.append((r.status_code, hilo.is_alive()))          # ¿el pedido lento sigue en curso?
             hilo.join(timeout=10)
         finally:
-            progreso.registrar_paso_leccion = original
+            RuntimeEducativo.registrar_paso_leccion = original
         self.assertEqual(terminado[0], (200, True))
 
     def test_un_pedido_rechazado_no_deja_el_turno_tomado(self):
@@ -134,7 +135,7 @@ class TestConcurrencia(unittest.TestCase):
         RuntimeEducativo.cargar_datos = lambda *a, **k: (_ for _ in ()).throw(RuntimeError("falla"))
         try:
             self.app.config["PROPAGATE_EXCEPTIONS"] = False
-            self.assertEqual(self.app.test_client().get("/resumen").status_code, 500)
+            self.assertEqual(self.nuevo_cliente().get("/resumen").status_code, 500)
         finally:
             RuntimeEducativo.cargar_datos = original
         hilo = threading.Thread(target=lambda: self.nuevo_cliente().get("/resumen"))
