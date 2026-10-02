@@ -111,6 +111,41 @@ class CuentaRepositoryTests(unittest.TestCase):
         self.assertEqual(profile, ("child_legacy", "Ana", "ana"))
         self.assertIn("idx_child_profiles_account_name_key", indexes)
 
+    def test_migracion_rechaza_alias_historicos_equivalentes_sin_perder_filas(self):
+        legacy_path = self.tmp / "legacy-duplicados.sqlite3"
+        with sqlite3.connect(legacy_path) as con:
+            con.executescript("""
+                CREATE TABLE schema_version (version INTEGER NOT NULL);
+                INSERT INTO schema_version(version) VALUES (2);
+                CREATE TABLE accounts (
+                    id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE,
+                    created_at TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'adult'
+                );
+                CREATE TABLE child_profiles (
+                    id TEXT PRIMARY KEY,
+                    account_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+                    display_name TEXT NOT NULL, created_at TEXT NOT NULL,
+                    active INTEGER NOT NULL DEFAULT 1,
+                    UNIQUE(account_id, display_name)
+                );
+                INSERT INTO accounts(id,email,created_at,role)
+                    VALUES ('acc_legacy','legacy@example.com','2026-01-01','adult');
+                INSERT INTO child_profiles(id,account_id,display_name,created_at,active)
+                    VALUES ('child_1','acc_legacy','Ana','2026-01-02',1);
+                INSERT INTO child_profiles(id,account_id,display_name,created_at,active)
+                    VALUES ('child_2','acc_legacy','ANA','2026-01-03',1);
+            """)
+        migrated = CuentaRepository(legacy_path)
+        with self.assertRaisesRegex(CuentaError, "nombres equivalentes"):
+            migrated.ensure_schema()
+        with sqlite3.connect(legacy_path) as con:
+            profiles = con.execute(
+                "SELECT id,display_name FROM child_profiles ORDER BY id"
+            ).fetchall()
+            columns = {row[1] for row in con.execute("PRAGMA table_info(child_profiles)")}
+        self.assertEqual(profiles, [("child_1", "Ana"), ("child_2", "ANA")])
+        self.assertNotIn("display_name_key", columns)
+
     def test_esquema_es_reproducible(self):
         self.repo.ensure_schema()
         self.repo.ensure_schema()
