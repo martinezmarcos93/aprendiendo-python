@@ -184,7 +184,7 @@ class TestWebCamino(Base):
 
     def test_onboarding_sin_nombre_usa_el_perfil_actual(self):
         r = self.post("/api/onboarding", {"nombre": "", "experiencia": "bastante", "meta_min": 5}).get_json()
-        self.assertEqual(r["actual"], self.perfil_id)
+        self.assertEqual(r["actual"], "Lua")
         self.assertEqual(self.c.get("/").status_code, 200)
 
     def test_onboarding_rechaza_valores_invalidos(self):
