@@ -83,7 +83,9 @@ Las rutas `/cuenta/runtime/ejercicio` y `/cuenta/runtime/leccion/paso` reciben d
 
 **Estado:** hallazgo confirmado por inspección del contrato entre rutas, runtime y motor. No se aplica una validación superficial de rangos como si resolviera el problema: limitar `xp` o `estrellas` no impide que el cliente solicite repetidamente el máximo permitido.
 
-**Corrección necesaria antes de confiar en estos datos para certificados, desbloqueos o analítica:** el servidor debe derivar los valores permitidos del ejercicio/paso conocido y validar la evidencia de resolución (por ejemplo, código y salida comparados contra el contrato del ejercicio) o marcar explícitamente estos endpoints como datos no autoritativos. La finalización debe derivar el número de pasos de la definición de la lección, no de `total_pasos` enviado por el cliente. Agregar pruebas negativas para XP arbitrario, índices desconocidos, pasos inexistentes y finalización prematura.
+**Mitigación aplicada en la rama:** los tres endpoints de escritura directa (`/cuenta/runtime/ejercicio`, `/cuenta/runtime/leccion/paso` y `/cuenta/runtime/practica`) ahora responden HTTP 410 y no modifican el progreso. Informan los endpoints canónicos que evalúan código/respuestas y derivan los metadatos del contenido del curso: `/api/ejercicios/<n>/evaluar`, `/api/lecciones/<leccion_id>/pasos/<i>/evaluar` y `/api/practica/comprobar`. Se actualizó la regresión para intentar enviar XP 5000, marcar un paso perfecto y declarar una práctica acertada, y comprobar que el progreso sigue intacto.
+
+**Límite residual:** el flujo canónico debe seguir cubierto por pruebas de integración en modo de cuenta autenticada para confirmar que cada tipo de contenido se evalúa y persiste en el ChildProfile activo. No se debe reactivar ninguno de los endpoints 410 como ruta de escritura confiable.
 
 ## Riesgos de arquitectura y límites de alcance
 
