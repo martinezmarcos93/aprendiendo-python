@@ -83,7 +83,7 @@ class CuentaRepositoryTests(unittest.TestCase):
                 INSERT INTO schema_version(version) VALUES (2);
                 CREATE TABLE accounts (
                     id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE,
-                    created_at TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'adult'
+                    created_at TEXT NOT NULL
                 );
                 CREATE TABLE child_profiles (
                     id TEXT PRIMARY KEY,
@@ -128,8 +128,8 @@ class CuentaRepositoryTests(unittest.TestCase):
                     active INTEGER NOT NULL DEFAULT 1,
                     UNIQUE(account_id, display_name)
                 );
-                INSERT INTO accounts(id,email,created_at,role)
-                    VALUES ('acc_legacy','legacy@example.com','2026-01-01','adult');
+                INSERT INTO accounts(id,email,created_at)
+                    VALUES ('acc_legacy','legacy@example.com','2026-01-01');
                 INSERT INTO child_profiles(id,account_id,display_name,created_at,active)
                     VALUES ('child_1','acc_legacy','Ana','2026-01-02',1);
                 INSERT INTO child_profiles(id,account_id,display_name,created_at,active)
@@ -143,8 +143,10 @@ class CuentaRepositoryTests(unittest.TestCase):
                 "SELECT id,display_name FROM child_profiles ORDER BY id"
             ).fetchall()
             columns = {row[1] for row in con.execute("PRAGMA table_info(child_profiles)")}
+            account_columns = {row[1] for row in con.execute("PRAGMA table_info(accounts)")}
         self.assertEqual(profiles, [("child_1", "Ana"), ("child_2", "ANA")])
         self.assertNotIn("display_name_key", columns)
+        self.assertNotIn("role", account_columns)
 
     def test_esquema_es_reproducible(self):
         self.repo.ensure_schema()
