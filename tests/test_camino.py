@@ -174,7 +174,7 @@ class TestWebCamino(Base):
     def test_onboarding_completo(self):
         r = self.post("/api/onboarding", {"nombre": "Lua Pérez", "experiencia": "nunca", "meta_min": 15}).get_json()
         self.assertTrue(r["ok"])
-        self.assertEqual(r["actual"], self.perfil_id)
+        self.assertEqual(r["actual"], "Lua")
         self.assertEqual(r["estado"]["meta_xp"], 60)
         self.assertEqual(r["estado"]["nombre"], "Lua")
         html = self.c.get("/").get_data(as_text=True)
