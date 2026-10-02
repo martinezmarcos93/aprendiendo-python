@@ -177,6 +177,7 @@ class TestProgresoLecciones(unittest.TestCase):
     def test_se_guarda_y_sobrevive_al_recargar(self):
         p = persistencia_local.cargar_progreso()
         progreso.registrar_paso_leccion(p, "l", 0, 5, True, 1)
+        self.assertTrue(persistencia_local.guardar_progreso(p))
         again = persistencia_local.cargar_progreso()
         self.assertTrue(again["lecciones"]["l"]["completada"])
         self.assertEqual(again["version"], progreso.VERSION_ESQUEMA)
