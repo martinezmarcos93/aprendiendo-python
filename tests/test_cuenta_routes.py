@@ -159,18 +159,19 @@ class CuentaRoutesTests(unittest.TestCase):
             "contract_version": 1,
             "profile_id": created.json["perfil"]["id"],
             "updated_at": "2026-09-30T12:00:00+00:00",
-            "data": {"xp_total": 25},
+            "data": {"xp_total": 25000},
         }
         saved = self.client.put(
             "/cuenta/progreso",
             json=progress,
             headers={"X-Tortu-CSRF": csrf},
         )
-        self.assertEqual(saved.status_code, 200)
+        self.assertEqual(saved.status_code, 410)
+        self.assertEqual(saved.json["codigo"], "escritura_no_autoritativa")
 
         loaded = self.client.get("/cuenta/progreso")
         self.assertEqual(loaded.status_code, 200)
-        self.assertEqual(loaded.json["progreso"]["data"]["xp_total"], 25)
+        self.assertIsNone(loaded.json["progreso"])
 
         acceso = self.client.get("/cuenta/acceso?producto=tortuscript-premium")
         self.assertEqual(acceso.status_code, 200)
@@ -193,7 +194,8 @@ class CuentaRoutesTests(unittest.TestCase):
             json=bad_progress,
             headers={"X-Tortu-CSRF": csrf},
         )
-        self.assertEqual(rejected.status_code, 400)
+        self.assertEqual(rejected.status_code, 410)
+        self.assertEqual(rejected.json["codigo"], "escritura_no_autoritativa")
 
         logout = self.client.post("/cuenta/logout", headers={"X-Tortu-CSRF": csrf})
         self.assertEqual(logout.status_code, 200)
@@ -245,22 +247,18 @@ class CuentaRoutesTests(unittest.TestCase):
         bienvenida = self.client.get("/bienvenida")
         self.assertEqual(bienvenida.status_code, 200)
 
-        guardado = self.client.put(
-            "/cuenta/progreso",
-            json={
-                "contract_version": 1,
-                "profile_id": perfil_id,
-                "updated_at": "2026-10-02T12:00:00+00:00",
-                "data": {"xp_total": 37},
-            },
-            headers={"X-Tortu-CSRF": csrf},
+        guardado = self.client.post(
+            "/api/onboarding",
+            json={"nombre": "Perfil de prueba", "experiencia": "nunca", "meta_min": 5},
+            headers={"X-Tortu-Token": "test-token"},
         )
-        self.assertEqual(guardado.status_code, 200)
+        self.assertEqual(guardado.status_code, 200, guardado.get_data(as_text=True))
 
         recuperado = self.client.get("/cuenta/progreso")
         self.assertEqual(recuperado.status_code, 200)
         self.assertEqual(recuperado.json["perfil"]["id"], perfil_id)
-        self.assertEqual(recuperado.json["progreso"]["data"]["xp_total"], 37)
+        self.assertEqual(recuperado.json["progreso"]["data"]["config"]["nombre"], "Perfil de prueba")
+        self.assertEqual(recuperado.json["progreso"]["data"]["xp_total"], 0)
 
     def test_aislamiento_entre_cuentas_para_perfiles_y_progreso(self):
         for email in ("a@example.com", "b@example.com"):
@@ -341,7 +339,7 @@ class CuentaRoutesTests(unittest.TestCase):
             json=snapshot,
             headers={"X-Tortu-CSRF": csrf_a},
         )
-        self.assertEqual(escritura_cruzada.status_code, 400)
+        self.assertEqual(escritura_cruzada.status_code, 410)
 
         acceso_b = cliente_b.get("/cuenta/acceso?producto=tortuscript-premium")
         self.assertEqual(acceso_b.status_code, 200)
@@ -666,16 +664,16 @@ class CuentaRoutesTests(unittest.TestCase):
                 "/cuenta/perfil", json={"perfil_id": pid}, headers=headers
             )
             self.assertEqual(seleccionado.status_code, 200)
-            guardado = self.client.put("/cuenta/progreso", json={
-                "contract_version": 1,
-                "profile_id": pid,
-                "updated_at": timestamp,
-                "data": {"xp_total": xp},
-            }, headers=headers)
+            guardado = self.client.post("/api/onboarding", json={
+                "nombre": f"Perfil-{xp}",
+                "experiencia": "nunca",
+                "meta_min": 5,
+            }, headers={"X-Tortu-Token": "test-token"})
             self.assertEqual(guardado.status_code, 200, guardado.get_data(as_text=True))
             cargado = self.client.get("/cuenta/progreso")
             self.assertEqual(cargado.status_code, 200)
-            self.assertEqual(cargado.json["progreso"]["data"]["xp_total"], xp)
+            self.assertEqual(cargado.json["progreso"]["data"]["config"]["nombre"], f"Perfil-{xp}")
+            self.assertEqual(cargado.json["progreso"]["data"]["xp_total"], 0)
 
         seleccionar_y_guardar(perfiles[0], 11, "2026-10-02T12:00:00+00:00")
         seleccionar_y_guardar(perfiles[1], 22, "2026-10-02T12:01:00+00:00")
