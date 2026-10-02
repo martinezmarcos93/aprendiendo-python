@@ -478,13 +478,14 @@ def runtime_registrar_ejercicio():
     _, auth, _ = resultado
     if not _require_csrf(auth, raw):
         return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
-    datos = request.get_json(silent=True) or {}
-    try:
-        runtime = RuntimeEducativo(_educativo())
-        mejora = runtime.registrar_ejercicio(raw, int(datos["indice"]), int(datos["estrellas"]), int(datos["xp_ganado"]))
-    except (ContextoEducativoError, ValueError, KeyError) as exc:
-        return jsonify(ok=False, mensaje=str(exc)), 400
-    return jsonify(ok=True, mejora=mejora)
+    # No aceptar puntuación/XP declarados por el cliente: se pueden falsificar.
+    # La evaluación autoritativa vive en /api/ejercicios/<n>/evaluar.
+    return jsonify(
+        ok=False,
+        codigo="evaluacion_requerida",
+        mensaje="La puntuación debe obtenerse mediante la evaluación del ejercicio.",
+        evaluador="/api/ejercicios/<n>/evaluar",
+    ), 410
 
 
 @bp.post("/runtime/leccion/paso")
@@ -496,15 +497,14 @@ def runtime_registrar_paso():
     _, auth, _ = resultado
     if not _require_csrf(auth, raw):
         return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
-    datos = request.get_json(silent=True) or {}
-    try:
-        runtime = RuntimeEducativo(_educativo())
-        info = runtime.registrar_paso_leccion(
-            raw, str(datos["leccion_id"]), int(datos["indice"]), int(datos["xp"]),
-            bool(datos["perfecto"]), int(datos["total_pasos"]), datos.get("estrellas"))
-    except (ContextoEducativoError, ValueError, KeyError) as exc:
-        return jsonify(ok=False, mensaje=str(exc)), 400
-    return jsonify(ok=True, resultado=info)
+    # El cliente no puede declarar un paso correcto ni decidir cuántos pasos tiene la lección.
+    # El endpoint canónico evalúa el contenido y deriva los metadatos del curso.
+    return jsonify(
+        ok=False,
+        codigo="evaluacion_requerida",
+        mensaje="El paso debe comprobarse mediante el evaluador de la lección.",
+        evaluador="/api/lecciones/<leccion_id>/pasos/<i>/evaluar",
+    ), 410
 
 
 @bp.post("/runtime/practica")
@@ -516,13 +516,14 @@ def runtime_registrar_practica():
     _, auth, _ = resultado
     if not _require_csrf(auth, raw):
         return jsonify(ok=False, mensaje="Falta una protección CSRF válida."), 403
-    datos = request.get_json(silent=True) or {}
-    try:
-        runtime = RuntimeEducativo(_educativo())
-        ganado = runtime.registrar_practica(raw, str(datos["leccion_id"]), int(datos["paso"]), bool(datos["acierto"]))
-    except (ContextoEducativoError, ValueError, KeyError) as exc:
-        return jsonify(ok=False, mensaje=str(exc)), 400
-    return jsonify(ok=True, xp_ganado=ganado)
+    # "acierto" no es evidencia de una respuesta correcta. La práctica se acredita
+    # únicamente a través de /api/practica/comprobar, que valida la respuesta del alumno.
+    return jsonify(
+        ok=False,
+        codigo="comprobacion_requerida",
+        mensaje="La práctica debe comprobarse mediante el evaluador de respuestas.",
+        evaluador="/api/practica/comprobar",
+    ), 410
 
 
 @bp.get("/runtime/proyectos")
