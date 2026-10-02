@@ -57,6 +57,11 @@ Hay pruebas unitarias separadas para cuenta, autenticación, selección de perfi
 
 El validador detecta permutaciones que producen la misma salida en «Dos variables», «Tabla del 2» y «Solo los pares». La lógica de lecciones ya admite ordenamientos alternativos cuando la ejecución genera la salida esperada; agregué una regresión que comprueba esos tres casos con el motor real. Los tres avisos del validador siguen siendo intencionales: informan al autor de que la consigna puede admitir más de un orden correcto, no indican un fallo de validación del curso.
 
+### B3-08 — El limitador de intentos retenía claves expiradas indefinidamente
+**Severidad:** baja en el modo local; riesgo de consumo de memoria bajo tráfico prolongado.
+
+`RateLimiter` guardaba una cola por clave, y las claves con emails únicos podían permanecer en el diccionario incluso después de expirar. Ahora hace limpieza periódica de colas vencidas conservando la ventana configurada para cada clave; agregué pruebas de límite/reintento y limpieza. CI pendiente para este cambio. El limitador sigue siendo process-local: antes de escalar a varios workers debe reemplazarse por un backend compartido y añadir límites coordinados por IP/cuenta.
+
 ### B3-07 — El envío de correo depende de una integración opcional
 **Severidad:** bloqueante para un lanzamiento remoto; no bloqueante para pruebas locales.
 
@@ -73,7 +78,7 @@ El validador detecta permutaciones que producen la misma salida en «Dos variabl
 
 ## Secuencia propuesta
 
-1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La cobertura NFKC, migración v2 → v3, cambio de perfil y ordenamientos equivalentes pasó en Python 3.9 y 3.12 en el commit `3fe66f208424bfe9bbaf35f2317455ad482986c0` (593 tests, 2 omitidos por versión). CI del HEAD `22a3d697fbe28b29cc5190069b2118db058fb8e1` pasó en Python 3.9 y 3.12: 597 tests, 2 omitidos por versión, sin fallos ni errores. Incluye las regresiones de migración parcial, rechazo de esquema futuro, contraseña inválida y verificación explícita de correo. [Ejecución](https://github.com/martinezmarcos93/tortuscript/actions/runs/37051187720).
+1. **CI previo verificado:** el commit `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión). La cobertura NFKC, migración v2 → v3, cambio de perfil y ordenamientos equivalentes pasó en Python 3.9 y 3.12 en el commit `3fe66f208424bfe9bbaf35f2317455ad482986c0` (593 tests, 2 omitidos por versión). CI del commit `22a3d697fbe28b29cc5190069b2118db058fb8e1` pasó en Python 3.9 y 3.12: 597 tests, 2 omitidos por versión, sin fallos ni errores. La prueba adicional del limitador está pendiente de CI. Incluye las regresiones de migración parcial, rechazo de esquema futuro, contraseña inválida y verificación explícita de correo. [Ejecución](https://github.com/martinezmarcos93/tortuscript/actions/runs/37051187720).
 2. **CI actual verificado:** Python 3.9 y 3.12 pasan en el HEAD `22a3d697fbe28b29cc5190069b2118db058fb8e1` (597 tests, 2 omitidos por versión).
 3. Validar la migración v2 → v3 con una copia local real, sin tocar la base original.
 4. Mantener consentimiento, exportación/supresión, retención y operación comercial como bloqueadores de un futuro lanzamiento remoto; no simular que están implementados.
