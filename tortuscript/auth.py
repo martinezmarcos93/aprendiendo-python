@@ -92,6 +92,9 @@ class AuthRepository:
         return self._create_account_token(row["id"], "recovery", RECOVERY_HOURS)
 
     def reset_password(self, raw_token, new_password):
+        # Validar antes de consumir el token: un error de política no debe
+        # inutilizar un enlace de recuperación todavía válido.
+        self.validar_password(new_password)
         account_id = self._consume_account_token(raw_token, "recovery")
         self.set_password(account_id, new_password)
         with self._db() as db:
@@ -143,9 +146,13 @@ class AuthRepository:
                 (_iso(_now()), account_id),
             )
 
-    def set_password(self, account_id, password):
+    @staticmethod
+    def validar_password(password):
         if not isinstance(password, str) or len(password) < 12:
             raise AuthError("La contraseña debe tener al menos 12 caracteres.")
+
+    def set_password(self, account_id, password):
+        self.validar_password(password)
         encoded = generate_password_hash(password, method="scrypt")
         with self._db() as db:
             db.execute("UPDATE accounts SET password_hash=? WHERE id=?", (encoded, account_id))
