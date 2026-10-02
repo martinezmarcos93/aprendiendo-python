@@ -44,7 +44,7 @@
 
 - [ ] Confirmar el CI completo del último commit de `sweep/consolidacion-ux-v1` en Python 3.9 y 3.12.
 - [ ] Confirmar que las regresiones de `tests/test_cuentas.py` pasen: ID opaco, alias equivalentes por mayúsculas/Unicode NFKC y migración de esquema v2 → v3.
-- [ ] Revisar los logs de migración del esquema v2 → v3; asegurar que la comprobación de duplicados históricos no elimina ni altera perfiles.
+- [ ] Revisar los logs de migración del esquema v2 → v3; comprobar que los duplicados históricos abortan antes de alterar el esquema y no eliminan ni modifican perfiles.
 - [ ] Confirmar la prueba HTTP de cambio entre dos perfiles de una misma cuenta: cada perfil debe recuperar su propio XP tras alternar varias veces.
 - [ ] Confirmar que el validador de contenido no tiene errores bloqueantes. Los tres avisos de ordenamientos equivalentes están explicados y cubiertos por `test_tres_ordenamientos_equivalentes_del_curso_se_aceptan`; revisar si las consignas deberían precisar mejor el objetivo pedagógico.
 - [ ] No fusionar a `main` hasta que CI esté verde, se revise el diff completo y Marcos complete las pruebas manuales relevantes.
