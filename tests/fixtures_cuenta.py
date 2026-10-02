@@ -8,6 +8,10 @@ from tortuscript.auth import AuthRepository
 def preparar_sesion_educativa(app, client, email="prueba@example.com", nombre="Ana", token="test-token", complete_onboarding=True):
     """Crea cuenta verificada, inicia sesión, selecciona ChildProfile y completa onboarding."""
     db = app.config["ACCOUNT_DB"]
+    # Rate limits are process-wide in tests; isolate each temporary account database.
+    parte, dominio = email.rsplit("@", 1)
+    sufijo = hashlib.sha256(str(db).encode("utf-8")).hexdigest()[:10]
+    email = f"{parte}-{sufijo}@{dominio}"
     password = "una-clave-larga-123"
     registro = client.post("/cuenta/registro", json={"email": email, "password": password})
     if registro.status_code != 202:
