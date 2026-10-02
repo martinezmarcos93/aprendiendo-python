@@ -1,4 +1,4 @@
-name: Verificación Fase 0
+name: Verificación base y barridos
 
 on:
   workflow_dispatch:
@@ -6,6 +6,10 @@ on:
     branches:
       - main
       - audit/ux-v1-2026-09-30
+      - sweep/consolidacion-ux-v1
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
