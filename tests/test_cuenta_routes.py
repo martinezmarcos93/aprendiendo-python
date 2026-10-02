@@ -409,13 +409,13 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(estado.json["nombre"], "Ana")
 
         proyecto = self.client.post(
-            "/api/proyectos",
+            "/runtime/proyectos",
             json={"nombre": "Proyecto UI", "tipo": "experimentar", "codigo": "print(1)"},
-            headers=api_headers,
+            headers={"X-Tortu-CSRF": csrf},
         )
         self.assertEqual(proyecto.status_code, 200)
 
-        listado = self.client.get("/api/proyectos", headers=api_headers)
+        listado = self.client.get("/runtime/proyectos")
         self.assertEqual(listado.status_code, 200)
 
         snapshot = self.client.get("/cuenta/progreso")
