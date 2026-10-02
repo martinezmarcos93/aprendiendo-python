@@ -212,9 +212,10 @@ class TestWebCamino(Base):
         self.post("/api/onboarding", {"meta_min": 10})
         r = self.c.get("/aprender")
         self.assertTrue(r.headers["Location"].endswith("/leccion/nivel0-programa"))
-        p = persistencia_local.cargar_progreso()
+        p = self._progreso_cuenta()["data"]
         for i in range(4):
             progreso.registrar_paso_leccion(p, "nivel0-programa", i, 1, True, 4)
+        self._guardar_progreso_cuenta(p)
         self.assertTrue(self.c.get("/aprender").headers["Location"].endswith("/leccion/nivel0-lenguaje"))
 
     # ── curso de la tortuga ──
@@ -303,9 +304,9 @@ class TestWebCamino(Base):
         self.post("/api/onboarding", {"meta_min": 10})
         html = self.c.get("/tortuga").get_data(as_text=True)
         self.assertIn(f'data-color-tortuga="{progreso.color_tortuga(1)}"', html)
-        p = persistencia_local.cargar_progreso()
+        p = self._progreso_cuenta()["data"]
         p["xp_total"] = progreso.UMBRALES_NIVEL[2]                                  # nivel 3
-        persistencia_local.guardar_progreso(p)
+        self._guardar_progreso_cuenta(p)
         html = self.c.get("/tortuga").get_data(as_text=True)
         self.assertIn(f'data-color-tortuga="{progreso.color_tortuga(3)}"', html)
         r = self.post("/api/tortuga", {"codigo": "avanzar 10"}).get_json()
@@ -318,10 +319,10 @@ class TestWebCamino(Base):
         html = self.c.get("/").get_data(as_text=True)
         self.assertNotIn("Hola de nuevo", html)                                # perfil nuevo: saludo normal
         self._dar_por_completa("hola-mundo")                                    # ya había hecho una lección
-        p = persistencia_local.cargar_progreso()
+        p = self._progreso_cuenta()["data"]
         ayer = (date.today() - timedelta(days=1)).isoformat()
         p["ultimo_dia"], p["xp_por_dia"] = ayer, {ayer: 35}
-        persistencia_local.guardar_progreso(p)
+        self._guardar_progreso_cuenta(p)
         html = self.c.get("/").get_data(as_text=True)
         self.assertIn("¡Hola de nuevo, Lua!", html)
         self.assertIn("Ayer", html)
@@ -329,7 +330,7 @@ class TestWebCamino(Base):
         self.assertIn("Hoy te espera <b>«", html)
         self.assertIn("▶ Continuar:", html)
         p["ultimo_dia"] = date.today().isoformat()                                  # ya vino hoy: no se repite
-        persistencia_local.guardar_progreso(p)
+        self._guardar_progreso_cuenta(p)
         self.assertNotIn("Hola de nuevo", self.c.get("/").get_data(as_text=True))
 
     def test_el_cierre_de_la_leccion_cuenta_que_aprendio_y_que_sigue(self):
@@ -343,11 +344,11 @@ class TestWebCamino(Base):
     def test_empezar_mas_adelante_saltea_sin_dar_nada(self):
         r = self.post("/api/onboarding", {"meta_min": 10, "experiencia": "poquito", "entrada": "tu-primera-variable"})
         self.assertTrue(r.get_json()["ok"])
-        planas = leccion.lecciones_planas(leccion.estado_cursos(contenido.todos_los_cursos(), persistencia_local.cargar_progreso(), {}))
+        planas = leccion.lecciones_planas(leccion.estado_cursos(contenido.todos_los_cursos(), self._progreso_cuenta()["data"], {}))
         estados = {l["id"]: l["estado"] for l in planas}
         self.assertEqual([estados[i] for i in ("hola-mundo", "texto-o-cuenta", "dos-lineas")], ["salteada"] * 3)
         self.assertEqual(estados["tu-primera-variable"], "actual")
-        p = persistencia_local.cargar_progreso()
+        p = self._progreso_cuenta()["data"]
         self.assertEqual((p["xp_total"], p["logros"]), (0, {}))                         # no se regala nada
         estado = self.c.get("/api/estado", headers=self.h).get_json()
         self.assertEqual(estado["lecciones_hechas"], 0)
@@ -359,8 +360,10 @@ class TestWebCamino(Base):
     def test_hacer_despues_una_salteada_la_convierte_en_hecha(self):
         self.post("/api/onboarding", {"meta_min": 10, "experiencia": "poquito", "entrada": "tu-primera-variable"})
         self.post("/api/lecciones/hola-mundo/pasos/0/comprobar", {})
-        progreso.registrar_paso_leccion(persistencia_local.cargar_progreso(), "hola-mundo", 1, 5, True, 2)
-        planas = leccion.lecciones_planas(leccion.estado_cursos(contenido.todos_los_cursos(), persistencia_local.cargar_progreso(), {}))
+        p = self._progreso_cuenta()["data"]
+        progreso.registrar_paso_leccion(p, "hola-mundo", 1, 5, True, 2)
+        self._guardar_progreso_cuenta(p)
+        planas = leccion.lecciones_planas(leccion.estado_cursos(contenido.todos_los_cursos(), self._progreso_cuenta()["data"], {}))
         self.assertIn(next(l["estado"] for l in planas if l["id"] == "hola-mundo"), ("hecha", "perfecta"))
 
     def test_prueba_de_nivel_recomienda_y_la_bienvenida_la_ofrece(self):
@@ -527,7 +530,7 @@ class TestWebCamino(Base):
         self.assertEqual(ok["evaluacion"]["estado"], "correcto")
         self.assertEqual((ok["premio"]["estrellas"], ok["premio"]["xp"], ok["premio"]["mejora"]), (3, 30, True))
         self.assertEqual(self._progreso_cuenta()["data"]["xp_total"], antes + 30)
-        p = persistencia_local.cargar_progreso()
+        p = self._progreso_cuenta()["data"]
         self.assertEqual(p["lecciones"]["tortuga-avanzar"]["pasos"]["4"]["estrellas"], 3)
         self.assertNotIn("4", p["ejercicios"])                                              # no toca la clave de ejercicios
         repetido = self.post(ruta, {"codigo": "avanzar 120"}).get_json()
@@ -584,25 +587,34 @@ class TestWebCamino(Base):
         self.assertIn('<details class="mas">', html)                                    # menú "Más"
 
     def test_liga_con_otro_perfil_de_la_pc(self):
-        self.post("/api/onboarding", {"meta_min": 10, "nombre": "Lua"})
-        p = persistencia_local.cargar_progreso("tomi")
-        p["config"]["nombre"] = "Tomi"
+        self.post("/api/onboarding", {"meta_min": 10})
+        creado = self.c.post(
+            "/cuenta/perfiles", json={"nombre": "Tomi"},
+            headers={"X-Tortu-CSRF": self.csrf},
+        )
+        self.assertEqual(creado.status_code, 201)
+        seleccionado = self.c.post(
+            "/cuenta/perfil", json={"perfil_id": creado.json["perfil"]["id"]},
+            headers={"X-Tortu-CSRF": self.csrf},
+        )
+        self.assertEqual(seleccionado.status_code, 200)
+        p = self._progreso_cuenta()["data"]
         progreso.sumar_xp(p, 500)
-        persistencia_local.guardar_progreso(p)
+        self._guardar_progreso_cuenta(p)
         html = self.c.get("/liga").get_data(as_text=True)
         self.assertIn("Tomi", html)
         self.assertIn("(vos)", html)
-        self.assertEqual(html.count('class="puesto"'), 5)                               # el grupo se completa con rivales
+        self.assertEqual(html.count('class="puesto"'), 5)
 
     def test_al_cambiar_de_semana_se_sube_de_liga_y_se_avisa_en_la_pagina(self):
         from datetime import date, timedelta
         self.post("/api/onboarding", {"meta_min": 10})
         hoy = date.today()
         anterior = liga.lunes_de(hoy) - timedelta(days=2)                              # un sábado de la semana pasada
-        p = persistencia_local.cargar_progreso()
+        p = self._progreso_cuenta()["data"]
         p["liga"] = {"nivel": 0, "semana": liga.clave_semana(anterior)}
         p["xp_por_dia"] = {str(anterior): 900}
-        persistencia_local.guardar_progreso(p)
+        self._guardar_progreso_cuenta(p)
         html = self.c.get("/").get_data(as_text=True)
         self.assertIn("liga_asciende", html)
         self.assertIn("Plata", html)
@@ -613,11 +625,11 @@ class TestWebCamino(Base):
     def _con_pasos_viejos(self):
         """hola-mundo con sus 4 pasos rápidos hechos hace una semana."""
         self.post("/api/onboarding", {"meta_min": 10})
-        p = persistencia_local.cargar_progreso()
+        p = self._progreso_cuenta()["data"]
         for i in (1, 2, 3, 4):
             progreso.registrar_paso_leccion(p, "hola-mundo", i, 5, True, 6)
             p["lecciones"]["hola-mundo"]["pasos"][str(i)]["fecha"] = "2026-01-01"
-        persistencia_local.guardar_progreso(p)
+        self._guardar_progreso_cuenta(p)
 
     def _practica(self, i, respuesta):
         return self.post("/api/practica/comprobar", {"leccion": "hola-mundo", "paso": i, "respuesta": respuesta}).get_json()
@@ -645,7 +657,7 @@ class TestWebCamino(Base):
         antes = self._progreso_cuenta()["data"]["xp_total"]
         r = self._practica(1, "mostrar")
         self.assertEqual((r["ok"], r["xp"], r["perfecto"]), (True, 2, True))
-        p = persistencia_local.cargar_progreso()
+        p = self._progreso_cuenta()["data"]
         self.assertEqual(p["xp_total"], antes + 2)
         self.assertEqual(p["repaso"]["hola-mundo:1"]["caja"], 1)
         self.assertEqual(self.c.get("/api/estado", headers=self.h).get_json()["practica_pendientes"], 3)
@@ -659,7 +671,7 @@ class TestWebCamino(Base):
         self.assertFalse(r["puede_ver_respuesta"])
         r = self._practica(1, "mostrar")
         self.assertEqual((r["ok"], r["xp"], r["perfecto"]), (True, 0, False))
-        self.assertEqual(persistencia_local.cargar_progreso()["repaso"]["hola-mundo:1"]["fallos"], 1)
+        self.assertEqual(self._progreso_cuenta()["data"]["repaso"]["hola-mundo:1"]["fallos"], 1)
 
     def test_ver_la_respuesta_de_una_tarjeta_solo_tras_dos_errores(self):
         self._con_pasos_viejos()
@@ -669,7 +681,7 @@ class TestWebCamino(Base):
         self._practica(1, "pantalla"); self._practica(1, "escribir")
         r = pedir().get_json()
         self.assertEqual(r["respuesta"], "mostrar")
-        self.assertEqual(persistencia_local.cargar_progreso()["repaso"]["hola-mundo:1"]["fallos"], 1)
+        self.assertEqual(self._progreso_cuenta()["data"]["repaso"]["hola-mundo:1"]["fallos"], 1)
 
     def test_solo_se_pueden_comprobar_tarjetas_de_la_sesion(self):
         self._con_pasos_viejos()
@@ -737,8 +749,10 @@ class TestWebCamino(Base):
     # ── certificado ──
     def _completar_curso_tortuga(self, perfectas=True):
         self._terminar_hasta("dos-variables")
+        p = self._progreso_cuenta()["data"]
         for _, lec in contenido.lecciones(contenido.cargar_curso("tortuga")):
-            progreso.registrar_paso_leccion(persistencia_local.cargar_progreso(), lec["id"], 0, 0, perfectas, 1)
+            progreso.registrar_paso_leccion(p, lec["id"], 0, 0, perfectas, 1)
+        self._guardar_progreso_cuenta(p)
 
     def test_el_certificado_solo_existe_al_terminar_el_curso(self):
         self.post("/api/onboarding", {"meta_min": 10, "nombre": "Lua"})
@@ -813,8 +827,9 @@ class TestWebCamino(Base):
 
     def test_la_meta_avanza_con_el_xp(self):
         self.post("/api/onboarding", {"meta_min": 5})                      # 20 XP
-        p = persistencia_local.cargar_progreso()
+        p = self._progreso_cuenta()["data"]
         progreso.registrar_ejercicio(p, 0, 3, 30)
+        self._guardar_progreso_cuenta(p)
         est = self.c.get("/api/estado", headers=self.h).get_json()
         self.assertEqual((est["xp_hoy"], est["meta_pct"]), (30, 100))
         self.assertIn("Meta cumplida", self.c.get("/").get_data(as_text=True))
