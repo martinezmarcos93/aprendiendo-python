@@ -16,14 +16,14 @@ Auditar en paralelo el recorrido educativo autenticado (B2) y los límites de id
 
 En la versión auditada, `crear_child_profile` derivaba el ID mediante `SHA-256(account_id + display_name.lower())`. El identificador interno dependía del nombre visible, por lo que una futura eliminación y recreación con el mismo correo y alias podía volver a asociar progreso huérfano. La API de borrado aún no está implementada.
 
-**Corrección aplicada en la rama:** los nuevos perfiles reciben IDs opacos aleatorios (`child_<24 hex>`), independientes del alias. Se agregaron pruebas para validar formato y unicidad. La corrección queda pendiente del CI de la revisión actual; todavía no se afirma que esté verificada por CI. Antes de exponer el borrado sigue siendo necesaria una política de eliminación/retención de los archivos de progreso.
+**Corrección aplicada en la rama:** los nuevos perfiles reciben IDs opacos aleatorios (`child_<24 hex>`), independientes del alias. Se agregaron pruebas para validar formato y unicidad. CI del commit de código `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` pasó en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión; 0 fallos/errores). Ejecución: [37046712403](https://github.com/martinezmarcos93/tortuscript/actions/runs/37046712403). Antes de exponer el borrado sigue siendo necesaria una política de eliminación/retención de los archivos de progreso.
 
 ### B3-02 — La unicidad de nombres no coincide con la generación de IDs
 **Severidad:** media; reproducible por inspección del contrato SQLite.
 
 La tabla original usaba `UNIQUE(account_id, display_name)`, sensible a mayúsculas, mientras el ID se calculaba con el nombre en minúsculas. Esto permitía una colisión de ID para `Ana` y `ANA`.
 
-**Corrección aplicada en la rama:** el esquema sube a versión 3, agrega `display_name_key` con normalización `casefold()` y una restricción única por cuenta. La migración revisa duplicados históricos antes de imponer el índice y falla con un mensaje accionable en vez de elegir silenciosamente qué perfil conservar. Se agregó una regresión para el alias duplicado con mayúsculas. Pendiente de CI y revisión del comportamiento de migración con una base local real.
+**Corrección aplicada en la rama:** el esquema sube a versión 3, agrega `display_name_key` con normalización `casefold()` y una restricción única por cuenta. La migración revisa duplicados históricos antes de imponer el índice y falla con un mensaje accionable en vez de elegir silenciosamente qué perfil conservar. Se agregó una regresión para el alias duplicado con mayúsculas. CI del commit de código `b5d9a8be48ce5c5f4a55a3b6a0a7128886ee3cec` completó correctamente en Python 3.9 y 3.12 (589 tests, 2 omitidos por versión; 0 fallos/errores). Ejecución: [37046712403](https://github.com/martinezmarcos93/tortuscript/actions/runs/37046712403). Sigue pendiente revisar el comportamiento de migración con una base local real y esperar CI del HEAD documental más reciente.
 
 ### B2-01 — Cobertura insuficiente del ciclo de vida completo en un único contrato de integración
 **Severidad:** media; brecha de verificación.
@@ -42,7 +42,7 @@ Hay pruebas unitarias separadas para cuenta, autenticación, selección de perfi
 
 ## Secuencia propuesta
 
-1. **En curso:** validar por CI las correcciones B3-01/B3-02 y sus pruebas de regresión.
+1. **Código verificado por CI:** B3-01/B3-02 y sus pruebas de regresión pasan en Python 3.9 y 3.12. Falta revisar la migración v2 → v3 con una base local real.
 2. Revisar la cobertura de integración B2 y agregar únicamente los pasos del recorrido cuenta → perfil → progreso → cambio de perfil que no estén cubiertos.
 3. Ejecutar el CI completo en Python 3.9 y 3.12 y revisar la migración de esquema v2 → v3.
 4. Mantener consentimiento, exportación/supresión, retención y operación comercial como bloqueadores de un futuro lanzamiento remoto; no simular que están implementados.
