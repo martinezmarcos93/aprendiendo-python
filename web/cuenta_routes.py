@@ -13,7 +13,6 @@ from tortuscript.cuentas import CuentaError, CuentaRepository
 from tortuscript.migracion_progreso import MigracionProgresoError, MigracionProgresoLocal
 from tortuscript.perfil_educativo import ContextoEducativoError, PerfilEducativoService
 from tortuscript.progreso_childprofile import ProgresoChildProfile
-from tortuscript.progreso_contrato import importar_snapshot
 from tortuscript.runtime_educativo import RuntimeEducativo
 from tortuscript.rate_limit import RateLimiter
 
