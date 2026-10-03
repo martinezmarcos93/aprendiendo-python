@@ -83,6 +83,23 @@ class AuthRepository:
         self.marcar_verificada(account_id)
         return account_id
 
+    def create_verification_token_for_email(self, email):
+        """Crea token solo para cuentas existentes aún no verificadas.
+
+        Devuelve None tanto para correos desconocidos como verificados para que
+        la ruta HTTP pueda responder de forma indistinguible.
+        """
+        email = (email or "").strip().lower()
+        if not email:
+            return None
+        with self._db() as db:
+            row = db.execute(
+                "SELECT id,verified_at FROM accounts WHERE email=?", (email,)
+            ).fetchone()
+        if not row or row["verified_at"]:
+            return None
+        return self.create_verification_token(row["id"])
+
     def create_recovery_token(self, email):
         email = (email or "").strip().lower()
         with self._db() as db:
