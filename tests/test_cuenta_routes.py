@@ -66,6 +66,34 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(registro_page.status_code, 200)
         self.assertIn("Crear cuenta adulta", registro_page.get_data(as_text=True))
 
+    def test_registro_y_recuperacion_fallan_cerrado_sin_sender_email(self):
+        self.app.config["ACCOUNT_EMAIL_SENDER"] = None
+
+        registro = self.client.post("/cuenta/registro", json={
+            "email": "sin-correo@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(registro.status_code, 503)
+        self.assertEqual(registro.json["codigo"], "envio_email_no_configurado")
+
+        registro_html = self.client.post("/cuenta/registrar", data={
+            "email": "sin-correo-html@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(registro_html.status_code, 503)
+
+        repo = CuentaRepository(self.tmp / "cuentas.sqlite3")
+        repo.ensure_schema()
+        self.assertIsNone(repo.obtener_account_por_email("sin-correo@example.com"))
+        self.assertIsNone(repo.obtener_account_por_email("sin-correo-html@example.com"))
+
+        recuperacion = self.client.post(
+            "/cuenta/recuperar",
+            json={"email": "cualquiera@example.com"},
+        )
+        self.assertEqual(recuperacion.status_code, 503)
+        self.assertEqual(recuperacion.json["codigo"], "envio_email_no_configurado")
+
     def test_registro_password_invalida_no_reserva_email(self):
         invalido = self.client.post("/cuenta/registro", json={
             "email": "reintento@example.com",
