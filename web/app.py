@@ -97,6 +97,10 @@ def create_app(token=None):
     app.config["ACCOUNT_DB"] = Path(app.instance_path) / "cuentas.sqlite3"
     app.config["ACCOUNT_COOKIE_SECURE"] = False
     app.config["ACCOUNT_COOKIE_SAMESITE"] = "Lax"
+    # La migración desde perfiles locales legados puede exponer datos entre
+    # cuentas en una instalación compartida. Solo habilitar en modo local,
+    # de un único usuario, mediante configuración explícita.
+    app.config["ENABLE_LOCAL_PROGRESS_MIGRATION"] = False
     app.register_blueprint(cuenta_bp)
     # Pistas vistas por (perfil, lección, paso): se reinician al abrir el ejercicio o la lección.
     pistas_vistas = {}
