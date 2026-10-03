@@ -5,7 +5,7 @@ No activa todavía el despliegue remoto: create_app mantiene el límite localhos
 """
 from pathlib import Path
 
-from flask import Blueprint, current_app, jsonify, make_response, redirect, render_template, request, url_for
+from flask import Blueprint, abort, current_app, jsonify, make_response, redirect, render_template, request, url_for
 
 from tortuscript.acceso import AccesoProducto
 from tortuscript.auth import AuthError, AuthRepository
