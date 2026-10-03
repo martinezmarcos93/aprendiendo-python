@@ -69,3 +69,14 @@ No desactivar autenticación, token local, aislamiento por perfil ni protección
 La ejecución más reciente [37129180624](https://github.com/martinezmarcos93/tortuscript/actions/runs/37129180624), commit b9179881245c6f3046311367416355838d9ef7a1, terminó correctamente en Python 3.9 y 3.12. Pasaron las pruebas Python/JavaScript y el validador de contenido, incluida la nueva regresión autenticada de evaluación y aislamiento de progreso entre perfiles.
 
 Esto **no marca como realizadas** las pruebas que requieren tu entorno: arranque de tu copia, comprobación visual responsive en navegador/dispositivo y migración v2→v3 contra una copia de una base local real. Esas comprobaciones siguen en esta lista para ejecutarlas después del pull y con datos de prueba; no accedí a tu copia local.
+
+
+## Estado actualizado de pruebas — 2026-10-03
+
+CI final: [37131712662](https://github.com/martinezmarcos93/tortuscript/actions/runs/37131712662), commit `736393a6356aaf727369dbc2472eb2ca1256de39`.
+
+**Comprobado en CI:** 613 tests Python en cada versión (3.9 y 3.12), validador de contenido, responsive Chromium sin desbordes en la matriz definida, contraste automatizado sin problemas y recorrido de 108 lecciones/541 pasos sin errores de consola.
+
+**Sigue pendiente de entorno/autorización:** probar una copia local real con migración v2→v3; validar interacción táctil, teclado y tecnologías de asistencia en dispositivos físicos; integrar envío real de correo y confirmar las puertas operativas/comerciales enumeradas en el barrido. No accedí a la copia local de Marcos.
+
+La suite de contrato comercial/educativo es ahora bloqueante en CI. Los jobs de navegador se omiten en commits cuyo mensaje comienza con `docs:`, para que las actualizaciones documentales no vuelvan a ejecutar el recorrido de 108 lecciones.

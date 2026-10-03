@@ -201,3 +201,31 @@ Se añadió una prueba de integración autenticada para la práctica espaciada: 
 Con las regresiones anteriores de evaluación de ejercicio y paso de lección, la suite cubre ahora los tres caminos de evaluación canónicos —ejercicio, paso de lección y práctica— junto con persistencia y aislamiento entre perfiles. Las rutas heredadas de escritura directa continúan rechazando los intentos de asignar puntuación desde el cliente.
 
 La validación de UX móvil en navegador/dispositivo y la migración v2→v3 contra una copia local real siguen siendo tareas manuales bloqueadas por entorno/autorización; no se declaran completadas por el CI.
+
+
+## Cierre de integración y auditoría de navegador — 2026-10-03
+
+CI final: [37131712662](https://github.com/martinezmarcos93/tortuscript/actions/runs/37131712662), commit `736393a6356aaf727369dbc2472eb2ca1256de39`.
+
+### Resultados comprobados
+
+- 613 tests Python aprobados en Python 3.9 y 3.12; validador de contenido correcto.
+- Responsive Chromium: sin desbordes en 320×800, 375×812, 390×844 y 768×1024.
+- Contraste normal/alto: sin problemas detectados por el auditor automatizado.
+- Recorrido Playwright de los nueve cursos: 108 lecciones, 541 pasos, 4.520 XP de prueba, cero errores de consola.
+
+### Defectos detectados y corregidos por la auditoría
+
+- El mapa curricular tenía etiquetas con relación de contraste 3,67:1; el texto ahora usa el color de alto contraste y conserva la identidad del nivel en el borde.
+- Una actividad HTML pedía dos fichas `h1` pero solo ofrecía una. Se añadió la ficha faltante.
+- El validador ahora comprueba la multiplicidad de fichas en pasos `completar`, también para HTML/CSS/JavaScript; una prueba de regresión impide reintroducirlo.
+- El servidor de prueba crea cuenta, perfil y sesión en SQLite temporal; el bootstrap existe solo en el servidor de prueba. No toca la copia local.
+- El recorrido de navegador espera la progresión asíncrona después de pasos de explicación y reconoce los botones de los editores web y SQL.
+
+### Límites pendientes fuera del CI
+
+- Migración v2→v3 contra una copia real de la base local: pendiente de autorización expresa de Marcos.
+- Prueba física en móviles/tablets, teclado y tecnologías de asistencia: la matriz automatizada no sustituye estas pruebas.
+- Entrega real de correo/outbox, limitación de tasa compartida multi-worker, revisión jurídica argentina de datos de menores, pagos y sincronización remota: puertas de lanzamiento, no se declaran cerradas por esta auditoría.
+
+**Estado:** barridos técnicos 2 + 3 cerrados en su alcance automatizado, con límites manuales y operativos identificados.

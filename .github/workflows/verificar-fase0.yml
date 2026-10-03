@@ -47,6 +47,7 @@ jobs:
         run: python herramientas/validar_contenido.py
 
   auditoria-navegador:
+    if: ${{ !startsWith(github.event.head_commit.message, 'docs:') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
