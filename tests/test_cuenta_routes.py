@@ -153,6 +153,18 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(verificado.status_code, 200)
         self.assertEqual(verificado.json["estado"], "correo_verificado")
 
+    def test_reenvio_aplica_limite_por_ip(self):
+        for _ in range(5):
+            respuesta = self.client.post("/cuenta/reenviar-verificacion", json={
+                "email": "ausente@example.com",
+            })
+            self.assertEqual(respuesta.status_code, 202)
+        bloqueado = self.client.post("/cuenta/reenviar-verificacion", json={
+            "email": "otro@example.com",
+        })
+        self.assertEqual(bloqueado.status_code, 429)
+        self.assertIn("Retry-After", bloqueado.headers)
+
     def test_reenvio_no_revela_si_correo_existe_o_ya_esta_verificado(self):
         email = "ya-verificada@example.com"
         creado = self.client.post("/cuenta/registro", json={
