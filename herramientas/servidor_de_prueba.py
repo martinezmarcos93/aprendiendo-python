@@ -60,7 +60,7 @@ def preparar_sesion_de_prueba(app, directorio):
     raw_session, csrf, _ = auth.create_session(cuenta.id)
     auth.select_profile(raw_session, perfil.id)
 
-    @app.get("/__test__/bootstrap")
+    @app.get("/cuenta/__test__/bootstrap")
     def bootstrap():
         respuesta = make_response("Sesión de prueba inicializada")
         respuesta.set_cookie(
