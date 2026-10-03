@@ -226,20 +226,19 @@ class TestWebCamino(Base):
         return respuesta.json["progreso"]
 
     def _guardar_progreso_cuenta(self, datos):
+        # Preparación de estado de prueba fuera de la API pública de escritura.
+        from tortuscript.progreso_contrato import ProgresoSnapshot
+        from tortuscript.progreso_childprofile import ProgresoChildProfile
+
         snapshot = self._progreso_cuenta()
-        respuesta = self.c.put(
-            "/cuenta/progreso",
-            json={
-                "contract_version": snapshot["contract_version"],
-                "profile_id": snapshot["profile_id"],
-                "updated_at": datetime.now(timezone.utc).isoformat(),
-                "data": datos,
-            },
-            headers={"X-Tortu-CSRF": self.csrf},
+        guardado = ProgresoSnapshot(
+            profile_id=snapshot["profile_id"],
+            schema_version=snapshot["contract_version"],
+            updated_at=datetime.now(timezone.utc).isoformat(),
+            data=datos,
         )
-        if respuesta.status_code != 200:
-            raise AssertionError(f"no se pudo guardar el progreso del ChildProfile: {respuesta.status_code} {respuesta.get_data(as_text=True)}")
-        return respuesta
+        ProgresoChildProfile(self._dir / "progreso_perfiles").guardar(guardado)
+        return guardado
 
     def _terminar_hasta(self, leccion_id):
         """Prepara el snapshot comercial con las lecciones previas ya completadas."""
