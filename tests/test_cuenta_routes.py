@@ -95,6 +95,13 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(recuperacion.status_code, 503)
         self.assertEqual(recuperacion.json["codigo"], "envio_email_no_configurado")
 
+        reenvio = self.client.post(
+            "/cuenta/reenviar-verificacion",
+            json={"email": "cualquiera@example.com"},
+        )
+        self.assertEqual(reenvio.status_code, 503)
+        self.assertEqual(reenvio.json["codigo"], "envio_email_no_configurado")
+
     def test_registro_password_invalida_no_reserva_email(self):
         invalido = self.client.post("/cuenta/registro", json={
             "email": "reintento@example.com",
