@@ -53,17 +53,17 @@ def preparar_sesion_educativa(app, client, email="prueba@example.com", nombre="A
     else:
         # Deja el perfil comercial en el estado real de primera visita, con snapshot persistido.
         from tortuscript.progreso import PROGRESO_INICIAL
-        documento = {
-            "contract_version": 1,
-            "profile_id": profile_id,
-            "updated_at": "2026-10-02T00:00:00+00:00",
-            "data": copy.deepcopy(PROGRESO_INICIAL),
-        }
-        documento["data"]["config"]["onboarding"] = False
-        guardado = client.put(
-            "/cuenta/progreso", json=documento, headers={"X-Tortu-CSRF": csrf}
+        from tortuscript.progreso_contrato import ProgresoSnapshot
+        from tortuscript.progreso_childprofile import ProgresoChildProfile
+
+        datos = copy.deepcopy(PROGRESO_INICIAL)
+        datos["config"]["onboarding"] = False
+        snapshot = ProgresoSnapshot(
+            profile_id=profile_id,
+            schema_version=1,
+            updated_at="2026-10-02T00:00:00+00:00",
+            data=datos,
         )
-        if guardado.status_code != 200:
-            raise AssertionError(f"snapshot inicial de fixture: {guardado.status_code} {guardado.get_data(as_text=True)}")
+        ProgresoChildProfile(app.config["PROGRESS_DIR"]).guardar(snapshot)
 
     return {"csrf": csrf, "perfil_id": profile_id, "headers": {"X-Tortu-Token": token}}
