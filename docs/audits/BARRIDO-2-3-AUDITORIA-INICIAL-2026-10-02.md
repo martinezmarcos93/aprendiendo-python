@@ -128,3 +128,5 @@ La migración llamaba a `cargar_progreso(nombre)`, que devuelve el progreso inic
 - No se habilitan pagos, despliegue remoto ni sincronización.
 - No se relajan autenticación, CSRF, rate limiting ni aislamiento de perfiles.
 - Todo cambio de persistencia debe incluir prueba de migración/esquema y regresión.
+
+**Mitigación adicional:** las rutas HTTP para listar e importar perfiles locales quedaron deshabilitadas por defecto mediante `ENABLE_LOCAL_PROGRESS_MIGRATION=False`. Solo una instalación local de un único usuario debe activar la opción explícitamente. Se añadieron pruebas para comprobar el 404 por defecto y que, al habilitarla, sigue siendo obligatoria una sesión válida.
