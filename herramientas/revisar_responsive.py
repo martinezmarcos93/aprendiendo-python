@@ -16,7 +16,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
 sys.path.insert(0, str(RAIZ / "herramientas"))
 
-ANCHOS = (320, 360, 414, 768)
+VIEWPORTS = ((320, 800), (375, 812), (390, 844), (768, 1024))
 RUTAS = ["/", "/leccion/hola-mundo", "/referencia", "/mapa", "/resumen", "/logros", "/liga", "/experimentar", "/tortuga",
          "/proyectos", "/repaso", "/practica", "/bienvenida", "/ayuda", "/leccion/laberinto-1", "/leccion/rpg-heroe",
          "/juego", "/leccion/juego-ganar", "/no-existe"]   # la última: página de error 404
@@ -51,8 +51,8 @@ def main():
         pg.evaluate("t => fetch('/api/onboarding', {method: 'POST', headers: {'Content-Type': 'application/json', "
                     "'X-Tortu-Token': t}, body: JSON.stringify({meta_min: 10})})", "prueba")
         pg.wait_for_timeout(400)
-        for ancho in ANCHOS:
-            pg.set_viewport_size({"width": ancho, "height": 800})
+        for ancho, alto in VIEWPORTS:
+            pg.set_viewport_size({"width": ancho, "height": alto})
             for ruta in RUTAS:
                 pg.goto(args.url + ruta)
                 pg.wait_for_timeout(200)
@@ -67,8 +67,8 @@ def main():
         import jugar_cursos
         from tortuscript import contenido
         leccion = contenido.cargar_curso()["secciones"][0]["lecciones"][0]
-        for ancho in ANCHOS:
-            pg.set_viewport_size({"width": ancho, "height": 800})
+        for ancho, alto in VIEWPORTS:
+            pg.set_viewport_size({"width": ancho, "height": alto})
             pg.goto(f"{args.url}/leccion/hola-mundo")
             for i, paso in enumerate(leccion["pasos"]):
                 pg.wait_for_timeout(250)
