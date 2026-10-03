@@ -63,7 +63,7 @@ def main():
     with sync_playwright() as p:
         navegador = p.chromium.launch()
         pg = navegador.new_page(viewport={"width": 1280, "height": 900})
-        pg.goto(args.url + "/__test__/bootstrap")
+        pg.goto(args.url + "/cuenta/__test__/bootstrap")
         pg.goto(args.url + "/bienvenida")
         api = ("args => fetch(args[2], {method: 'POST', headers: {'Content-Type': 'application/json', "
                "'X-Tortu-Token': args[0]}, body: JSON.stringify(args[1])})")
