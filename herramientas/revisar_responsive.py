@@ -5,7 +5,7 @@ Requiere Playwright (opcional) y un servidor de prueba andando:
     python herramientas/servidor_de_prueba.py            (en otra terminal)
     python herramientas/revisar_responsive.py [--url http://127.0.0.1:5077] [--capturas carpeta]
 
-Prueba anchos de 320, 360, 414 y 768 px sobre las páginas principales y sobre un paso de cada tipo
+Prueba los viewports obligatorios 320×800, 375×812, 390×844 y 768×1024 sobre las páginas principales y sobre un paso de cada tipo
 de lección. Sale con código 1 si algo se desborda; con --capturas guarda una imagen de cada caso.
 """
 import argparse
