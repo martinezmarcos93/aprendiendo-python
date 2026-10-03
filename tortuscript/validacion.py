@@ -10,6 +10,7 @@ Revisa TODO lo que un chico va a ver, sin abrir la app:
 Uso: validar_curso(curso) -> list[Hallazgo];  herramientas/validar_contenido.py lo imprime.
 """
 import ast
+from collections import Counter
 import itertools
 import re
 from dataclasses import dataclass
@@ -258,6 +259,15 @@ def _validar_paso(paso, donde, hallazgos):
         faltantes = [r for r in respuesta if r not in paso["fichas"]]
         if faltantes:
             hallazgos.append(Hallazgo(ERROR, donde, f"respuestas que no están entre las fichas: {faltantes}"))
+        disponibles = Counter(paso["fichas"])
+        necesarias = Counter(respuesta)
+        insuficientes = {ficha: cantidad for ficha, cantidad in necesarias.items()
+                         if cantidad > disponibles[ficha]}
+        if insuficientes:
+            hallazgos.append(Hallazgo(
+                ERROR, donde,
+                f"faltan fichas duplicadas para respuestas repetidas: {insuficientes}",
+            ))
         codigo = paso["codigo"]
         for r in respuesta:
             codigo = codigo.replace(HUECO, r, 1)
