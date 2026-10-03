@@ -108,6 +108,85 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(valido.status_code, 202)
         self.assertEqual(valido.json["estado"], "pendiente_verificacion")
 
+    def test_fallo_de_proveedor_no_rompe_registro_y_se_puede_reintentar(self):
+        def proveedor_roto(**payload):
+            raise RuntimeError("fallo simulado del proveedor")
+
+        self.app.config["ACCOUNT_EMAIL_SENDER"] = proveedor_roto
+        registro = self.client.post("/cuenta/registro", json={
+            "email": "reintento-correo@example.com",
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(registro.status_code, 503)
+        self.assertEqual(registro.json["codigo"], "envio_email_fallido")
+
+        repo = CuentaRepository(self.tmp / "cuentas.sqlite3")
+        repo.ensure_schema()
+        cuenta = repo.obtener_account_por_email("reintento-correo@example.com")
+        self.assertIsNotNone(cuenta)
+        auth = AuthRepository(self.tmp / "cuentas.sqlite3")
+        with auth._db() as db:
+            row = db.execute(
+                "SELECT password_hash,verified_at FROM accounts WHERE id=?", (cuenta.id,)
+            ).fetchone()
+        self.assertTrue(row["password_hash"])
+        self.assertIsNone(row["verified_at"])
+
+        self.app.config["ACCOUNT_EMAIL_SENDER"] = lambda **payload: self.emails.append(payload)
+        reenvio = self.client.post("/cuenta/reenviar-verificacion", json={
+            "email": "REINTENTO-CORREO@example.com",
+        })
+        self.assertEqual(reenvio.status_code, 202)
+        self.assertEqual(reenvio.json["estado"], "solicitud_recibida")
+        self.assertEqual(len(self.emails), 1)
+        self.assertEqual(self.emails[0]["tipo"], "verification")
+        verificado = self.client.post("/cuenta/verificar-email", json={
+            "token": self.emails[0]["token"],
+        })
+        self.assertEqual(verificado.status_code, 200)
+        self.assertEqual(verificado.json["estado"], "correo_verificado")
+
+    def test_reenvio_no_revela_si_correo_existe_o_ya_esta_verificado(self):
+        email = "ya-verificada@example.com"
+        creado = self.client.post("/cuenta/registro", json={
+            "email": email, "password": "una-clave-larga-123",
+        })
+        self.assertEqual(creado.status_code, 202)
+        cuenta_id = "acc_" + __import__("hashlib").sha256(email.encode()).hexdigest()[:24]
+        AuthRepository(self.tmp / "cuentas.sqlite3").marcar_verificada(cuenta_id)
+        self.emails.clear()
+
+        desconocido = self.client.post("/cuenta/reenviar-verificacion", json={
+            "email": "no-existe@example.com",
+        })
+        verificado = self.client.post("/cuenta/reenviar-verificacion", json={
+            "email": email,
+        })
+        self.assertEqual(desconocido.status_code, 202)
+        self.assertEqual(verificado.status_code, 202)
+        self.assertEqual(desconocido.json, verificado.json)
+        self.assertEqual(self.emails, [])
+
+    def test_fallo_de_proveedor_en_recuperacion_no_filtra_estado_de_cuenta(self):
+        email = "recuperar-correo@example.com"
+        self.client.post("/cuenta/registro", json={
+            "email": email, "password": "una-clave-larga-123",
+        })
+        cuenta_id = "acc_" + __import__("hashlib").sha256(email.encode()).hexdigest()[:24]
+        AuthRepository(self.tmp / "cuentas.sqlite3").marcar_verificada(cuenta_id)
+
+        def proveedor_roto(**payload):
+            raise RuntimeError("fallo simulado del proveedor")
+
+        self.app.config["ACCOUNT_EMAIL_SENDER"] = proveedor_roto
+        recuperacion = self.client.post("/cuenta/recuperar", json={"email": email})
+        desconocido = self.client.post(
+            "/cuenta/recuperar", json={"email": "ausente@example.com"}
+        )
+        self.assertEqual(recuperacion.status_code, 202)
+        self.assertEqual(desconocido.status_code, 202)
+        self.assertEqual(recuperacion.json, desconocido.json)
+
     def test_registro_aplica_rate_limit_por_ip_y_devuelve_retry_after(self):
         for indice in range(5):
             respuesta = self.client.post("/cuenta/registro", json={
