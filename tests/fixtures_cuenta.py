@@ -7,6 +7,10 @@ from tortuscript.auth import AuthRepository
 
 def preparar_sesion_educativa(app, client, email="prueba@example.com", nombre="Ana", token="test-token", complete_onboarding=True):
     """Crea cuenta verificada, inicia sesión, selecciona ChildProfile y completa onboarding."""
+    # Las pruebas sustituyen el proveedor externo por un sender inocuo; nunca
+    # envían correos reales desde CI.
+    if not callable(app.config.get("ACCOUNT_EMAIL_SENDER")):
+        app.config["ACCOUNT_EMAIL_SENDER"] = lambda **payload: None
     db = app.config["ACCOUNT_DB"]
     # Rate limits are process-wide in tests; isolate each temporary account database.
     parte, dominio = email.rsplit("@", 1)
