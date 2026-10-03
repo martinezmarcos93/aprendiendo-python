@@ -55,6 +55,17 @@ class MigracionProgresoTests(unittest.TestCase):
         self.assertEqual(snapshot.profile_id, self.perfil.id)
         self.assertEqual(snapshot.data["xp_total"], 123)
 
+    def test_rechaza_nombre_de_perfil_no_textual_sin_error_500(self):
+        for nombre in (None, [], {}, 17):
+            with self.subTest(nombre=nombre):
+                with self.assertRaises(MigracionProgresoError):
+                    self.migracion.importar_local(self.session, nombre)
+
+    def test_rechaza_perfil_local_inexistente(self):
+        with self.assertRaises(MigracionProgresoError):
+            self.migracion.importar_local(self.session, "perfil_que_no_existe")
+        self.assertIsNone(self.service.cargar_progreso(self.session))
+
     def test_no_reemplaza_progreso_comercial_sin_confirmacion(self):
         self.service.guardar_progreso(self.session, nuevo_snapshot(self.perfil.id, {"xp_total": 999}))
         with self.assertRaises(MigracionProgresoError):
