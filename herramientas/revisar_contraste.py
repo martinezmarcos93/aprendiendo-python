@@ -12,8 +12,8 @@ como las lecciones bloqueadas) no se cuentan.
 import argparse
 import sys
 
-RUTAS = ["/", "/leccion/hola-mundo", "/referencia", "/mapa", "/resumen", "/logros", "/liga", "/experimentar",
-         "/tortuga", "/proyectos", "/repaso", "/practica", "/bienvenida", "/ayuda", "/leccion/laberinto-1",
+RUTAS = ["/", "/bienvenida", "/aprender", "/leccion/hola-mundo", "/ejercicios/1", "/referencia", "/mapa", "/resumen", "/logros", "/liga", "/experimentar",
+         "/tortuga", "/proyectos", "/proyectos-integradores", "/repaso", "/practica", "/ayuda", "/leccion/laberinto-1",
          "/leccion/rpg-heroe", "/juego", "/leccion/juego-ganar", "/no-existe"]   # la última: página de error 404
 
 JS = r"""
