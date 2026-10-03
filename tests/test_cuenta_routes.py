@@ -2,6 +2,7 @@
 import shutil
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from web.app import create_app
@@ -811,6 +812,89 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(
             recuperado.json["progreso"]["data"]["config"]["nombre"], "Ana"
         )
+
+
+    def test_practica_canonica_autenticada_persiste_en_perfil_activo(self):
+        email = "practica-integrada@example.com"
+        self.client.post("/cuenta/registro", json={
+            "email": email, "password": "una-clave-larga-123",
+        })
+        cuenta_id = "acc_" + __import__("hashlib").sha256(email.encode()).hexdigest()[:24]
+        AuthRepository(self.tmp / "cuentas.sqlite3").marcar_verificada(cuenta_id)
+        login = self.client.post("/cuenta/login", json={
+            "email": email, "password": "una-clave-larga-123",
+        })
+        self.assertEqual(login.status_code, 200)
+        csrf = login.json["csrf"]
+        creado = self.client.post(
+            "/cuenta/perfiles", json={"nombre": "Practica"},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(creado.status_code, 201)
+        perfil_id = creado.json["perfil"]["id"]
+        seleccionado = self.client.post(
+            "/cuenta/perfil", json={"perfil_id": perfil_id},
+            headers={"X-Tortu-CSRF": csrf},
+        )
+        self.assertEqual(seleccionado.status_code, 200)
+
+        onboarding = self.client.post("/api/onboarding", json={
+            "nombre": "Practica", "experiencia": "nunca", "meta_min": 5,
+        }, headers={"X-Tortu-Token": "test-token"})
+        self.assertEqual(onboarding.status_code, 200, onboarding.get_data(as_text=True))
+
+        # Completar los pasos rápidos crea tarjetas vencidas cuando avanzamos
+        # el reloj de la aplicación de prueba dos días, sin tocar el reloj real.
+        respuestas = {
+            0: True,
+            1: "mostrar",
+            2: ["mostrar"],
+            3: ['mostrar "Hola"', 'mostrar "Chau"'],
+            4: "Buen día",
+        }
+        for indice, respuesta in respuestas.items():
+            comprobado = self.client.post(
+                f"/api/lecciones/hola-mundo/pasos/{indice}/comprobar",
+                json={"respuesta": respuesta},
+                headers={"X-Tortu-Token": "test-token"},
+            )
+            self.assertEqual(
+                comprobado.status_code, 200,
+                f"paso {indice}: {comprobado.get_data(as_text=True)}",
+            )
+            self.assertTrue(comprobado.json["ok"])
+
+        progreso_antes = self.client.get("/cuenta/progreso")
+        self.assertEqual(progreso_antes.status_code, 200)
+        xp_antes = progreso_antes.json["progreso"]["data"]["xp_total"]
+
+        fecha_real = __import__("datetime").date
+        delta = __import__("datetime").timedelta
+
+        class FechaFutura(fecha_real):
+            @classmethod
+            def today(cls):
+                return fecha_real.today() + delta(days=2)
+
+        with patch("web.app.date", FechaFutura):
+            pagina = self.client.get("/practica")
+            self.assertEqual(pagina.status_code, 200, pagina.get_data(as_text=True))
+            respuesta = self.client.post(
+                "/api/practica/comprobar",
+                json={"leccion": "hola-mundo", "paso": 1, "respuesta": "mostrar"},
+                headers={"X-Tortu-Token": "test-token"},
+            )
+        self.assertEqual(respuesta.status_code, 200, respuesta.get_data(as_text=True))
+        self.assertTrue(respuesta.json["ok"])
+
+        progreso_despues = self.client.get("/cuenta/progreso")
+        self.assertEqual(progreso_despues.status_code, 200)
+        self.assertEqual(progreso_despues.json["perfil"]["id"], perfil_id)
+        self.assertEqual(
+            progreso_despues.json["progreso"]["data"]["xp_total"], xp_antes + 2
+        )
+        tarjeta = progreso_despues.json["progreso"]["data"]["repaso"]["hola-mundo:1"]
+        self.assertEqual(tarjeta["aciertos"], 1)
 
 if __name__ == "__main__":
     unittest.main()
