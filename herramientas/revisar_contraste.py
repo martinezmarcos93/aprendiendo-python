@@ -64,8 +64,8 @@ def main():
         navegador = p.chromium.launch()
         pg = navegador.new_page(viewport={"width": 1280, "height": 900})
         pg.goto(args.url + "/bienvenida")
-        api = ("(t, cuerpo, ruta) => fetch(ruta, {method: 'POST', headers: {'Content-Type': 'application/json', "
-               "'X-Tortu-Token': t}, body: JSON.stringify(cuerpo)})")
+        api = ("args => fetch(args[2], {method: 'POST', headers: {'Content-Type': 'application/json', "
+               "'X-Tortu-Token': args[0]}, body: JSON.stringify(args[1])})")
         pg.evaluate(api, ["prueba", {"meta_min": 10}, "/api/onboarding"])
         for modo in ("normal", "alto"):
             pg.evaluate(api, ["prueba", {"contraste": modo}, "/api/ajustes"])
