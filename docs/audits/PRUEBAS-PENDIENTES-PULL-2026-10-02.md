@@ -62,3 +62,10 @@ Anotar por prueba: **OK / FALLA / BLOQUEADA**, commit probado, pasos exactos, re
 ## Regla de seguridad
 
 No desactivar autenticación, token local, aislamiento por perfil ni protección CSRF para conseguir que pasen tests antiguos. Si una expectativa de test contradice el contrato vigente, actualizar el fixture o documentar la incompatibilidad después de verificar el comportamiento esperado.
+
+
+## Actualización de CI — 2026-10-03
+
+La ejecución más reciente [37129180624](https://github.com/martinezmarcos93/tortuscript/actions/runs/37129180624), commit b9179881245c6f3046311367416355838d9ef7a1, terminó correctamente en Python 3.9 y 3.12. Pasaron las pruebas Python/JavaScript y el validador de contenido, incluida la nueva regresión autenticada de evaluación y aislamiento de progreso entre perfiles.
+
+Esto **no marca como realizadas** las pruebas que requieren tu entorno: arranque de tu copia, comprobación visual responsive en navegador/dispositivo y migración v2→v3 contra una copia de una base local real. Esas comprobaciones siguen en esta lista para ejecutarlas después del pull y con datos de prueba; no accedí a tu copia local.
