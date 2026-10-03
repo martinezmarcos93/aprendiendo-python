@@ -9,7 +9,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from flask import make_response
+from flask import make_response, request
 
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ))
@@ -62,6 +62,14 @@ def preparar_sesion_de_prueba(app, directorio):
 
     @app.get("/cuenta/__test__/bootstrap")
     def bootstrap():
+        nombre = (request.args.get("perfil") or "Prueba").strip()[:60] or "Prueba"
+        perfil_actual = next(
+            (p for p in cuentas.listar_child_profiles(cuenta.id) if p.display_name == nombre),
+            None,
+        )
+        if perfil_actual is None:
+            perfil_actual = cuentas.crear_child_profile(cuenta.id, nombre)
+        auth.select_profile(raw_session, perfil_actual.id)
         respuesta = make_response("Sesión de prueba inicializada")
         respuesta.set_cookie(
             "tortu_session", raw_session, httponly=True, secure=False,
