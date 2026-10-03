@@ -49,10 +49,16 @@ def _limit_or_429(key, limit, window):
     respuesta.headers["Retry-After"] = str(retry_after)
     return respuesta, 429
 
+def _email_sender_configurado():
+    return callable(current_app.config.get("ACCOUNT_EMAIL_SENDER"))
+
+
 def _emitir_email(tipo, email, token, expires):
     sender = current_app.config.get("ACCOUNT_EMAIL_SENDER")
-    if callable(sender):
-        sender(tipo=tipo, email=email, token=token, expires=expires)
+    if not callable(sender):
+        return False
+    sender(tipo=tipo, email=email, token=token, expires=expires)
+    return True
 
 def _cookie_config():
     return {
@@ -140,6 +146,11 @@ def registrar_post():
     password = datos.get("password")
     if not isinstance(email, str) or not isinstance(password, str):
         return render_template("cuenta/registrar.html", error="Correo y contraseña son obligatorios."), 400
+    if not _email_sender_configurado():
+        return render_template(
+            "cuenta/registrar.html",
+            error="El registro no está disponible porque el envío de correo no está configurado.",
+        ), 503
     cuentas, auth = _repos()
     try:
         auth.validar_password(password)
@@ -164,6 +175,12 @@ def registro():
     password = datos.get("password")
     if not isinstance(email, str) or not isinstance(password, str):
         return jsonify(ok=False, mensaje="Correo y contraseña son obligatorios."), 400
+    if not _email_sender_configurado():
+        return jsonify(
+            ok=False,
+            codigo="envio_email_no_configurado",
+            mensaje="El registro no está disponible porque el envío de correo no está configurado.",
+        ), 503
     cuentas, auth = _repos()
     try:
         auth.validar_password(password)
@@ -210,6 +227,14 @@ def confirmar_verificacion_email():
 
 @bp.post("/recuperar")
 def solicitar_recuperacion():
+    # La respuesta no depende de que la cuenta exista; solo indica si el canal
+    # global de correo está disponible en esta instalación.
+    if not _email_sender_configurado():
+        return jsonify(
+            ok=False,
+            codigo="envio_email_no_configurado",
+            mensaje="La recuperación no está disponible porque el envío de correo no está configurado.",
+        ), 503
     datos = request.get_json(silent=True) or {}
     email = datos.get("email")
     if isinstance(email, str):
