@@ -426,6 +426,8 @@ def acceso_producto():
 
 @bp.get("/progreso/locales")
 def listar_progresos_locales():
+    if not current_app.config.get("ENABLE_LOCAL_PROGRESS_MIGRATION", False):
+        abort(404)
     raw = request.cookies.get("tortu_session")
     try:
         locales = MigracionProgresoLocal(_educativo()).listar_locales(raw)
@@ -436,6 +438,8 @@ def listar_progresos_locales():
 
 @bp.post("/progreso/importar-local")
 def importar_progreso_local():
+    if not current_app.config.get("ENABLE_LOCAL_PROGRESS_MIGRATION", False):
+        abort(404)
     raw = request.cookies.get("tortu_session")
     resultado = _require_session()
     if not resultado:
