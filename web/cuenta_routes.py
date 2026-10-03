@@ -3,6 +3,7 @@
 La ruta de cuenta usa la infraestructura server-side de tortuscript.auth.
 No activa todavía el despliegue remoto: create_app mantiene el límite localhost.
 """
+import logging
 from pathlib import Path
 
 from flask import Blueprint, abort, current_app, jsonify, make_response, redirect, render_template, request, url_for
@@ -20,6 +21,8 @@ def _rate_limiter():
     # Cada instancia Flask mantiene su propio limitador. Evita compartir estado
     # entre aplicaciones de prueba o instancias WSGI distintas en el mismo proceso.
     return current_app.extensions.setdefault("tortu_rate_limiter", RateLimiter())
+
+logger = logging.getLogger(__name__)
 
 bp = Blueprint("cuenta", __name__, url_prefix="/cuenta")
 
@@ -59,6 +62,15 @@ def _emitir_email(tipo, email, token, expires):
         return False
     sender(tipo=tipo, email=email, token=token, expires=expires)
     return True
+
+def _intentar_emitir_email(tipo, email, token, expires):
+    """Aísla fallos del proveedor para no convertirlos en errores HTTP inesperados."""
+    try:
+        return _emitir_email(tipo, email, token, expires)
+    except Exception:
+        # No registrar token ni dirección de correo en los logs.
+        logger.exception("Falló el envío de correo transaccional (tipo=%s)", tipo)
+        return False
 
 def _cookie_config():
     return {
@@ -161,7 +173,12 @@ def registrar_post():
     except AuthError as exc:
         return render_template("cuenta/registrar.html", error=str(exc)), 400
     token, expires = auth.create_verification_token(cuenta.id)
-    _emitir_email("verification", cuenta.email, token, expires)
+    if not _intentar_emitir_email("verification", cuenta.email, token, expires):
+        return render_template(
+            "cuenta/pendiente.html",
+            email=cuenta.email,
+            mensaje="No pudimos confirmar el envío. Podés solicitar otro enlace desde esta página.",
+        ), 503
     return render_template("cuenta/pendiente.html", email=cuenta.email), 202
 
 
@@ -191,7 +208,12 @@ def registro():
     except AuthError as exc:
         return jsonify(ok=False, mensaje=str(exc)), 400
     token, expires = auth.create_verification_token(cuenta.id)
-    _emitir_email("verification", cuenta.email, token, expires)
+    if not _intentar_emitir_email("verification", cuenta.email, token, expires):
+        return jsonify(
+            ok=False,
+            codigo="envio_email_fallido",
+            mensaje="No pudimos confirmar el envío. Solicitá otro enlace de verificación.",
+        ), 503
     return jsonify(ok=True, estado="pendiente_verificacion", email=cuenta.email), 202
 
 
@@ -225,6 +247,34 @@ def confirmar_verificacion_email():
     return render_template("cuenta/verificacion.html", ok=True)
 
 
+@bp.post("/reenviar-verificacion")
+def reenviar_verificacion():
+    """Reintenta el correo sin revelar si una cuenta existe o ya está verificada."""
+    limit = _limit_or_429(f"resend-verification:{request.remote_addr or 'unknown'}", 5, 3600)
+    if limit:
+        return limit
+    datos = request.form if request.form else (request.get_json(silent=True) or {})
+    email = datos.get("email")
+    if isinstance(email, str) and _email_sender_configurado():
+        _, auth = _repos()
+        token_info = auth.create_verification_token_for_email(email)
+        if token_info:
+            token, expires = token_info
+            _intentar_emitir_email("verification", email.strip().lower(), token, expires)
+    # Misma respuesta para correo inexistente, verificado o proveedor fallido.
+    if request.form:
+        return render_template(
+            "cuenta/pendiente.html",
+            email=email.strip() if isinstance(email, str) else "",
+            mensaje="Si la cuenta existe y todavía no está verificada, enviaremos un nuevo enlace.",
+        ), 202
+    return jsonify(
+        ok=True,
+        estado="solicitud_recibida",
+        mensaje="Si la cuenta existe y todavía no está verificada, enviaremos un nuevo enlace.",
+    ), 202
+
+
 @bp.post("/recuperar")
 def solicitar_recuperacion():
     # La respuesta no depende de que la cuenta exista; solo indica si el canal
@@ -247,7 +297,7 @@ def solicitar_recuperacion():
             token, expires = token_info
             cuenta = _repos()[0].obtener_account_por_email(email)
             if cuenta:
-                _emitir_email("recovery", cuenta.email, token, expires)
+                _intentar_emitir_email("recovery", cuenta.email, token, expires)
     return jsonify(ok=True, estado="solicitud_recibida"), 202
 
 
