@@ -70,6 +70,9 @@ jobs:
           exit 1
       - name: Auditoría responsive
         run: python herramientas/revisar_responsive.py --url http://127.0.0.1:5077 --capturas artifacts/responsive
+      - name: Recorrido de todos los cursos por navegador
+        if: always()
+        run: python herramientas/jugar_cursos.py --url http://127.0.0.1:5077
       - name: Auditoría de contraste WCAG AA
         if: always()
         run: python herramientas/revisar_contraste.py --url http://127.0.0.1:5077
