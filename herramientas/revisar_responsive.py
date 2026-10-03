@@ -69,7 +69,7 @@ def main():
         leccion = contenido.cargar_curso()["secciones"][0]["lecciones"][0]
         for ancho, alto in VIEWPORTS:
             pg.set_viewport_size({"width": ancho, "height": alto})
-            pg.goto(f"{args.url}/leccion/hola-mundo")
+            pg.goto(f"{args.url}/leccion/{leccion['id']}")
             for i, paso in enumerate(leccion["pasos"]):
                 pg.wait_for_timeout(250)
                 r = pg.evaluate(JS_DESBORDE)
