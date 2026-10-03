@@ -190,3 +190,14 @@ La prueba impide que la integración se considere cubierta únicamente por tests
 - Consentimiento, retención, exportación/supresión, revisión jurídica argentina, pagos y sincronización remota siguen siendo puertas de lanzamiento comercial, no funciones que esta rama deba simular como terminadas.
 
 **Estado:** barridos técnicos automatizados 2 + 3 cerrados con las salvedades anteriores documentadas. Esta actualización no autoriza merge a main.
+
+
+## Cobertura final del flujo educativo canónico — 2026-10-03
+
+CI [37129366763](https://github.com/martinezmarcos93/tortuscript/actions/runs/37129366763), commit 41855a724d7b2960e0221b8eb7b0c44dfa29fcad, terminó en verde en Python 3.9 y 3.12, incluyendo pruebas Python/JavaScript y validador de contenido.
+
+Se añadió una prueba de integración autenticada para la práctica espaciada: crea una cuenta y ChildProfile, completa onboarding y pasos rápidos por las rutas de evaluación, avanza el reloj de la aplicación de prueba sin modificar el reloj del sistema, abre la práctica, comprueba una tarjeta y verifica que los XP y el registro de repaso se persistan en el perfil activo.
+
+Con las regresiones anteriores de evaluación de ejercicio y paso de lección, la suite cubre ahora los tres caminos de evaluación canónicos —ejercicio, paso de lección y práctica— junto con persistencia y aislamiento entre perfiles. Las rutas heredadas de escritura directa continúan rechazando los intentos de asignar puntuación desde el cliente.
+
+La validación de UX móvil en navegador/dispositivo y la migración v2→v3 contra una copia local real siguen siendo tareas manuales bloqueadas por entorno/autorización; no se declaran completadas por el CI.
