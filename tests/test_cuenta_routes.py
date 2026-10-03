@@ -775,6 +775,19 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(evaluacion.json["evaluacion"]["estado"], "correcto")
         self.assertEqual(evaluacion.json["premio"]["xp"], 30)
 
+        # La ruta canónica de lección debe evaluar el mismo paso sin crear
+        # una segunda recompensa ni divergir del progreso del ejercicio.
+        evaluacion_leccion = self.client.post(
+            "/api/lecciones/hola-mundo/pasos/5/evaluar",
+            json={"codigo": 'mostrar "Hola mundo"'},
+            headers={"X-Tortu-Token": "test-token"},
+        )
+        self.assertEqual(
+            evaluacion_leccion.status_code, 200,
+            evaluacion_leccion.get_data(as_text=True),
+        )
+        self.assertEqual(evaluacion_leccion.json["evaluacion"]["estado"], "correcto")
+
         progreso_ana = self.client.get("/cuenta/progreso")
         self.assertEqual(progreso_ana.status_code, 200)
         self.assertEqual(progreso_ana.json["perfil"]["id"], perfiles["Ana"])
