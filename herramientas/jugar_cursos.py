@@ -79,7 +79,14 @@ def _jugar_paso(pg, paso):
     elif tipo == "escribir":
         pg.wait_for_selector(".paso-caja .CodeMirror")
         pg.evaluate("s => document.querySelector('.paso-caja .CodeMirror').CodeMirror.setValue(s)", paso["solucion"])
-        pg.click("text=▶ Jugar" if paso.get("juego") else "text=▶ Dibujar" if paso.get("tortuga") else "text=▶ Ejecutar")
+        boton = (
+            "text=▶ Probar" if paso.get("web")
+            else "text=▶ Ejecutar consulta" if paso.get("lenguaje") == "sql"
+            else "text=▶ Jugar" if paso.get("juego")
+            else "text=▶ Dibujar" if paso.get("tortuga")
+            else "text=▶ Ejecutar"
+        )
+        pg.click(boton)
         _esperar_pie(pg, entradas)
         pg.click("#lec-principal")
         return
