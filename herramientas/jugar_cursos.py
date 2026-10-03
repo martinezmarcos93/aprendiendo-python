@@ -94,6 +94,7 @@ def main():
         pg = navegador.new_page(viewport={"width": 1280, "height": 900})
         pg.on("console", lambda m: errores.append(m.text) if m.type == "error" else None)
         pg.on("pageerror", lambda e: errores.append(str(e)))
+        pg.goto(args.url + "/__test__/bootstrap")
         pg.goto(args.url + "/bienvenida")
         pg.evaluate("t => fetch('/api/onboarding', {method: 'POST', headers: {'Content-Type': 'application/json', "
                     "'X-Tortu-Token': t}, body: JSON.stringify({meta_min: 10})})", "prueba")
