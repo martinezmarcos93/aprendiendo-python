@@ -156,3 +156,37 @@ La migración llamaba a `cargar_progreso(nombre)`, que devuelve el progreso inic
 **Estado de verificación:** cambios enviados a la rama sweep/consolidacion-ux-v1; las ejecuciones de CI correspondientes están pendientes/en curso al registrar esta actualización. No se declara el barrido cerrado hasta confirmar CI verde en Python 3.9 y 3.12.
 
 **Próximo paso:** verificar el resultado del workflow más reciente; después completar el contrato de integración autenticado del flujo canónico (sesión → ChildProfile → onboarding/evaluación → persistencia → cambio de perfil → recuperación aislada). La comprobación de migración v2→v3 contra una copia local real sigue expresamente aplazada hasta autorización de Marcos; no acceder ni validar la copia local antes de esa autorización.
+
+
+## Actualización de verificación e integración — 2026-10-03
+
+**CI final verificado:** [37129180624](https://github.com/martinezmarcos93/tortuscript/actions/runs/37129180624), commit b9179881245c6f3046311367416355838d9ef7a1. Python 3.9 y 3.12 terminaron en verde; se completaron pruebas Python/JavaScript y validador de contenido.
+
+### Cierre técnico de B2-01
+
+Se agregó una regresión integrada autenticada que recorre:
+
+1. registro y verificación de una cuenta de prueba;
+2. inicio de sesión y creación de dos ChildProfiles;
+3. selección del perfil, onboarding y persistencia;
+4. evaluación correcta del primer ejercicio por la ruta canónica del servidor;
+5. evaluación del paso de lección equivalente;
+6. cambio al segundo perfil, confirmación de progreso independiente y vuelta al primero para recuperar sus XP y configuración.
+
+La prueba impide que la integración se considere cubierta únicamente por tests unitarios aislados. Los endpoints heredados que aceptaban puntuación o snapshots del cliente permanecen deshabilitados con HTTP 410.
+
+### Estado consolidado de los barridos 2 + 3
+
+- **B3/B4, integridad y límites de confianza:** correcciones de identidad de ChildProfile, validación de snapshots, rechazo de versiones/timestamps/datos inválidos, controles de registro y autenticación: CI verde.
+- **B2, recorrido autenticado:** onboarding, evaluación canónica de ejercicio y paso de lección, persistencia y aislamiento al cambiar de perfil: CI verde.
+- **B2/B3, validación manual y operación real:** no se declara verificado lo que requiere entorno externo.
+
+### Riesgos residuales que no se deben confundir con fallos del barrido local
+
+- La matriz de UX móvil debe ejecutarse en navegador real/dispositivo; una auditoría estática no demuestra usabilidad táctil.
+- La migración v2→v3 contra una copia real de la base local queda aplazada hasta autorización de Marcos.
+- El envío real de correo, los fallos del proveedor y los reintentos/outbox requieren configuración y pruebas de integración con un proveedor; la existencia de un callable no demuestra entrega.
+- La operación multi-worker requiere rate limiting compartido; el limitador actual es por proceso.
+- Consentimiento, retención, exportación/supresión, revisión jurídica argentina, pagos y sincronización remota siguen siendo puertas de lanzamiento comercial, no funciones que esta rama deba simular como terminadas.
+
+**Estado:** barridos técnicos automatizados 2 + 3 cerrados con las salvedades anteriores documentadas. Esta actualización no autoriza merge a main.
