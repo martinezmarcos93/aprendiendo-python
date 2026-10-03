@@ -253,6 +253,18 @@ def reenviar_verificacion():
     limit = _limit_or_429(f"resend-verification:{request.remote_addr or 'unknown'}", 5, 3600)
     if limit:
         return limit
+    if not _email_sender_configurado():
+        if request.form:
+            return render_template(
+                "cuenta/pendiente.html",
+                email=request.form.get("email", ""),
+                mensaje="El envío de correo no está configurado en esta instalación.",
+            ), 503
+        return jsonify(
+            ok=False,
+            codigo="envio_email_no_configurado",
+            mensaje="El reenvío no está disponible porque el envío de correo no está configurado.",
+        ), 503
     datos = request.form if request.form else (request.get_json(silent=True) or {})
     email = datos.get("email")
     if isinstance(email, str) and _email_sender_configurado():
