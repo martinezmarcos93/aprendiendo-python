@@ -237,6 +237,7 @@ class TestWeb(unittest.TestCase):
         self.assertNotIn("_perfil", respuesta.json["progreso"]["data"])
 
     def test_importar_progreso_local_exige_reemplazo_explicito(self):
+        self.app.config["ENABLE_LOCAL_PROGRESS_MIGRATION"] = True
         p = persistencia_local.cargar_progreso()
         p["xp_total"] = 123
         self.assertTrue(persistencia_local.guardar_progreso(p))
@@ -263,6 +264,7 @@ class TestWeb(unittest.TestCase):
         self.assertEqual(actual["xp_total"], 123)
 
     def test_importar_progreso_local_rechaza_nombre_invalido_y_sin_csrf(self):
+        self.app.config["ENABLE_LOCAL_PROGRESS_MIGRATION"] = True
         invalido = self.c.post(
             "/cuenta/progreso/importar-local",
             json={"perfil_local": "../../etc", "reemplazar": True},
