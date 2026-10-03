@@ -61,7 +61,7 @@ def _jugar_paso(pg, paso):
             "(antes) => { const c = document.querySelector('#lec-contador'); "
             "const f = document.querySelector('#lec-paso h2'); "
             "return !c || c.textContent !== antes || (f && /Lección perfecta|Lección completada|Práctica terminada/.test(f.textContent)); }",
-            contador_antes,
+            arg=contador_antes,
             timeout=10000,
         )
         return
