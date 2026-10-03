@@ -96,6 +96,15 @@ Además de los endpoints de puntuación, `PUT /cuenta/progreso` aceptaba un snap
 
 **Implicación funcional:** cualquier cliente que todavía dependiera de `PUT /cuenta/progreso` debe migrar a las operaciones evaluadas del servidor; no reactivar la escritura de snapshots como atajo. La importación de progreso local es un flujo separado y debe continuar verificando su origen y destino.
 
+### B4-04 — Registro y recuperación podían aparentar éxito sin un canal de correo
+**Severidad:** alta para un despliegue con cuentas, porque la verificación y recuperación dependen de correo electrónico.
+
+`_emitir_email()` no hacía nada cuando `ACCOUNT_EMAIL_SENDER` no estaba configurado, pero las rutas seguían devolviendo respuestas de éxito. El registro podía crear una cuenta pendiente de verificación sin enviar el enlace; la recuperación podía confirmar recepción sin enviar un enlace de restablecimiento.
+
+**Mitigación aplicada en la rama:** el registro HTML/JSON y la recuperación devuelven HTTP 503 con código `envio_email_no_configurado` si no existe un sender callable. El registro falla antes de crear la cuenta, evitando dejar una cuenta pendiente irrecuperable por este motivo. La respuesta de recuperación no depende de que la cuenta exista; el 503 solo informa que falta el canal global. Se añadieron pruebas de regresión para las tres rutas.
+
+**Límite residual:** un sender configurado que luego falle al entregar el mensaje necesita manejo de fallos/outbox y reintentos; la mera existencia de un callable no garantiza entrega. La instalación no debe considerarse lista para producción hasta verificar envío real y recuperación de extremo a extremo.
+
 ### B4-03 — La importación local aceptaba fuentes inexistentes o malformadas
 **Severidad:** media; riesgo de respuestas HTTP 500, importaciones vacías inesperadas y estado inconsistente.
 
