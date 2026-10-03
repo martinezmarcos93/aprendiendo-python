@@ -723,5 +723,81 @@ class CuentaRoutesTests(unittest.TestCase):
         seleccionar_y_guardar(perfiles[0], 11, "2026-10-02T12:00:00+00:00")
         seleccionar_y_guardar(perfiles[1], 22, "2026-10-02T12:01:00+00:00")
 
+
+    def test_evaluacion_canonica_persiste_y_aisla_xp_entre_perfiles(self):
+        # Recorrido autenticado completo: cuenta → perfiles → onboarding →
+        # evaluación canónica en servidor → persistencia → cambio y recuperación.
+        email = "evaluacion-integrada@example.com"
+        self.client.post("/cuenta/registro", json={
+            "email": email,
+            "password": "una-clave-larga-123",
+        })
+        cuenta_id = "acc_" + __import__("hashlib").sha256(email.encode()).hexdigest()[:24]
+        AuthRepository(self.tmp / "cuentas.sqlite3").marcar_verificada(cuenta_id)
+
+        login = self.client.post("/cuenta/login", json={
+            "email": email,
+            "password": "una-clave-larga-123",
+        })
+        self.assertEqual(login.status_code, 200)
+        csrf = login.json["csrf"]
+        headers = {"X-Tortu-CSRF": csrf, "X-Tortu-Token": "test-token"}
+
+        perfiles = {}
+        for nombre in ("Ana", "Beto"):
+            creado = self.client.post(
+                "/cuenta/perfiles", json={"nombre": nombre}, headers=headers
+            )
+            self.assertEqual(creado.status_code, 201, creado.get_data(as_text=True))
+            perfiles[nombre] = creado.json["perfil"]["id"]
+
+        def seleccionar(perfil_id):
+            respuesta = self.client.post(
+                "/cuenta/perfil", json={"perfil_id": perfil_id},
+                headers={"X-Tortu-CSRF": csrf},
+            )
+            self.assertEqual(respuesta.status_code, 200, respuesta.get_data(as_text=True))
+
+        def completar_onboarding(nombre):
+            respuesta = self.client.post("/api/onboarding", json={
+                "nombre": nombre, "experiencia": "nunca", "meta_min": 5,
+            }, headers={"X-Tortu-Token": "test-token"})
+            self.assertEqual(respuesta.status_code, 200, respuesta.get_data(as_text=True))
+
+        seleccionar(perfiles["Ana"])
+        completar_onboarding("Ana")
+        evaluacion = self.client.post(
+            "/api/ejercicios/1/evaluar",
+            json={"codigo": 'mostrar "Hola mundo"'},
+            headers={"X-Tortu-Token": "test-token"},
+        )
+        self.assertEqual(evaluacion.status_code, 200, evaluacion.get_data(as_text=True))
+        self.assertEqual(evaluacion.json["evaluacion"]["estado"], "correcto")
+        self.assertEqual(evaluacion.json["premio"]["xp"], 30)
+
+        progreso_ana = self.client.get("/cuenta/progreso")
+        self.assertEqual(progreso_ana.status_code, 200)
+        self.assertEqual(progreso_ana.json["perfil"]["id"], perfiles["Ana"])
+        self.assertEqual(progreso_ana.json["progreso"]["data"]["xp_total"], 30)
+
+        seleccionar(perfiles["Beto"])
+        completar_onboarding("Beto")
+        progreso_beto = self.client.get("/cuenta/progreso")
+        self.assertEqual(progreso_beto.status_code, 200)
+        self.assertEqual(progreso_beto.json["perfil"]["id"], perfiles["Beto"])
+        self.assertEqual(progreso_beto.json["progreso"]["data"]["xp_total"], 0)
+        self.assertEqual(
+            progreso_beto.json["progreso"]["data"]["config"]["nombre"], "Beto"
+        )
+
+        seleccionar(perfiles["Ana"])
+        recuperado = self.client.get("/cuenta/progreso")
+        self.assertEqual(recuperado.status_code, 200)
+        self.assertEqual(recuperado.json["perfil"]["id"], perfiles["Ana"])
+        self.assertEqual(recuperado.json["progreso"]["data"]["xp_total"], 30)
+        self.assertEqual(
+            recuperado.json["progreso"]["data"]["config"]["nombre"], "Ana"
+        )
+
 if __name__ == "__main__":
     unittest.main()
