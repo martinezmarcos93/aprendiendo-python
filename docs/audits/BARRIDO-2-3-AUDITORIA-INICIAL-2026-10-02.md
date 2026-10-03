@@ -139,3 +139,20 @@ La migración llamaba a `cargar_progreso(nombre)`, que devuelve el progreso inic
 - Todo cambio de persistencia debe incluir prueba de migración/esquema y regresión.
 
 **Mitigación adicional:** las rutas HTTP para listar e importar perfiles locales quedaron deshabilitadas por defecto mediante `ENABLE_LOCAL_PROGRESS_MIGRATION=False`. Solo una instalación local de un único usuario debe activar la opción explícitamente. Se añadieron pruebas para comprobar el 404 por defecto y que, al habilitarla, sigue siendo obligatoria una sesión válida.
+## Continuación — integridad de importación y persistencia (2026-10-03)
+
+### B4-05 — El archivo de progreso podía declarar una identidad distinta de su propietario
+
+**Hallazgo:** el adaptador validaba el formato del profile_id al construir la ruta, pero al leer el JSON no comparaba la identidad declarada dentro del snapshot con el identificador del archivo consultado. Un archivo alterado o intercambiado podía entregar un snapshot que afirmara pertenecer a otro ChildProfile y dejar la detección únicamente a cargo de la capa superior.
+
+**Corrección aplicada en la rama:** ProgresoChildProfile.cargar() ahora rechaza el snapshot cuando snapshot.profile_id no coincide con el ID propietario solicitado. Se agregó una regresión que altera la identidad declarada en el archivo y comprueba que la carga falle.
+
+### B4-06 — El contrato aceptaba metadatos y datos de snapshot insuficientemente validados
+
+**Hallazgo:** el contrato permitía que updated_at estuviera vacío, malformado o sin zona horaria; además, el valor booleano true podía pasar como versión numérica 1 en Python. El contrato tampoco comprobaba que todos los valores de data fueran serializables como JSON estricto.
+
+**Corrección aplicada en la rama:** el contrato exige una fecha ISO 8601 con zona horaria, una versión de tipo entero exacto y datos serializables como JSON (sin valores no finitos). Se añadieron regresiones para fechas inválidas, fechas sin zona horaria, versión booleana y valores no serializables.
+
+**Estado de verificación:** cambios enviados a la rama sweep/consolidacion-ux-v1; las ejecuciones de CI correspondientes están pendientes/en curso al registrar esta actualización. No se declara el barrido cerrado hasta confirmar CI verde en Python 3.9 y 3.12.
+
+**Próximo paso:** verificar el resultado del workflow más reciente; después completar el contrato de integración autenticado del flujo canónico (sesión → ChildProfile → onboarding/evaluación → persistencia → cambio de perfil → recuperación aislada). La comprobación de migración v2→v3 contra una copia local real sigue expresamente aplazada hasta autorización de Marcos; no acceder ni validar la copia local antes de esa autorización.
