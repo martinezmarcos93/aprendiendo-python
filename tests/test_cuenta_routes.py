@@ -142,7 +142,7 @@ class CuentaRoutesTests(unittest.TestCase):
         self.assertEqual(self.emails[0]["tipo"], "verification")
         verificado = self.client.post("/cuenta/verificar-email", json={
             "token": self.emails[0]["token"],
-        })
+        }, headers={"Accept": "application/json"})
         self.assertEqual(verificado.status_code, 200)
         self.assertEqual(verificado.json["estado"], "correo_verificado")
 
