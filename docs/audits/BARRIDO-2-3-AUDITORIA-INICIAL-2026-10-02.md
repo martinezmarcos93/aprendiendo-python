@@ -96,6 +96,15 @@ Además de los endpoints de puntuación, `PUT /cuenta/progreso` aceptaba un snap
 
 **Implicación funcional:** cualquier cliente que todavía dependiera de `PUT /cuenta/progreso` debe migrar a las operaciones evaluadas del servidor; no reactivar la escritura de snapshots como atajo. La importación de progreso local es un flujo separado y debe continuar verificando su origen y destino.
 
+### B4-03 — La importación local aceptaba fuentes inexistentes o malformadas
+**Severidad:** media; riesgo de respuestas HTTP 500, importaciones vacías inesperadas y estado inconsistente.
+
+La migración llamaba a `cargar_progreso(nombre)`, que devuelve el progreso inicial cuando el archivo no existe. Por ello, una solicitud con un nombre de perfil inexistente podía importar un perfil vacío como si la fuente fuera válida. Además, algunos archivos JSON podían superar la validación superficial y fallar después durante la migración de esquema (por ejemplo, una configuración que no fuera un objeto), propagando una excepción no controlada.
+
+**Mitigación aplicada en la rama:** se valida que el nombre sea texto normalizado y que el perfil figure entre las fuentes locales existentes antes de leerlo. Los errores de estructura durante la carga se convierten en `MigracionProgresoError`, sin guardar el destino. Se añadieron regresiones para valores no textuales, perfiles inexistentes y archivos con configuración malformada.
+
+**Límite residual:** los perfiles locales son archivos compartidos por la instalación local y no tienen un vínculo de propiedad con una cuenta comercial. La migración requiere selección explícita, pero antes de habilitar el servicio en un entorno multiusuario remoto habrá que definir una prueba de consentimiento/propiedad para la fuente; no debe exponerse el listado global de perfiles locales a cuentas remotas.
+
 ## Riesgos de arquitectura y límites de alcance
 
 1. **Privacidad/consentimiento:** `docs/FASE12_PRIVACIDAD_MENORES_V1.md` define minimización, consentimiento, retención y derechos, pero declara que es una base de diseño, no una habilitación legal ni una implementación completa. Antes de cualquier despliegue comercial hay que traducir cada requisito a flujos, persistencia, pruebas y revisión jurídica argentina.
