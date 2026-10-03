@@ -26,6 +26,21 @@ class CuentaRoutesTests(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmp)
 
+    def test_migracion_local_legada_desactivada_por_defecto(self):
+        listado = self.client.get("/cuenta/progreso/locales")
+        importacion = self.client.post(
+            "/cuenta/progreso/importar-local",
+            json={"perfil_local": "ana"},
+        )
+        self.assertEqual(listado.status_code, 404)
+        self.assertEqual(importacion.status_code, 404)
+
+    def test_migracion_local_legada_solo_se_habilita_explicita(self):
+        self.app.config["ENABLE_LOCAL_PROGRESS_MIGRATION"] = True
+        listado = self.client.get("/cuenta/progreso/locales")
+        # La capacidad queda habilitada, pero sigue requiriendo sesión con perfil.
+        self.assertEqual(listado.status_code, 401)
+
     def test_api_valida_token_antes_de_resolver_la_sesion_educativa(self):
         # El token de la app local y la sesión de cuenta son controles distintos.
         # Sin token, la petición debe rechazarse por el gateway; con token pero sin
