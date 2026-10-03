@@ -48,7 +48,13 @@ def _jugar_paso(pg, paso):
     if tipo == "explicacion":
         # El pie empieza oculto y lo muestra leccion.js; esperar a que el
         # navegador termine de inicializarlo evita un click prematuro/flaky.
-        pg.wait_for_selector("#lec-principal:visible", timeout=10000)
+        try:
+            pg.wait_for_selector("#lec-principal:visible", timeout=10000)
+        except Exception as exc:
+            raise AssertionError(
+                f"El control de explicación no aparece en {pg.url}; "
+                f"cuerpo={pg.locator('body').inner_text()[:400]!r}"
+            ) from exc
         pg.click("#lec-principal")
         return
     if tipo in ("elegir", "predecir"):
