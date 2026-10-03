@@ -54,19 +54,27 @@ class TestWeb(unittest.TestCase):
         return respuesta.json["progreso"]
 
     def _guardar_snapshot_cuenta(self, snapshot):
-        respuesta = self.c.put(
-            "/cuenta/progreso",
-            json={
-                "contract_version": snapshot["contract_version"],
-                "profile_id": snapshot["profile_id"],
-                "updated_at": datetime.now(timezone.utc).isoformat(),
-                "data": snapshot["data"],
-            },
-            headers={"X-Tortu-CSRF": self.csrf},
+        # Estos tests preparan estado inicial para probar páginas y recorridos.
+        # No deben usar la API HTTP de escritura genérica, que se rechaza porque
+        # permitiría al navegador acreditar XP o lecciones sin evaluación.
+        from tortuscript.progreso_contrato import ProgresoSnapshot
+        from tortuscript.progreso_childprofile import ProgresoChildProfile
+
+        actual = self.c.get("/cuenta/progreso")
+        if actual.status_code != 200:
+            raise AssertionError(
+                f"no se pudo resolver el perfil de prueba: "
+                f"{actual.status_code} {actual.get_data(as_text=True)}"
+            )
+        profile_id = actual.json["perfil"]["id"]
+        guardado = ProgresoSnapshot(
+            profile_id=profile_id,
+            schema_version=snapshot["contract_version"],
+            updated_at=datetime.now(timezone.utc).isoformat(),
+            data=snapshot["data"],
         )
-        if respuesta.status_code != 200:
-            raise AssertionError(f"no se pudo guardar el snapshot: {respuesta.status_code} {respuesta.get_data(as_text=True)}")
-        return respuesta
+        ProgresoChildProfile(self._dir / "progreso_perfiles").guardar(guardado)
+        return guardado
 
     # ── recorridos curriculares ──
     def _completar_curso(self, curso_id):
