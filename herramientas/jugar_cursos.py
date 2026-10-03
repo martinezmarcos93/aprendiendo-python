@@ -46,6 +46,9 @@ def _click_exacto(pg, selector, texto):
 def _jugar_paso(pg, paso):
     tipo, entradas = paso["tipo"], list(paso.get("entradas_prueba") or [])
     if tipo == "explicacion":
+        # El pie empieza oculto y lo muestra leccion.js; esperar a que el
+        # navegador termine de inicializarlo evita un click prematuro/flaky.
+        pg.wait_for_selector("#lec-principal:visible", timeout=10000)
         pg.click("#lec-principal")
         return
     if tipo in ("elegir", "predecir"):
