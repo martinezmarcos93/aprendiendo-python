@@ -47,7 +47,8 @@ def _jugar_paso(pg, paso):
     tipo, entradas = paso["tipo"], list(paso.get("entradas_prueba") or [])
     if tipo == "explicacion":
         # El pie empieza oculto y lo muestra leccion.js; esperar a que el
-        # navegador termine de inicializarlo evita un click prematuro/flaky.
+        # navegador lo inicialice y a que termine la comprobación asíncrona.
+        contador_antes = pg.locator("#lec-contador").inner_text()
         try:
             pg.wait_for_selector("#lec-principal:visible", timeout=10000)
         except Exception as exc:
@@ -56,6 +57,13 @@ def _jugar_paso(pg, paso):
                 f"cuerpo={pg.locator('body').inner_text()[:400]!r}"
             ) from exc
         pg.click("#lec-principal")
+        pg.wait_for_function(
+            "(antes) => { const c = document.querySelector('#lec-contador'); "
+            "const f = document.querySelector('#lec-paso h2'); "
+            "return !c || c.textContent !== antes || (f && /Lección perfecta|Lección completada|Práctica terminada/.test(f.textContent)); }",
+            contador_antes,
+            timeout=10000,
+        )
         return
     if tipo in ("elegir", "predecir"):
         pg.wait_for_selector(".opcion-paso")
