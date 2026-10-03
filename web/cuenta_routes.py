@@ -68,8 +68,8 @@ def _intentar_emitir_email(tipo, email, token, expires):
     try:
         return _emitir_email(tipo, email, token, expires)
     except Exception:
-        # No registrar token ni dirección de correo en los logs.
-        logger.exception("Falló el envío de correo transaccional (tipo=%s)", tipo)
+        # No registrar token, dirección ni el texto arbitrario de la excepción del proveedor.
+        logger.error("Falló el envío de correo transaccional (tipo=%s)", tipo)
         return False
 
 def _cookie_config():
