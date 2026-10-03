@@ -130,18 +130,18 @@ class TestWebProyectosIntegradores(unittest.TestCase):
         datos = actual["data"]
         for i in ("py-print", "web-html-estructura"):
             datos["lecciones"][i] = {"pasos": {}, "completada": True, "perfecta": True}
-        guardado = self.c.put(
-            "/cuenta/progreso",
-            json={
-                "contract_version": actual["contract_version"],
-                "profile_id": actual["profile_id"],
-                "updated_at": actual["updated_at"],
-                "data": datos,
-            },
-            headers={"X-Tortu-CSRF": self.csrf},
+        # Estado inicial de la prueba: sembrar almacenamiento directamente,
+        # sin usar una API que ya no acepta snapshots arbitrarios del navegador.
+        from tortuscript.progreso_contrato import ProgresoSnapshot
+        from tortuscript.progreso_childprofile import ProgresoChildProfile
+
+        guardado = ProgresoSnapshot(
+            profile_id=actual["profile_id"],
+            schema_version=actual["contract_version"],
+            updated_at=actual["updated_at"],
+            data=datos,
         )
-        if guardado.status_code != 200:
-            raise AssertionError(f"no se pudo preparar el progreso: {guardado.status_code} {guardado.get_data(as_text=True)}")
+        ProgresoChildProfile(self._dir / "progreso_perfiles").guardar(guardado)
 
     def tearDown(self):
         persistencia_local.DIRECTORIO, persistencia_local.PERFIL_ACTUAL = self._orig
