@@ -38,7 +38,10 @@ class MigracionProgresoLocal:
         actual = self.educativo.cargar_progreso(raw_session)
         if actual is not None and not reemplazar:
             raise MigracionProgresoError("El perfil comercial ya tiene progreso; se requiere reemplazo explícito.")
-        datos = cargar_progreso(nombre)
+        try:
+            datos = cargar_progreso(nombre)
+        except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
+            raise MigracionProgresoError("El progreso local no tiene un formato válido.") from exc
         if not isinstance(datos, dict):
             raise MigracionProgresoError("El progreso local no tiene un formato válido.")
         datos.pop("_perfil", None)
